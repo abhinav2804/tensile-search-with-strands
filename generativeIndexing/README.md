@@ -27,6 +27,10 @@ graph LR
     B --> G[SSE Updates]
 ```
 
+![Detailed Architecture Diagram](./static/architecture-diagram_svg.svg)
+
+This architecture diagram illustrates the complete system flow, showing how different components interact with each other.
+
 ## 📦 Requirements
 
 - Python 3.10+
@@ -133,7 +137,6 @@ generativeindexing/
 └── requirements.txt             # Dependencies
 
 ```
-
 ## 🔒 Security Considerations
 
 - 🔑 **Credentials**: Store secrets in environment variables or use AWS Secrets Manager
@@ -168,6 +171,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+---
+
+## 🔄 Processing Flow
+
+![Detailed Processing Flow Diagram](./static/flow-diagram.svg)
+
+This flow diagram shows the step-by-step processing of documents through the system, from input to final indexing.
 
 ---
 
