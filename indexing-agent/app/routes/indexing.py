@@ -67,7 +67,7 @@ def event_stream(user_id: str, data_path: str, user_query_path: str):
         summary_data = {
             "message": "🎉 All done! Your data is now searchable.",
             "total_documents": len_of_docs,
-            "index_name": config["elasticsearch"]["default_index"],
+            "index_name": index_name,
             "time_taken_seconds": time_taken
         }
         yield from send_event("Summary", "completed", 100, "Process completed", summary=summary_data)
