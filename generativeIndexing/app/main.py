@@ -67,6 +67,14 @@ async def enforce_utf8(request, call_next):
         response.headers["content-type"] = response.headers.get("content-type", "text/html") + "; charset=utf-8"
     return response
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.middleware("http")
 async def count_requests(request, call_next):
     global REQUEST_COUNT
