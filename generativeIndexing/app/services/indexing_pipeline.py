@@ -119,7 +119,9 @@ def process_file_combos_with_bedrock(file_combos, config, user_id):
             "No readme provided"
         )
 
-        # Save readme in plain text for readability
+        if isinstance(readme_content, dict):
+            readme_content = json.dumps(readme_content, indent=2)
+
         with open(readme_path, "w", encoding="utf-8") as f:
             f.write(readme_content)
 

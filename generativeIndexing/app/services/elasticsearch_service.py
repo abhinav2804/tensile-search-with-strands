@@ -104,13 +104,20 @@ def create_index_and_insert(config, user_id, dynamo_data=None):
 
     # --- Create index ---
     if not es.indices.exists(index=index_name):
-        es.indices.create(index=index_name, body={"mappings": {"properties": schema or {}}})
+        if schema and "mappings" in schema:
+            es.indices.create(index=index_name, body=schema)
+        else:
+            es.indices.create(index=index_name, body={"mappings": {"properties": schema or {}}})
         logger.info(f"✅ Created Elasticsearch index: {index_name}")
     else:
         logger.warning(f"⚠️ Index already exists: {index_name}")
         index_name = f"{index_name.lower()}_{safe_timestamp}"
-        es.indices.create(index=index_name, body={"mappings": {"properties": schema or {}}})
+        if schema and "mappings" in schema:
+            es.indices.create(index=index_name, body=schema)
+        else:
+            es.indices.create(index=index_name, body={"mappings": {"properties": schema or {}}})
         logger.info(f"✅ Created Elasticsearch index: {index_name}")
+
 
     # --- Stream documents & count ---
     data_json_path = os.path.join(user_output_dir, "data.json")
