@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Generative Indexing Live 🚀</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0;
+  padding: 20px;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  color: #eaeaea;
+}
+h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  background: linear-gradient(90deg, #00FFB2, #00BFFF, #00FFB2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 4s infinite;
+}
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+button {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 0 15px rgba(0, 255, 178, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+button:hover:enabled {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 178, 0.7);
+}
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+#log-container {
+  display: none;
+  margin-top: 20px;
+}
+#global-loader {
+  height: 20px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+#global-fill {
+  height: 20px;
+  width: 0%;
+  background: linear-gradient(90deg, #00FFB2, #00BFFF);
+  transition: width 0.4s ease, background 0.4s ease;
+}
+#log {
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 15px;
+  height: 600px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0,255,178,0.2);
+  backdrop-filter: blur(8px);
+}
+.log-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-left: 4px solid #00FFB2;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px;
+  animation: fadeIn 0.6s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.step { font-weight: bold; font-size: 1.1rem; }
+.status { font-style: italic; color: #bbb; }
+.details { margin-top: 5px; font-size: 0.9rem; }
+
+/* Stage-specific colors */
+.dynamodb { border-left-color: #ffcc00; }
+.fileproc { border-left-color: #1e90ff; }
+.bedrock { border-left-color: #a020f0; }
+.elasticsearch { border-left-color: #00ff7f; }
+.summary { border-left-color: gold; }
+
+/* Ticker Tape */
+#ticker {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.7);
+  color: #00FFB2;
+  font-size: 1rem;
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  box-shadow: 0 -2px 10px rgba(0,255,178,0.3);
+}
+#ticker span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: tickerScroll 15s linear infinite;
+}
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+</head>
+<body>
+
+<h1>📡 Generative Indexing Live Dashboard</h1>
+<button id="startBtn">🚀 Indexing Started</button>
+
+<div id="log-container">
+  <!-- Single global loader -->
+  <div id="global-loader">
+    <div id="global-fill"></div>
+  </div>
+  <div id="log"></div>
+</div>
+
+<!-- Ticker Tape -->
+<div id="ticker">
+  <span id="tickerText">🚀 Hackathon Mode Enabled • Waiting to Start...</span>
+</div>
+
+<script>
+const startBtn = document.getElementById('startBtn');
+const logDiv = document.getElementById('log');
+const logContainer = document.getElementById('log-container');
+const tickerText = document.getElementById('tickerText');
+const globalFill = document.getElementById('global-fill');
+
+function getStageClass(step) {
+  if (/dynamo/i.test(step)) return 'dynamodb';
+  if (/file/i.test(step)) return 'fileproc';
+  if (/bedrock/i.test(step)) return 'bedrock';
+  if (/elastic/i.test(step)) return 'elasticsearch';
+  if (/summary/i.test(step) || /final/i.test(step)) return 'summary';
+  return '';
+}
+
+function getStageIcon(step) {
+  if (/dynamo/i.test(step)) return '🗄️';
+  if (/file/i.test(step)) return '📄';
+  if (/bedrock/i.test(step)) return '🤖';
+  if (/elastic/i.test(step)) return '🔍';
+  if (/summary/i.test(step) || /final/i.test(step)) return '🏁';
+  return '🔹';
+}
+
+function getStageColor(step) {
+  if (/dynamo/i.test(step)) return 'linear-gradient(90deg, #ffcc00, #ffd633)';
+  if (/file/i.test(step)) return 'linear-gradient(90deg, #1e90ff, #63b3ff)';
+  if (/bedrock/i.test(step)) return 'linear-gradient(90deg, #a020f0, #d580ff)';
+  if (/elastic/i.test(step)) return 'linear-gradient(90deg, #00ff7f, #7affb0)';
+  if (/summary/i.test(step) || /final/i.test(step)) return 'linear-gradient(90deg, gold, #ffec80)';
+  return 'linear-gradient(90deg, #00FFB2, #00BFFF)';
+}
+
+function appendLog(step, status, progress, details) {
+  const item = document.createElement('div');
+  const stageClass = getStageClass(step);
+  const stageIcon = getStageIcon(step);
+  const stageColor = getStageColor(step);
+
+  item.classList.add('log-item', stageClass);
+  item.innerHTML = `
+    <div class="step">${stageIcon} ${step}</div>
+    <div class="status">Status: ${status}</div>
+    <div class="details">Details: ${details || '...'}</div>
+  `;
+  logDiv.appendChild(item);
+
+  // Auto-scroll to latest
+  logDiv.scrollTop = logDiv.scrollHeight;
+
+  // Update ticker dynamically
+  tickerText.textContent = `${stageIcon} ${step} • Status: ${status} • Progress: ${progress}% • Powered by AWS Bedrock + Elasticsearch + DynamoDB`;
+
+  // Update single loader
+  globalFill.style.width = `${progress}%`;
+  globalFill.style.background = stageColor;
+}
+
+startBtn.addEventListener('click', () => {
+  logDiv.innerHTML = '';
+  globalFill.style.width = '0%';
+  startBtn.disabled = true;
+  logContainer.style.display = 'block';
+  tickerText.textContent = '🔄 Connecting to FastAPI SSE • Initializing Pipeline...';
+
+  const userId = 123;
+  const dataPath = '/home/hs/imgpt/data';
+  const userQueryPath = '/home/hs/imgpt/user';
+  const url = `http://localhost:8000/triggerIndexingLive?user_id=${userId}&data_path=${encodeURIComponent(dataPath)}&user_query_path=${encodeURIComponent(userQueryPath)}`;
+
+  const eventSource = new EventSource(url);
+
+  eventSource.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    appendLog(data.step, data.status, data.progress ?? 0, data.details);
+
+    if (data.summary) {
+      appendLog('Final Summary', 'completed', 100, `${data.summary.message} | Total Docs: ${data.summary.total_documents} | Index: ${data.summary.index_name} | Time: ${data.summary.time_taken_seconds}s`);
+      tickerText.textContent = `🏁 Indexing Complete • ${data.summary.total_documents} Docs • Index: ${data.summary.index_name} • Time: ${data.summary.time_taken_seconds}s`;
+      globalFill.style.width = '100%';
+      globalFill.style.background = getStageColor('summary');
+      eventSource.close();
+      startBtn.disabled = false;
+    }
+  };
+
+  eventSource.onerror = function() {
+    appendLog('❌ Error', 'failed', 0, 'Connection error or server stopped.');
+    tickerText.textContent = '❌ Error in SSE Connection • Check FastAPI Server';
+    globalFill.style.background = 'linear-gradient(90deg, red, darkred)';
+    eventSource.close();
+    startBtn.disabled = false;
+  };
+});
+</script>
+
+</body>
+</html>
