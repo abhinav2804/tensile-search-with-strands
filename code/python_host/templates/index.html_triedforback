@@ -1,0 +1,1987 @@
+<!DOCTYPE
+html >
+  <html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Discovery AI - Smart Shopping Interface</title>
+<meta name="description" content="AI-powered product discovery with natural language search and advanced filtering" />
+
+<style>
+    * {\
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {\
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg,
+            #0a0a0f 0%,
+            #1a0f2e 15%,
+            #0f1419 30%,
+            #1e1b4b 45%,
+            #312e81 60%,
+            #1e1b4b 75%,
+            #0f1419 90%,
+            #0a0a0f 100%);
+        background-size: 400% 400%;
+        animation: backgroundMove 15s ease infinite;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        background-attachment: fixed;
+    }
+
+    @keyframes backgroundMove {\
+        0%, 100% { background-position: 0% 50%; }\
+        25% { background-position: 100% 25%; }\
+        50% { background-position: 50% 100%; }\
+        75% { background-position: 25% 75%; }
+    }
+
+    body::before {\
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+            radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.25) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(16, 185, 129, 0.2) 0%, transparent 60%),
+            radial-gradient(ellipse at 70% 10%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 30% 70%, rgba(168, 85, 247, 0.2) 0%, transparent 55%);
+        animation: backgroundShift 25s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    @keyframes backgroundShift {
+        0%, 100% {\
+            opacity: 0.7;
+            transform: scale(1) rotate(0deg);
+        }
+        25% {\
+            opacity: 0.9;
+            transform: scale(1.05) rotate(1deg);
+        }
+        50% {\
+            opacity: 0.6;
+            transform: scale(0.95) rotate(-0.8deg);
+        }
+        75% {\
+            opacity: 0.8;
+            transform: scale(1.02) rotate(1.2deg);
+        }
+    }
+
+    /* Enhanced particle system */
+    .particle {\
+        position: fixed;
+        border-radius: 50%;
+        z-index: 1;
+        animation: float 12s infinite linear;
+        filter: blur(0.5px);
+    }
+
+    .particle:nth-child(1) {\
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.6), rgba(139, 92, 246, 0.2));
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .particle:nth-child(2) {\
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.1));
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        animation-duration: 16s;
+    }
+
+    .particle:nth-child(3) {\
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.6), rgba(16, 185, 129, 0.2));
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        animation-duration: 14s;
+    }
+
+    @keyframes float {
+        0% {\
+            transform: translateY(100vh) scale(0);
+            opacity: 0;
+        }
+        10% {\
+            opacity: 1;
+        }
+        90% {\
+            opacity: 1;
+        }
+        100% {\
+            transform: translateY(-10px) scale(1);
+            opacity: 0;
+        }
+    }
+
+    .main-container {\
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+        padding-bottom: 140px;
+    }
+
+    .header {\
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {\
+        from { opacity: 0; transform: translateY(-30px); }\
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {\
+        font-size: 2.8rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        animation: gradientFlow 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientFlow {\
+        0%, 100% { background-position: 0% 50%; }\
+        50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {\
+        font-size: 1rem;
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        height: 1.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .typewriter {\
+        display: inline-block;
+        position: relative;
+    }
+
+    .typewriter::after {\
+        content: '|';
+        color: #8b5cf6;
+        animation: blink 1s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes blink {\
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+
+    /* Enhanced Real-time stats section */
+    .stats-section {
+        max-width: 1000px;
+        margin: 0 auto 3rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.85) 0%,
+            rgba(30, 41, 59, 0.75) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 18px;
+        padding: 1.8rem;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.8),
+            rgba(16, 185, 129, 0.8),
+            transparent);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #38bdf8, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.8rem;
+        animation: countUp 2s ease-out;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(20px) scale(0.8); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 24px;
+        height: 24px;
+        opacity: 0.6;
+        color: #8b5cf6;
+    }
+
+    /* Enhanced templates section with better positioning */
+    .templates-section {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto 4rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        position: relative;
+        z-index: 15;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .templates-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #f1f5f9;
+        justify-content: center;
+        text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .templates-title .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        box-shadow: 0 0 20px #8b5cf6;
+        animation: pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+        from { opacity: 0.8; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.3); }
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        align-items: start;
+    }
+
+    .template-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.85) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(25px);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        height: fit-content;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .template-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.8),
+            transparent);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .template-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 80px rgba(139, 92, 246, 0.4);
+        border-color: rgba(139, 92, 246, 0.6);
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.98) 0%,
+            rgba(30, 41, 59, 0.92) 100%);
+    }
+
+    .template-card:hover::before {
+        opacity: 1;
+    }
+
+    .template-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .template-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .template-image::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.2),
+            rgba(59, 130, 246, 0.15));
+        border-radius: 16px;
+    }
+
+    .template-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .template-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .template-text {
+        flex: 1;
+    }
+
+    .template-category {
+        font-size: 0.8rem;
+        color: #93c5fd;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .feature-tag {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+        color: #c4b5fd;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .template-title {
+        font-size: 1.1rem;
+        color: #f9fafb;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .template-description {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        line-height: 1.5;
+    }
+
+    /* Enhanced Features Section */
+    .features-section {
+        max-width: 1200px;
+        margin: 0 auto 3rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.4s both;
+        position: relative;
+        z-index: 15;
+    }
+
+    .features-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientFlow 3s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .feature-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.9) 0%,
+            rgba(30, 41, 59, 0.8) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        border-radius: 24px;
+        padding: 2.5rem;
+        text-align: center;
+        backdrop-filter: blur(25px);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(59, 130, 246, 0.04) 50%,
+            rgba(16, 185, 129, 0.08) 100%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 30px 80px rgba(59, 130, 246, 0.35);
+        border-color: rgba(59, 130, 246, 0.6);
+    }
+
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1.8rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-icon svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .feature-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #f9fafb;
+        margin-bottom: 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-description {
+        color: #94a3b8;
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+        font-size: 1rem;
+    }
+
+    /* Enhanced Input Section with better visibility */
+    .input-section {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(90vw, 900px);
+        z-index: 200;
+        animation: slideInUp 0.8s ease-out 0.5s both;
+    }
+
+    @keyframes slideInUp {
+        from { transform: translateX(-50%) translateY(100%); }
+        to { transform: translateX(-50%) translateY(0); }
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(145deg,
+            rgba(5, 15, 35, 0.98) 0%,
+            rgba(15, 25, 45, 0.95) 50%,
+            rgba(5, 15, 35, 0.98) 100%);
+        border: 2px solid transparent;
+        border-radius: 50px;
+        backdrop-filter: blur(30px);
+        box-shadow:
+            0 20px 80px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 0 0 1px rgba(139, 92, 246, 0.3);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .progress-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(139, 92, 246, 0.15);
+        border-radius: 50px;
+        z-index: 5;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease;
+    }
+
+    .progress-overlay.active {
+        opacity: 1;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(139, 92, 246, 0.4) 0%,
+            rgba(168, 85, 247, 0.5) 50%,
+            rgba(139, 92, 246, 0.4) 100%);
+        width: 0%;
+        border-radius: 50px;
+        transition: width 0.15s ease-out;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+        border-radius: 50px;
+        animation: progressShine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progressShine {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+    }
+
+    .input-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        background: linear-gradient(90deg,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.9),
+            rgba(16, 185, 129, 0.8),
+            rgba(236, 72, 153, 0.8),
+            rgba(139, 92, 246, 0.8));
+        background-size: 300% 100%;
+        border-radius: 50px;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        animation: borderFlow 2s linear infinite;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    @keyframes borderFlow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+
+    .input-container:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 25px 100px rgba(139, 92, 246, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 0 0 1px rgba(139, 92, 246, 0.5);
+    }
+
+    .input-container:focus-within {
+        transform: translateY(-4px);
+        box-shadow:
+            0 30px 120px rgba(139, 92, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 0 0 1px rgba(139, 92, 246, 0.6);
+    }
+
+    .dropdown-container {
+        position: relative;
+        flex-shrink: 0;
+        margin-left: 1rem;
+        z-index: 10;
+    }
+
+    .dropdown {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        padding: 1rem 1.8rem 1rem 1rem;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1em 1em;
+        min-width: 160px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .dropdown:hover {
+        color: #e2e8f0;
+    }
+
+    .dropdown option {
+        background: rgba(5, 15, 35, 0.98);
+        color: #e2e8f0;
+        padding: 0.5rem;
+    }
+
+    .dropdown-container::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.4), transparent);
+    }
+
+    .main-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #f1f5f9;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 1rem 1.25rem;
+        outline: none;
+        font-family: inherit;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+        z-index: 10;
+        position: relative;
+    }
+
+    .main-input::placeholder {
+        color: #64748b;
+        font-size: 1rem;
+        font-weight: 400;
+        transition: all 0.3s ease;
+    }
+
+    .main-input:focus::placeholder {
+        color: #475569;
+        transform: translateX(4px);
+    }
+
+    .main-input:focus {
+        color: #ffffff;
+    }
+
+    .main-input:-webkit-autofill,
+    .main-input:-webkit-autofill:hover,
+    .main-input:-webkit-autofill:focus,
+    .main-input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px rgba(5, 15, 35, 0.98) inset !important;
+        -webkit-text-fill-color: #f1f5f9 !important;
+        color: #f1f5f9 !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        transition: background-color 5000s ease-in-out 0s;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .main-input:-moz-autofill {
+        background-color: rgba(5, 15, 35, 0.98) !important;
+        color: #f1f5f9 !important;
+        box-shadow: none !important;
+        background-image: none !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .submit-btn {
+        flex-shrink: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.25) 0%,
+            rgba(139, 92, 246, 0.4) 50%,
+            rgba(139, 92, 246, 0.25) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        padding: 0.8rem;
+        margin: 0.4rem;
+        color: #a78bfa;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+            0 6px 20px rgba(139, 92, 246, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        z-index: 10;
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.4),
+            rgba(168, 85, 247, 0.4));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.4) 0%,
+            rgba(139, 92, 246, 0.6) 50%,
+            rgba(139, 92, 246, 0.4) 100%);
+        transform: scale(1.08) rotate(5deg);
+        color: #c4b5fd;
+        box-shadow:
+            0 10px 30px rgba(139, 92, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    .submit-btn:hover::before {
+        opacity: 1;
+    }
+
+    .submit-btn:active {
+        transform: scale(1.05) rotate(2deg);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .submit-btn:disabled:hover {
+        transform: none;
+    }
+
+    .submit-btn svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    .submit-btn:hover svg {
+        transform: translateX(2px) scale(1.15);
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 2.2rem;
+        }
+
+        .main-container {
+            padding: 1rem;
+            padding-bottom: 140px;
+        }
+
+        .templates-grid, .features-grid, .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .input-section {
+            width: min(95vw, 900px);
+        }
+
+        .template-content {
+            gap: 1rem;
+        }
+
+        .template-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .template-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.6);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.8);
+    }
+</style>
+</head>
+<body>
+
+<!-- Enhanced floating particles -->
+<div class="particle" style="left: 15%; animation-delay: 0s;"></div>
+<div class="particle" style="left: 35%; animation-delay: 2s;"></div>
+<div class="particle" style="left: 55%; animation-delay: 4s;"></div>
+<div class="particle" style="left: 75%; animation-delay: 1s;"></div>
+<div class="particle" style="left: 25%; animation-delay: 6s;"></div>
+<div class="particle" style="left: 65%; animation-delay: 3s;"></div>
+
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title">Product Discovery AI</div>
+        <div class="subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </div>
+    </div>
+
+    <!-- Enhanced Real-time Statistics Section -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                <div class="stat-value" id="productCount">2.8M</div>
+                <div class="stat-label">Products Indexed</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                    <path d="M12 3v6"/>
+                </svg>
+                <div class="stat-value" id="categoryCount">1,247</div>
+                <div class="stat-label">Product Categories</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="stat-value" id="brandCount">15.2K</div>
+                <div class="stat-label">Active Brands</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <div class="stat-value" id="querySpeed">< 150ms</div>
+                <div class="stat-label">Avg Query Time</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Templates Section -->
+    <div class="templates-section">
+        <div class="templates-title">
+            <span class="dot"></span>
+            <span>Smart Product Search Templates</span>
+        </div>
+
+        <div class="templates-grid">
+            <div class="template-card" data-prompt="Find me a red cotton t-shirt under 500 rupees with Nike brand, plain design without pockets, available for same-day delivery">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Fashion & Apparel
+                            <span class="feature-tag">Express</span>
+                        </div>
+                        <div class="template-title">Specific Clothing Search</div>
+                        <div class="template-description">Find clothing items with exact specifications including color, material, brand, design features, and delivery preferences.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me laptops with 16GB RAM, Intel i7 processor, under 80000 rupees, with SSD storage, good for gaming and video editing">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Electronics & Tech
+                            <span class="feature-tag">Performance</span>
+                        </div>
+                        <div class="template-title">High-Spec Electronics Search</div>
+                        <div class="template-description">Discover electronics with detailed technical specifications, performance requirements, and specific use cases.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Find wireless headphones with active noise cancellation, over 20 hours battery life, under 5000 rupees, compatible with both Android and iPhone">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/3783471/pexels-photo-3783471.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1"/>
+                                <path d="M8 14a5 5 0 1 1 8 0"/>
+                                <path d="M19 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Audio Accessories
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                        <div class="template-title">Audio Equipment with Features</div>
+                        <div class="template-description">Search audio products with advanced features like noise cancellation, long battery life, and device compatibility.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me smartphones with 128GB storage, good camera for photography, 5G support, under 25000 rupees, from Samsung or OnePlus">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Mobile Devices
+                            <span class="feature-tag">5G Ready</span>
+                        </div>
+                        <div class="template-title">Advanced Smartphone Search</div>
+                        <div class="template-description">Find smartphones with specific storage, camera quality, connectivity features, and preferred brand options.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Find home furniture like sofas with leather upholstery, 3-seater, brown color, under 50000 rupees, suitable for living room">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"/>
+                                <path d="M21 9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Home & Furniture
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                        <div class="template-title">Furniture with Material Specs</div>
+                        <div class="template-description">Discover furniture items with specific materials, colors, seating capacity, and room suitability requirements.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me running shoes with cushioned sole, size 9, for daily training, under 3000 rupees, from Adidas or Puma, good for flat feet">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/>
+                                <path d="M2 18v3c0 .6.4 1 1 1h4c.6 0 1-.4 1-1v-3"/>
+                                <path d="M8 21l8-8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Sports & Footwear
+                            <span class="feature-tag">Comfort</span>
+                        </div>
+                        <div class="template-title">Athletic Footwear with Purpose</div>
+                        <div class="template-description">Find sports shoes with specific sole technology, sizing, training purpose, and foot-type compatibility.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Features Section -->
+    <div class="features-section">
+        <div class="features-title">Advanced Product Discovery Features</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 19c-5 0-8-3-8-8s3-8 8-8 8 3 8 8-3 8-8 8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                        <circle cx="12" cy="8" r="1"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Natural Language Search</div>
+                <div class="feature-description">Describe products in plain English with specific attributes, brands, colors, sizes, and features. Our AI understands complex product requirements.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M7 12l3-3 3 3 4-4"/>
+                        <circle cx="7" cy="12" r="1"/>
+                        <circle cx="13" cy="9" r="1"/>
+                        <circle cx="17" cy="5" r="1"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Smart Price Filtering</div>
+                <div class="feature-description">Set precise budget ranges and find products that match your price expectations across multiple categories and brands.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        <path d="M20 3v4"/>
+                        <path d="M22 5h-4"/>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h2"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Specification Matching</div>
+                <div class="feature-description">Match exact technical specifications, materials, dimensions, and performance criteria for electronics, furniture, and other products.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+                        <path d="M8.5 8.5v.01"/>
+                        <path d="M16 15.5v.01"/>
+                        <path d="M12 12v.01"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Multi-Brand Comparison</div>
+                <div class="feature-description">Compare similar products across different brands with detailed attribute matching and feature comparison capabilities.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <circle cx="12" cy="12" r="4"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Delivery & Availability</div>
+                <div class="feature-description">Filter products by delivery speed, stock availability, and location-based delivery options including same-day and express delivery.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/>
+                        <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                        <path d="M4.93 4.93l1.41 1.41"/>
+                        <path d="M17.66 17.66l1.41 1.41"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Real-time Inventory</div>
+                <div class="feature-description">Access live inventory data across multiple retailers and marketplaces to find products that are actually in stock and available.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Removed upload section from middle of page -->
+    
+    </div>
+
+<!-- Enhanced Input Section -->
+<div class="input-section">
+    <div class="input-container">
+        <!-- Enhanced progress bar with better visibility -->
+        <div class="progress-overlay" id="progressOverlay">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="dropdown-container">
+            <select id="categorySelector" class="dropdown">
+                <option value="auto">🤖 Smart Choice</option>
+                <option value="electronics">📱 Electronics</option>
+                <option value="fashion">👕 Fashion</option>
+                <option value="home">🏠 Home & Furniture</option>
+                <option value="sports">⚽ Sports & Fitness</option>
+                <option value="books">📚 Books & Media</option>
+                <option value="automotive">🚗 Automotive</option>
+            </select>
+        </div>
+
+        <!-- Removed any default value and ensured no pre-stored text -->
+        <input id="userInput" class="main-input" type="text" placeholder="Describe the product you're looking for with specific details..." autocomplete="off" value="" />
+
+        <button id="submitBtn" class="submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 2L11 13"/>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+    <!-- Moved upload section to the very bottom of the page -->
+    <!-- Upload Data Files Section - Now at bottom of page -->
+    <!-- Reduced top margin and added bottom margin for better spacing -->
+    <!-- Upload Section -->
+<div class="upload-section" style="width: min(90vw, 900px); margin: 1rem auto 2rem auto; position: relative;">
+  <div
+    style="background: linear-gradient(145deg, rgba(5, 15, 35, 0.95) 0%, rgba(15, 25, 45, 0.92) 50%, rgba(5, 15, 35, 0.95) 100%);
+           border: 2px solid rgba(139, 92, 246, 0.3);
+           border-radius: 20px;
+           backdrop-filter: blur(30px);
+           box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+           padding: 1.5rem; margin-bottom: 11rem;">
+
+    <!-- Title -->
+    <div style="display: flex; align-items: center; margin-bottom: 1rem; color: #e2e8f0; font-size: 0.9rem; font-weight: 600;">
+      <svg style="width: 20px; height: 20px; margin-right: 8px; color: #8b5cf6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14,2 14,8 20,8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10,9 9,9 8,9"/>
+      </svg>
+      Upload Data Files
+    </div>
+
+    <!-- Drop Zone -->
+    <div id="uploadDropZone" style="border: 2px dashed rgba(139, 92, 246, 0.4); border-radius: 12px; padding: 2rem; text-align: center; background: rgba(139, 92, 246, 0.05); transition: all 0.3s ease; cursor: pointer;">
+      <input id="fileInput" type="file" multiple accept=".csv,.json,.txt" style="display: none;" />
+
+      <div id="uploadContent">
+        <svg style="width: 48px; height: 48px; color: #8b5cf6; margin: 0 auto 1rem; display: block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <div style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0.5rem;">
+          Drop CSV, JSON, or TXT files here
+        </div>
+        <div style="color: #94a3b8; font-size: 0.875rem;">
+          or click to browse files
+        </div>
+      </div>
+    </div>
+
+    <!-- Uploaded Files List -->
+    <div id="uploadedFilesList" style="margin-top: 1rem; display: none;">
+      <div style="color: #e2e8f0; font-size: 0.875rem; margin-bottom: 0.5rem;">
+        Uploaded Files (<span id="fileCount">0</span>)
+      </div>
+      <div id="filesList" style="max-height: 120px; overflow-y: auto;"></div>
+    </div>
+
+    <!-- Description + Submit Section -->
+    <div id="descriptionSection" style="margin-top: 1rem; display: none;">
+    <textarea id="fileDescription"
+  placeholder="Enter a short description for the uploaded data..."
+  style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(139,92,246,0.3); background: rgba(15,25,45,0.8); color: #e2e8f0; font-size: 0.9rem; resize: vertical;"></textarea>
+
+      <button id="submitBtnLow"
+        style="margin-top: 1rem; padding: 0.75rem 1.25rem; background: #8b5cf6; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background 0.3s ease;">
+        Submit
+      </button>
+
+      <div id="confirmationMessage"
+        style="margin-top: 0.75rem; display: none; color: #4ade80; font-weight: 600; font-size: 0.9rem;">
+        ✅ Data Index Initiated
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const uploadDropZone = document.getElementById('uploadDropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadedFilesList = document.getElementById('uploadedFilesList');
+    const filesList = document.getElementById('filesList');
+    const fileCount = document.getElementById('fileCount');
+    const descriptionSection = document.getElementById('descriptionSection');
+    const fileDescription = document.getElementById('fileDescription');
+    const submitBtn = document.getElementById('submitBtnLow');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    let uploadedFiles = [];
+
+    // Dropzone listeners
+    uploadDropZone.addEventListener('click', () => fileInput.click());
+    uploadDropZone.addEventListener('dragover', handleDragOver);
+    uploadDropZone.addEventListener('dragleave', handleDragLeave);
+    uploadDropZone.addEventListener('drop', handleDrop);
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadDropZone.style.borderColor = '#8b5cf6';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.1)';
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadDropZone.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.05)';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        handleDragLeave(e);
+        const files = Array.from(e.dataTransfer.files);
+        processFiles(files);
+    }
+
+    function handleFileSelect(e) {
+        const files = Array.from(e.target.files);
+        processFiles(files);
+    }
+
+    async function processFiles(files) {
+        const validFiles = files.filter(file =>
+            file.type === 'text/csv' ||
+            file.type === 'application/json' ||
+            file.type === 'text/plain' ||
+            file.name.endsWith('.csv') ||
+            file.name.endsWith('.json') ||
+            file.name.endsWith('.txt')
+        );
+
+        if (validFiles.length === 0) {
+            alert('Please upload CSV, JSON, or TXT files only.');
+            return;
+        }
+
+        uploadedFiles = [];
+        for (const file of validFiles) {
+            const content = await readFileContent(file);
+            uploadedFiles.push({
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                content: content,
+                uploadedAt: new Date().toISOString()
+            });
+        }
+
+        // Update file list
+        updateFilesList();
+
+        // Show description + submit
+        descriptionSection.style.display = 'block';
+    }
+
+    function updateFilesList() {
+        uploadedFilesList.style.display = 'block';
+        fileCount.textContent = uploadedFiles.length;
+        filesList.innerHTML = uploadedFiles.map(f =>
+            `<div style="color:#cbd5e1; font-size:0.85rem; margin-bottom:0.25rem;">📄 ${f.name}</div>`
+        ).join('');
+    }
+
+    function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = e => reject(e);
+            reader.readAsText(file);
+        });
+    }
+
+  // ✅ Submit button handler
+  submitBtn.addEventListener("click", async () => {
+    confirmationMessage.style.display = "none";
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+
+    const description = fileDescription.value.trim();
+    if (!description) {
+      alert("Please enter a description before submitting.");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+      return;
+    }
+
+    try {
+      // ✅ Call backend with files + description
+      await uploadToBackend(uploadedFiles, description);
+
+      // Success
+      confirmationMessage.style.display = "block";
+      confirmationMessage.style.color = "#4ade80";
+      confirmationMessage.innerHTML =
+        "✅ File successfully uploaded<br>✅ Data index initiated";
+    } catch (err) {
+      // Error
+      confirmationMessage.style.display = "block";
+      confirmationMessage.style.color = "#f87171";
+      confirmationMessage.textContent =
+        "❌ Upload failed: " + err.message;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+    }
+  });
+});
+
+	// ✅ Upload helper
+async function uploadToBackend(files, description) {
+  const payload = {
+    description,
+    files: files.map((f) => ({
+      name: f.name,
+      content: f.content,
+      metadata: {
+        size: f.size,
+        type: f.type,
+        uploadedAt: f.uploadedAt,
+      },
+    })),
+  };
+
+  const response = await fetch("/api/elasticsearch/bulk-upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Upload-Source": "product-discovery-ui",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+</script>
+
+<script>
+    // Enhanced typewriter effect with product-focused phrases
+    const phrases = [
+        "🛍️ Smart Product Discovery",
+        "🔍 Detailed Specification Search", 
+        "💎 Premium Quality Matching",
+        "🎯 Precision Product Finder",
+        "⚡ Instant Attribute Matching",
+        "🧠 AI-Powered Shopping Assistant"
+    ];
+
+    let currentPhrase = 0;
+    let currentChar = 0;
+    let isDeleting = false;
+
+    function typeWriter() {
+        const typewriterElement = document.getElementById('typewriter');
+        if (!typewriterElement) return;
+
+        const current = phrases[currentPhrase];
+
+        if (isDeleting) {
+            typewriterElement.textContent = current.substring(0, currentChar - 1);
+            currentChar--;
+        } else {
+            typewriterElement.textContent = current.substring(0, currentChar + 1);
+            currentChar++;
+        }
+
+        let typeSpeed = isDeleting ? 60 : 100;
+
+        if (!isDeleting && currentChar === current.length) {
+            typeSpeed = 1500;
+            isDeleting = true;
+        } else if (isDeleting && currentChar === 0) {
+            isDeleting = false;
+            currentPhrase = (currentPhrase + 1) % phrases.length;
+            typeSpeed = 300;
+        }
+
+        setTimeout(typeWriter, typeSpeed);
+    }
+
+    // Animated statistics for product discovery platform
+    function animateStats() {
+        const stats = [
+            { element: 'productCount', values: ['2.8M', '2.9M', '2.8M', '3.0M'], colors: ['#10b981', '#10b981', '#10b981', '#10b981'], interval: 5000 },
+            { element: 'categoryCount', values: ['1,247', '1,251', '1,249', '1,253'], colors: ['#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6'], interval: 7000 },
+            { element: 'brandCount', values: ['15.2K', '15.3K', '15.2K', '15.4K'], colors: ['#8b5cf6', '#8b5cf6', '#8b5cf6', '#8b5cf6'], interval: 4000 },
+            { element: 'querySpeed', values: ['< 150ms', '< 120ms', '< 180ms', '< 140ms'], colors: ['#f59e0b', '#10b981', '#f59e0b', '#10b981'], interval: 8000 }
+        ];
+
+        stats.forEach(stat => {
+            let index = 0;
+            setInterval(() => {
+                const element = document.getElementById(stat.element);
+                if (element) {
+                    element.style.opacity = '0.6';
+                    element.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        element.textContent = stat.values[index];
+                        element.style.color = stat.colors[index];
+                        element.style.opacity = '1';
+                        element.style.transform = 'scale(1)';
+                        index = (index + 1) % stat.values.length;
+                    }, 200);
+                }
+            }, stat.interval);
+        });
+    }
+
+    // Template click → fill input
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const prompt = card.getAttribute('data-prompt');
+            document.getElementById('userInput').value = prompt;
+            document.getElementById('userInput').focus();
+
+            // Update submit button state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.style.opacity = '1';
+            submitBtn.disabled = false;
+        });
+    });
+
+    // Enhanced submit functionality with improved progress
+    const submitBtn = document.getElementById('submitBtn');
+    const mainInput = document.getElementById('userInput');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressFill = document.getElementById('progressFill');
+    const categorySelector = document.getElementById('categorySelector');
+    let progressInterval;
+    let isProcessing = false;
+
+    // Handle input events
+    mainInput.addEventListener('input', () => {
+        if (mainInput.value.trim()) {
+            submitBtn.style.opacity = '1';
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.style.opacity = '0.4';
+            submitBtn.disabled = true;
+        }
+    });
+
+    // Handle Enter key
+    mainInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
+
+    // Handle submit button click
+    submitBtn.addEventListener('click', handleSubmit);
+
+    function handleSubmit() {
+        if (!mainInput.value.trim() || isProcessing) return;
+
+        isProcessing = true;
+        let userQuery = mainInput.value.trim();
+        const selectedCategory = categorySelector.value;
+
+        // Append category selection to query if not "auto"
+        if (selectedCategory !== 'auto') {
+            userQuery += ` in ${selectedCategory} category`;
+        }
+
+        // Show progress overlay
+        progressOverlay.classList.add('active');
+        progressFill.style.width = '0%';
+
+        // Disable input and button
+        mainInput.disabled = true;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.4';
+
+        // Enhanced realistic progress animation
+        let progress = 0;
+        let progressSpeed = 2.5;
+
+        clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+            if (progress < 30) {
+                progressSpeed = 2.5 + Math.random() * 1.5; // Fast start
+            } else if (progress < 60) {
+                progressSpeed = 1.5 + Math.random() * 1; // Medium speed
+            } else if (progress < 80) {
+                progressSpeed = 0.8 + Math.random() * 0.5; // Slow down
+            } else if (progress < 90) {
+                progressSpeed = 0.3 + Math.random() * 0.2; // Very slow
+            } else if (progress < 95) {
+                progressSpeed = 0.1 + Math.random() * 0.1; // Crawl
+            } else {
+                progressSpeed = 0.05; // Almost stop
+            }
+
+            progress += progressSpeed;
+            const displayProgress = Math.min(progress, 97);
+            progressFill.style.width = displayProgress + '%';
+        }, 100);
+
+        console.log('Processing product search:', userQuery);
+        console.log('Selected category:', selectedCategory);
+
+        // Simulate backend call for product discovery
+        fetch("/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chatInput: userQuery,
+                selectedCategory: selectedCategory
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Complete progress to 100%
+            clearInterval(progressInterval);
+            progressFill.style.width = '100%';
+
+            setTimeout(() => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    completeProcess();
+                    alert("Product search completed - results would be displayed here");
+                }
+            }, 500);
+        })
+        .catch(err => {
+            console.error('Product search failed:', err);
+            clearInterval(progressInterval);
+            completeProcess();
+            alert("Error connecting to product database. Please try again.");
+        });
+    }
+
+    function completeProcess() {
+        // Hide progress overlay
+        progressOverlay.classList.remove('active');
+        progressFill.style.width = '0%';
+
+        // Re-enable input and button
+        mainInput.disabled = false;
+        submitBtn.disabled = false;
+
+        // Reset button opacity based on input state
+        if (mainInput.value.trim()) {
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.style.opacity = '0.4';
+        }
+
+        isProcessing = false;
+    }
+
+	    const uploadDropZone = document.getElementById('uploadDropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadedFilesList = document.getElementById('uploadedFilesList');
+    const filesList = document.getElementById('filesList');
+    const fileCount = document.getElementById('fileCount');
+    const descriptionSection = document.getElementById('descriptionSection');
+    const fileDescription = document.getElementById('fileDescription');
+    const submitBtn = document.getElementById('submitBtn');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    let uploadedFiles = [];
+
+    // Event listeners
+    uploadDropZone.addEventListener('click', () => fileInput.click());
+    uploadDropZone.addEventListener('dragover', handleDragOver);
+    uploadDropZone.addEventListener('dragleave', handleDragLeave);
+    uploadDropZone.addEventListener('drop', handleDrop);
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadDropZone.style.borderColor = '#8b5cf6';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.1)';
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadDropZone.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.05)';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        handleDragLeave(e);
+        const files = Array.from(e.dataTransfer.files);
+        processFiles(files);
+    }
+
+    function handleFileSelect(e) {
+        const files = Array.from(e.target.files);
+        processFiles(files);
+    }
+
+    async function processFiles(files) {
+        const validFiles = files.filter(file =>
+            file.type === 'text/csv' ||
+            file.type === 'application/json' ||
+            file.type === 'text/plain' ||
+            file.name.endsWith('.csv') ||
+            file.name.endsWith('.json') ||
+            file.name.endsWith('.txt')
+        );
+
+        if (validFiles.length === 0) {
+            alert('Please upload CSV, JSON, or TXT files only.');
+            return;
+        }
+
+        // Show upload progress
+        document.getElementById('uploadContent').innerHTML = `
+            <div style="color: #8b5cf6; font-size: 1rem; margin-bottom: 0.5rem;">
+                Uploading files...
+            </div>
+            <div style="width: 100%; height: 4px; background: rgba(139, 92, 246, 0.2); border-radius: 2px; overflow: hidden;">
+                <div id="uploadProgress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #a855f7); border-radius: 2px; transition: width 0.3s ease;"></div>
+            </div>
+        `;
+
+        // Simulate upload progress
+        let progress = 0;
+        const progressBar = document.getElementById('uploadProgress');
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            progressBar.style.width = progress + '%';
+        }, 200);
+
+        try {
+            // Process files
+            uploadedFiles = []; // reset
+            for (const file of validFiles) {
+                const content = await readFileContent(file);
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    content: content,
+                    uploadedAt: new Date().toISOString()
+                });
+            }
+
+            // Complete upload
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+
+            setTimeout(() => {
+                updateFilesList();
+                resetUploadZone();
+
+                // Show description + submit section
+                descriptionSection.style.display = 'block';
+            }, 1000);
+
+        } catch (error) {
+            clearInterval(progressInterval);
+            console.error('File processing error:', error);
+        }
+    }
+
+    function updateFilesList() {
+        uploadedFilesList.style.display = 'block';
+        fileCount.textContent = uploadedFiles.length;
+        filesList.innerHTML = uploadedFiles.map(f =>
+            `<div style="color:#cbd5e1; font-size:0.85rem; margin-bottom:0.25rem;">📄 ${f.name}</div>`
+        ).join('');
+    }
+
+    function resetUploadZone() {
+        uploadDropZone.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.05)';
+        document.getElementById('uploadContent').innerHTML = `
+            <svg style="width: 48px; height: 48px; color: #8b5cf6; margin: 0 auto 1rem; display: block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <div style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0.5rem;">
+                Drop CSV, JSON, or TXT files here
+            </div>
+            <div style="color: #94a3b8; font-size: 0.875rem;">
+                or click to browse files
+            </div>
+        `;
+    }
+
+    async function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = e => reject(e);
+            reader.readAsText(file);
+        });
+    }
+
+    // Handle submit
+    submitBtn.addEventListener('click', async () => {
+        confirmationMessage.style.display = 'none'; // reset
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Submitting...";
+
+        const description = fileDescription.value.trim();
+
+        try {
+            await uploadToBackend(uploadedFiles, description);
+            confirmationMessage.style.display = 'block';
+            confirmationMessage.textContent = "✅ Data Index Initiated";
+        } catch (err) {
+            confirmationMessage.style.display = 'block';
+            confirmationMessage.style.color = "#f87171";
+            confirmationMessage.textContent = "❌ Upload failed: " + err.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Submit";
+        }
+    });
+
+    // Backend upload with description
+    async function uploadToBackend(files, description) {
+        const payload = {
+            description,
+            files: files.map(f => ({
+                name: f.name,
+                content: f.content,
+                metadata: {
+                    size: f.size,
+                    type: f.type,
+                    uploadedAt: f.uploadedAt
+                }
+            })),
+            processingOptions: {
+                indexName: 'uploaded_data',
+                bulkIndex: true,
+                parseCSV: true,
+                validateJSON: true
+            }
+        };
+
+        const response = await fetch('/api/elasticsearch/bulk-upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Upload-Source': 'product-discovery-ui'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        return response.json();
+
+    function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    
+                    // Validate JSON files
+                    if (file.name.endsWith('.json') || file.type === 'application/json') {
+                        JSON.parse(content); // This will throw if invalid JSON
+                    }
+                    
+                    resolve(content);
+                } catch (error) {
+                    reject(new Error(`Invalid JSON format in file "${file.name}": ${error.message}`));
+                }
+            };
+            reader.onerror = (e) => reject(new Error(`Failed to read file "${file.name}"`));
+            reader.readAsText(file);
+        });
+    }
+
+    
+
+    function updateFilesList() {
+        if (uploadedFiles.length > 0) {
+            uploadedFilesList.style.display = 'block';
+            fileCount.textContent = uploadedFiles.length;
+            
+            filesList.innerHTML = uploadedFiles.map((file, index) => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                    <div style="color: #e2e8f0;">
+                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                    </div>
+                    <button onclick="removeFile(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.25rem;">×</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function removeFile(index) {
+        uploadedFiles.splice(index, 1);
+        updateFilesList();
+        if (uploadedFiles.length === 0) {
+            uploadedFilesList.style.display = 'none';
+        }
+    }
+
+    function resetUploadZone() {
+        document.getElementById('uploadContent').innerHTML = `
+            <svg style="width: 48px; height: 48px; color: #8b5cf6; margin: 0 auto 1rem; display: block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <div style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0.5rem;">
+                Drop CSV, JSON, or TXT files here
+            </div>
+            <div style="color: #94a3b8; font-size: 0.875rem;">
+                or click to browse files
+            </div>
+        `;
+    }
+
+    // Initialize everything on DOM load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(typeWriter, 300);
+
+        // Start animated statistics
+        animateStats();
+
+        if (!mainInput.value.trim()) {
+            submitBtn.style.opacity = '0.4';
+            submitBtn.disabled = true;
+        }
+    });
+</script>
+</body>
+</html>
+

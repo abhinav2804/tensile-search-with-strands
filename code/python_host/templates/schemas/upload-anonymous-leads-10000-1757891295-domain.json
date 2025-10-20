@@ -1,0 +1,69 @@
+{
+  "domain": "sales",
+  "portal_name": "Sales Lead Management Portal",
+  "entity_name": "lead",
+  "search_placeholder": "Search leads by name, company, or email",
+  "upload_description": "This portal handles sales lead data, including contact information, company details, and deal stage.",
+  "primary_actions": [
+    "Create New Lead",
+    "View Lead Details",
+    "Update Lead Status"
+  ],
+  "color_scheme": "#007bff",
+  "templates": [
+    {
+      "prompt": "Find leads with 'Closed Won' deal stage and 'Website Form' source",
+      "category": "Lead Generation",
+      "tag": "Closed Deals",
+      "title": "Successful Website Leads",
+      "description": "This template finds leads that have a 'Closed Won' deal stage and were sourced from the 'Website Form'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'></path><path d='M15 9h-6v6h6V9z'></path></svg>",
+      "image": "https://images.pexels.com/photos/590020/pexels-photo-590020.jpeg?auto=compress&cs=tinypng&w=1600"
+    },
+    {
+      "prompt": "Find leads with a phone number containing '555'",
+      "category": "Contact Management",
+      "tag": "Phone Search",
+      "title": "Leads with 555 Number",
+      "description": "This template finds leads that have a phone number containing the digits '555'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinypng&w=1600"
+    },
+    {
+      "prompt": "Find leads with a last name starting with 'A' and a deal stage of 'Re-engagement'",
+      "category": "Lead Outreach",
+      "tag": "Name Search",
+      "title": "Re-engaging Anderson Leads",
+      "description": "This template finds leads with a last name starting with 'A' and a deal stage of 'Re-engagement'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'></path><path d='M11 10h2v5h-2v-5zm0 9h2v2h-2v-2z'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184318/pexels-photo-3184318.jpeg?auto=compress&cs=tinypng&w=1600"
+    },
+    {
+      "prompt": "Find leads with a company name containing 'Inc' and a phone number area code of '917'",
+      "category": "Account Management",
+      "tag": "Company Search",
+      "title": "Inc Companies with 917 Area Code",
+      "description": "This template finds leads with a company name containing 'Inc' and a phone number area code of '917'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'></path><path d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z'></path></svg>",
+      "image": "https://images.pexels.com/photos/6194801/pexels-photo-6194801.jpeg?auto=compress&cs=tinypng&w=1600"
+    },
+    {
+      "prompt": "Find leads with a deal stage range from 'On Hold' to 'Re-engagement', and a lead owner of 'Selena Doyle' or 'Kelsey Mosley'",
+      "category": "Pipeline Management",
+      "tag": "Deal Stage",
+      "title": "Selena and Kelsey's Active Leads",
+      "description": "This template finds leads with a deal stage between 'On Hold' and 'Re-engagement', and a lead owner of 'Selena Doyle' or 'Kelsey Mosley'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'></path><path d='M11 10h2v5h-2v-5zm0 9h2v2h-2v-2z'></path></svg>",
+      "image": "https://images.pexels.com/photos/6194800/pexels-photo-6194800.jpeg?auto=compress&cs=tinypng&w=1600"
+    },
+    {
+      "prompt": "Find leads with a website domain containing 'com' and a phone number containing '992'",
+      "category": "Lead Generation",
+      "tag": "Website Search",
+      "title": "Com Leads with 992 Phone",
+      "description": "This template finds leads with a website domain containing 'com' and a phone number containing the digits '992'.",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'></path><path d='M15 9h-6v6h6V9z'></path></svg>",
+      "image": "https://images.pexels.com/photos/6194802/pexels-photo-6194802.jpeg?auto=compress&cs=tinypng&w=1600"
+    }
+  ]
+}

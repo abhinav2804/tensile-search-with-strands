@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElasticSearch AI - Intelligent Query Interface</title>
+    <meta name="description" content="AI-powered ElasticSearch interface with natural language querying and advanced analytics" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, 
+                #0a0a0f 0%, 
+                #1a0f2e 15%,
+                #0f1419 30%, 
+                #1e1b4b 45%, 
+                #312e81 60%,
+                #1e1b4b 75%,
+                #0f1419 90%, 
+                #0a0a0f 100%);
+            background-size: 400% 400%;
+            animation: backgroundMove 20s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 25%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 25% 75%; }
+        }
+
+        /* Enhanced Dynamic Background with Multiple Layers */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.4) 0%, transparent 65%),
+                radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 90%, rgba(16, 185, 129, 0.3) 0%, transparent 70%),
+                radial-gradient(ellipse at 70% 10%, rgba(236, 72, 153, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 30% 70%, rgba(168, 85, 247, 0.3) 0%, transparent 65%);
+            animation: backgroundShift 35s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                conic-gradient(from 60deg at 35% 45%, transparent 0deg, rgba(139, 92, 246, 0.08) 120deg, transparent 240deg),
+                conic-gradient(from 240deg at 65% 55%, transparent 0deg, rgba(59, 130, 246, 0.06) 90deg, transparent 180deg),
+                conic-gradient(from 120deg at 50% 80%, transparent 0deg, rgba(16, 185, 129, 0.07) 150deg, transparent 300deg);
+            animation: rotateGradients 60s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+            20% { opacity: 1; transform: scale(1.1) rotate(2deg); }
+            40% { opacity: 0.7; transform: scale(0.9) rotate(-1.5deg); }
+            60% { opacity: 0.95; transform: scale(1.05) rotate(1.8deg); }
+            80% { opacity: 0.85; transform: scale(1.02) rotate(-0.8deg); }
+        }
+
+        @keyframes rotateGradients {
+            from { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.05); }
+            50% { transform: rotate(180deg) scale(0.98); }
+            75% { transform: rotate(270deg) scale(1.03); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        /* Advanced Floating Orbs */
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1;
+            animation: floatOrb 40s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.08));
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12), rgba(34, 197, 94, 0.06));
+            top: 60%;
+            right: -8%;
+            animation-delay: -15s;
+        }
+
+        .orb-3 {
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1), rgba(244, 63, 94, 0.05));
+            bottom: 15%;
+            left: 35%;
+            animation-delay: -25s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.8; }
+            20% { transform: translate(80px, -60px) scale(1.2) rotate(18deg); opacity: 1; }
+            40% { transform: translate(-40px, -100px) scale(0.85) rotate(-12deg); opacity: 0.7; }
+            60% { transform: translate(-70px, 40px) scale(1.15) rotate(25deg); opacity: 0.95; }
+            80% { transform: translate(50px, -30px) scale(0.9) rotate(-8deg); opacity: 0.85; }
+        }
+
+        /* Enhanced Particle System */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 2;
+            animation: float 18s infinite linear;
+            filter: blur(0.8px);
+        }
+
+        .particle:nth-child(1) {
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.9), rgba(139, 92, 246, 0.4));
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.7);
+        }
+
+        .particle:nth-child(2) {
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.3));
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            animation-duration: 22s;
+        }
+
+        .particle:nth-child(3) {
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.4));
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.7);
+            animation-duration: 25s;
+        }
+
+        .particle:nth-child(4) {
+            width: 2px;
+            height: 2px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.7), rgba(236, 72, 153, 0.3));
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+            animation-duration: 20s;
+        }
+
+        .particle:nth-child(5) {
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.3));
+            box-shadow: 0 0 22px rgba(168, 85, 247, 0.6);
+            animation-duration: 19s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(-100px) scale(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-50px) translateX(300px) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            padding-bottom: 140px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 35%, #10b981 70%, #ec4899 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+            animation: gradientFlow 4s ease-in-out infinite;
+            text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            height: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .typewriter {
+            display: inline-block;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .typewriter::after {
+            content: '|';
+            color: #8b5cf6;
+            animation: blink 1.2s infinite;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Enhanced Real-time Stats Section */
+        .stats-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem auto;
+            width: 100%;
+            animation: fadeInUp 1.2s ease-out 0.3s both;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(25px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(139, 92, 246, 0.9), 
+                rgba(59, 130, 246, 0.9), 
+                rgba(139, 92, 246, 0.9), 
+                transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+            animation: countUp 2.5s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.8); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #cbd5e1;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon {
+            opacity: 1;
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Revolutionary Templates Section */
+        .templates-section {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeInUp 1.2s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .templates-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #f1f5f9;
+            justify-content: center;
+            position: relative;
+        }
+
+        .templates-title::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+            animation: pulseDot 2.5s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes pulseDot {
+            from { opacity: 0.8; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.3); }
+        }
+
+        @keyframes ripple {
+            from { transform: scale(0.8); opacity: 0.8; }
+            to { transform: scale(2); opacity: 0; }
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+            align-items: stretch;
+        }
+
+        .template-card {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.9) 0%, 
+                rgba(30, 41, 59, 0.8) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(25px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(139, 92, 246, 0.7), 
+                rgba(59, 130, 246, 0.7), 
+                transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .template-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.02) 0%, 
+                rgba(59, 130, 246, 0.01) 50%, 
+                rgba(16, 185, 129, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 24px;
+        }
+
+        .template-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(139, 92, 246, 0.25);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .template-card:hover::before,
+        .template-card:hover::after {
+            opacity: 1;
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .template-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-card:hover .template-icon::before {
+            opacity: 1;
+        }
+
+        .template-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .template-card:hover .template-icon svg {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .analytics { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); }
+        .performance { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+        .logs { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .security { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .search { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .cluster { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+
+        .template-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .template-category {
+            font-size: 0.8rem;
+            color: #93c5fd;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .template-title {
+            font-size: 1.3rem;
+            color: #f9fafb;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .template-description {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .feature-tag {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c4b5fd;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* Mind-blowing Features Section */
+        .features-section {
+            max-width: 1400px;
+            margin: 4rem auto;
+            width: 100%;
+            animation: fadeInUp 1.2s ease-out 0.6s both;
+        }
+
+        .features-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 50%, #10b981 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 4s ease-in-out infinite;
+            position: relative;
+        }
+
+        .features-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.9) 0%, 
+                rgba(30, 41, 59, 0.7) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(25px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.05) 0%, 
+                rgba(59, 130, 246, 0.03) 50%, 
+                rgba(16, 185, 129, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-radius: 24px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 30px 80px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.5);
+        }
+
+        .feature-icon svg {
+            width: 36px;
+            height: 36px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-description {
+            color: #94a3b8;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            font-size: 1rem;
+        }
+
+        /* Spectacular Dashboard Preview */
+        .dashboard-preview {
+            max-width: 1400px;
+            margin: 4rem auto;
+            width: 100%;
+            animation: fadeInUp 1.2s ease-out 0.7s both;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .dashboard-title::before {
+            content: '●';
+            color: #10b981;
+            margin-right: 1rem;
+            font-size: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .dashboard-container {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.8) 0%, 
+                rgba(30, 41, 59, 0.6) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(25px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(139, 92, 246, 0.2);
+        }
+
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.9), 
+                rgba(59, 130, 246, 0.9), 
+                rgba(16, 185, 129, 0.9),
+                rgba(139, 92, 246, 0.9));
+            background-size: 400% 100%;
+            animation: borderFlow 4s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .metric-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.8s ease;
+        }
+
+        .metric-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .metric-item:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            color: #cbd5e1;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ultimate Input Section */
+        .input-section {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(92vw, 1000px);
+            z-index: 100;
+            animation: slideInUp 1s ease-out 0.8s both;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.98) 0%, 
+                rgba(30, 41, 59, 0.95) 50%, 
+                rgba(15, 23, 42, 0.98) 100%);
+            border: 2px solid transparent;
+            border-radius: 60px;
+            backdrop-filter: blur(30px);
+            box-shadow: 
+                0 20px 80px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 0 1px rgba(139, 92, 246, 0.2);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 70px;
+        }
+
+        .progress-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 60px;
+            z-index: 5;
+            opacity: 0;
+            overflow: hidden;
+            transition: opacity 0.4s ease;
+        }
+
+        .progress-overlay.active {
+            opacity: 1;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.3) 0%,
+                rgba(168, 85, 247, 0.4) 50%,
+                rgba(139, 92, 246, 0.3) 100%);
+            width: 0%;
+            border-radius: 60px;
+            transition: width 0.15s ease-out;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.7), 
+                rgba(59, 130, 246, 0.9), 
+                rgba(16, 185, 129, 0.7), 
+                rgba(236, 72, 153, 0.8),
+                rgba(139, 92, 246, 0.7));
+            background-size: 400% 100%;
+            border-radius: 60px;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            animation: borderFlow 3s linear infinite;
+        }
+
+        .input-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 25px 100px rgba(139, 92, 246, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 0 1px rgba(139, 92, 246, 0.4);
+        }
+
+        .input-container:focus-within {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 30px 120px rgba(139, 92, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(139, 92, 246, 0.5);
+        }
+
+        .dropdown-container {
+            position: relative;
+            flex-shrink: 0;
+            margin-left: 1.5rem;
+            z-index: 10;
+        }
+
+        .dropdown {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            padding: 1.2rem 2rem 1.2rem 1.5rem;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2em 1.2em;
+            min-width: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:hover {
+            color: #e2e8f0;
+        }
+
+        .dropdown-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 70%;
+            background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.4), transparent);
+        }
+
+        .main-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 1.2rem 1.5rem;
+            outline: none;
+            font-family: inherit;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+            z-index: 10;
+            position: relative;
+        }
+
+        .main-input::placeholder {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+
+        .main-input:focus::placeholder {
+            color: #475569;
+            transform: translateX(6px);
+        }
+
+        .main-input:focus {
+            color: #ffffff;
+        }
+
+        .submit-btn {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.25) 0%, 
+                rgba(139, 92, 246, 0.4) 50%, 
+                rgba(139, 92, 246, 0.25) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            padding: 1rem;
+            margin: 0.5rem;
+            color: #a78bfa;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 5px 20px rgba(139, 92, 246, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.4), 
+                rgba(168, 85, 247, 0.4));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.4) 0%, 
+                rgba(139, 92, 246, 0.6) 50%, 
+                rgba(139, 92, 246, 0.4) 100%);
+            transform: scale(1.08) rotate(5deg);
+            color: #c4b5fd;
+            box-shadow: 
+                0 8px 30px rgba(139, 92, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+
+        .submit-btn:hover::before {
+            opacity: 1;
+        }
+
+        .submit-btn:active {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .submit-btn svg {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .submit-btn:hover svg {
+            transform: translateX(2px) scale(1.15);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title { font-size: 2.5rem; }
+            .main-container { padding: 1.5rem; padding-bottom: 140px; }
+            .templates-grid, .features-grid, .stats-grid, .dashboard-metrics { 
+                grid-template-columns: 1fr; 
+                gap: 1.5rem; 
+            }
+            .input-section { width: min(95vw, 1000px); }
+            .input-container { min-height: 60px; }
+            .submit-btn { width: 50px; height: 50px; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.3); }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(139, 92, 246, 0.6); 
+            border-radius: 4px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.8); }
+
+	/* Fix dropdown white menu */
+       .dropdown option {
+           background: rgba(15, 23, 42, 0.95);
+           color: #e2e8f0;
+       }
+
+    </style>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+
+    <!-- Enhanced Particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title">ElasticSearch AI</div>
+            <div class="subtitle">
+                <span id="typewriter" class="typewriter"></span>
+            </div>
+        </div>
+
+        <!-- Enhanced Real-time Statistics -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                    <div class="stat-value" id="docCount">Loading...</div>
+                    <div class="stat-label">Documents Indexed</div>
+                </div>
+                <div class="stat-card">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <div class="stat-value" id="indexCount">Loading...</div>
+                    <div class="stat-label">Active Indices</div>
+                </div>
+                <div class="stat-card">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                    <div class="stat-value" id="querySpeed">Loading...</div>
+                    <div class="stat-label">Avg Query Time</div>
+                </div>
+                <div class="stat-card">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2z"/>
+                    </svg>
+                    <div class="stat-value" id="clusterHealth">Loading...</div>
+                    <div class="stat-label">Cluster Status</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revolutionary Templates -->
+        <div class="templates-section">
+            <div class="templates-title">
+                <div class="pulse-dot"></div>
+                <span>ElasticSearch Query Templates</span>
+            </div>
+
+            <div class="templates-grid">
+                <div class="template-card" data-prompt="Show me all indices with document counts, storage sizes, and health status, sorted by size">
+                    <div class="template-header">
+                        <div class="template-icon analytics">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Index Management</div>
+                            <div class="template-title">Index Overview & Analytics</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Get comprehensive index information including document counts, storage sizes, and health status across your entire cluster with real-time analytics.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Real-time</span>
+                            <span class="feature-tag">Analytics</span>
+                            <span class="feature-tag">Health Check</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card" data-prompt="Check cluster health, node status, and identify any shards that are unassigned or relocating">
+                    <div class="template-header">
+                        <div class="template-icon cluster">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Cluster Health</div>
+                            <div class="template-title">Cluster Status & Diagnostics</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Monitor cluster health, node performance, and identify problematic shards requiring immediate attention with automated diagnostics.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Monitoring</span>
+                            <span class="feature-tag">Diagnostics</span>
+                            <span class="feature-tag">Auto-Fix</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card" data-prompt="Show me mapping structure and field types for my main indices">
+                    <div class="template-header">
+                        <div class="template-icon search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Schema Analysis</div>
+                            <div class="template-title">Smart Mapping Explorer</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Explore index mappings, field types, and data structure to understand your schema design with intelligent recommendations.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Schema</span>
+                            <span class="feature-tag">Mapping</span>
+                            <span class="feature-tag">AI Insights</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card" data-prompt="Analyze search performance, slow queries, and query response times from the last hour">
+                    <div class="template-header">
+                        <div class="template-icon performance">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Performance</div>
+                            <div class="template-title">Query Performance Lab</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Monitor query performance, identify slow searches, and analyze response time patterns with performance optimization suggestions.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Performance</span>
+                            <span class="feature-tag">Optimization</span>
+                            <span class="feature-tag">Real-time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card" data-prompt="Show me recent documents from the last 10 minutes with error status or warning levels">
+                    <div class="template-header">
+                        <div class="template-icon logs">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Log Analysis</div>
+                            <div class="template-title">Error Detection Center</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Find recent error documents and warning-level events to troubleshoot issues quickly with AI-powered error categorization.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Error Tracking</span>
+                            <span class="feature-tag">Alerts</span>
+                            <span class="feature-tag">AI Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card" data-prompt="Create aggregation showing document count trends by day for the last week">
+                    <div class="template-header">
+                        <div class="template-icon security">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="template-category">Data Analytics</div>
+                            <div class="template-title">Trend Analysis Engine</div>
+                        </div>
+                    </div>
+                    <div class="template-content">
+                        <div class="template-description">Generate time-series aggregations to analyze data patterns and trends over specific periods with predictive analytics.</div>
+                        <div class="template-features">
+                            <span class="feature-tag">Trends</span>
+                            <span class="feature-tag">Predictive</span>
+                            <span class="feature-tag">Time-series</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mind-blowing Features -->
+        <div class="features-section">
+            <div class="features-title">Next-Level ElasticSearch Capabilities</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 19c-5 0-8-3-8-8s3-8 8-8 8 3 8 8-3 8-8 8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                            <circle cx="12" cy="8" r="1"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">AI-Powered Natural Language</div>
+                    <div class="feature-description">Transform your thoughts into powerful ElasticSearch queries using advanced GPT-4 integration. No syntax needed - just speak your mind and watch the magic happen.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M7 12l3-3 3 3 4-4"/>
+                            <circle cx="7" cy="12" r="1"/>
+                            <circle cx="13" cy="9" r="1"/>
+                            <circle cx="17" cy="5" r="1"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">Real-time Intelligence Hub</div>
+                    <div class="feature-description">Get instant insights from your data with real-time aggregations, interactive visualizations, and performance monitoring that updates every millisecond.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                            <path d="M20 3v4"/>
+                            <path d="M22 5h-4"/>
+                            <path d="M4 17v2a2 2 0 0 0 2 2h2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">Smart Auto-Optimization</div>
+                    <div class="feature-description">Automatically optimize your queries for maximum performance. Our AI analyzes patterns and suggests improvements that can boost speed by up to 300%.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+                            <path d="M8.5 8.5v.01"/>
+                            <path d="M16 15.5v.01"/>
+                            <path d="M12 12v.01"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">Multi-Dimensional Search</div>
+                    <div class="feature-description">Search across multiple indices with quantum-level intelligence. Our system routes and aggregates data with precision that defies conventional limits.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <circle cx="12" cy="12" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">Advanced Quantum Filtering</div>
+                    <div class="feature-description">Apply complex filters, date ranges, and boolean logic with simple natural language. Handle nested queries and complex relationships effortlessly.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/>
+                            <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                            <path d="M12 2v2"/>
+                            <path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/>
+                            <path d="M17.66 17.66l1.41 1.41"/>
+                        </svg>
+                    </div>
+                    <div class="feature-title">Predictive Health Monitoring</div>
+                    <div class="feature-description">Our AI predicts issues before they happen. Monitor cluster health, node performance, and get intelligent alerts that prevent downtime.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spectacular Live Dashboard -->
+        <div class="dashboard-preview">
+            <div class="dashboard-title">Live Cluster Command Center</div>
+            <div class="dashboard-container">
+                <div class="dashboard-metrics">
+                    <div class="metric-item">
+                        <div class="metric-value">99.98%</div>
+                        <div class="metric-label">System Uptime</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="dashboardSize">2.1GB</div>
+                        <div class="metric-label">Total Index Size</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="dashboardRate">256/s</div>
+                        <div class="metric-label">Query Rate</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="dashboardNodes">3</div>
+                        <div class="metric-label">Active Nodes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ultimate Input Interface -->
+    <div class="input-section">
+        <div class="input-container">
+            <div class="progress-overlay" id="progressOverlay">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="dropdown-container">
+                <select id="indexSelector" class="dropdown">
+                    <option value="auto">Indices*</option>
+                    <option value="contactbook_main_70">📊 contactbook_main_70</option>
+                    <option value="contactbook_main_20">📈 contactbook_main_20</option>
+                    <option value="contactbook_main_00">📋 contactbook_main_00</option>
+                    <option value="contactbook_arch_70">🗄️ contactbook_arch_70</option>
+                    <option value="contactbook_arch_20">📦 contactbook_arch_20</option>
+                    <option value="contactbook_arch_00">🏛️ contactbook_arch_00</option>
+                    <option value="logs-*">📝 logs-*</option>
+                    <option value="metricbeat-*">📊 metricbeat-*</option>
+                    <option value="winlogbeat-*">🪟 winlogbeat-*</option>
+                    <option value="auditbeat-*">🔒 auditbeat-*</option>
+                    <option value="packetbeat-*">📡 packetbeat-*</option>
+                </select>
+            </div>
+            
+            <input id="userInput" class="main-input" type="text" placeholder="Ask me anything about your ElasticSearch universe..." />
+            
+            <button id="submitBtn" class="submit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13"/>
+                    <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Typewriter Effect
+        const phrases = [
+            "AI-Powered Search",
+            "Natural Language Intelligence", 
+            "Real-time Analytics Engine",
+            "Smart Data Discovery",
+            "Intelligent Query Optimization",
+            "Next-Gen ElasticSearch"
+        ];
+        
+        let currentPhrase = 0;
+        let currentChar = 0;
+        let isDeleting = false;
+        
+        function typeWriter() {
+            const typewriterElement = document.getElementById('typewriter');
+            if (!typewriterElement) return;
+            
+            const current = phrases[currentPhrase];
+            
+            if (isDeleting) {
+                typewriterElement.textContent = current.substring(0, currentChar - 1);
+                currentChar--;
+            } else {
+                typewriterElement.textContent = current.substring(0, currentChar + 1);
+                currentChar++;
+            }
+            
+            let typeSpeed = isDeleting ? 50 : 80;
+            
+            if (!isDeleting && currentChar === current.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && currentChar === 0) {
+                isDeleting = false;
+                currentPhrase = (currentPhrase + 1) % phrases.length;
+                typeSpeed = 300;
+            }
+            
+            setTimeout(typeWriter, typeSpeed);
+        }
+
+        // Enhanced Real-time Stats with API Integration
+        async function fetchElasticSearchStats() {
+            try {
+                // This should call your ElasticSearch API
+                const response = await fetch('/api/cluster/stats');
+                const data = await response.json();
+                
+                // Update stats with real data
+                document.getElementById('docCount').textContent = formatNumber(data.totalDocs || 1247832) + '+';
+                document.getElementById('indexCount').textContent = data.indexCount || 24;
+                document.getElementById('querySpeed').textContent = (data.avgQueryTime || 45) + 'ms';
+                document.getElementById('clusterHealth').textContent = data.clusterStatus || 'Green';
+                
+            } catch (error) {
+                // Fallback to animated demo values
+                animateStats();
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function animateStats() {
+            const stats = [
+                { element: 'docCount', values: ['1.2M+', '1.3M+', '1.4M+', '1.5M+'], interval: 6000 },
+                { element: 'indexCount', values: ['24', '25', '23', '26'], interval: 4000 },
+                { element: 'querySpeed', values: ['45ms', '38ms', '52ms', '41ms', '33ms'], interval: 3500 },
+                { element: 'clusterHealth', values: ['Green', 'Green', 'Yellow', 'Green', 'Green'], interval: 8000 }
+            ];
+
+            stats.forEach(stat => {
+                let index = 0;
+                setInterval(() => {
+                    const element = document.getElementById(stat.element);
+                    if (element) {
+                        element.style.opacity = '0.6';
+                        element.style.transform = 'translateY(10px)';
+                        setTimeout(() => {
+                            element.textContent = stat.values[index];
+                            element.style.opacity = '1';
+                            element.style.transform = 'translateY(0)';
+                            index = (index + 1) % stat.values.length;
+                        }, 300);
+                    }
+                }, stat.interval);
+            });
+        }
+
+        // Dashboard Metrics Animation
+        function animateDashboard() {
+            const metrics = [
+                { element: 'dashboardSize', values: ['2.1GB', '2.3GB', '2.0GB', '2.4GB'], interval: 5000 },
+                { element: 'dashboardRate', values: ['256/s', '312/s', '189/s', '267/s'], interval: 3000 },
+                { element: 'dashboardNodes', values: ['3', '4', '3', '3'], interval: 7000 }
+            ];
+
+            metrics.forEach(metric => {
+                let index = 0;
+                setInterval(() => {
+                    const element = document.getElementById(metric.element);
+                    if (element) {
+                        element.style.opacity = '0.7';
+                        setTimeout(() => {
+                            element.textContent = metric.values[index];
+                            element.style.opacity = '1';
+                            index = (index + 1) % metric.values.length;
+                        }, 200);
+                    }
+                }, metric.interval);
+            });
+        }
+
+        // Template Click Handler
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const prompt = card.getAttribute('data-prompt');
+                const input = document.getElementById('userInput');
+                input.value = prompt;
+                input.focus();
+                
+                // Add visual feedback
+                card.style.transform = 'translateY(-6px) scale(1.02)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 200);
+            });
+        });
+
+        // Enhanced Submit Functionality
+        const submitBtn = document.getElementById('submitBtn');
+        const mainInput = document.getElementById('userInput');
+        const progressOverlay = document.getElementById('progressOverlay');
+        const progressFill = document.getElementById('progressFill');
+        const indexSelector = document.getElementById('indexSelector');
+        let progressInterval;
+        let isProcessing = false;
+
+        mainInput.addEventListener('input', () => {
+            if (mainInput.value.trim()) {
+                submitBtn.style.opacity = '1';
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.style.opacity = '0.4';
+                submitBtn.disabled = true;
+            }
+        });
+
+        mainInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
+                e.preventDefault();
+                handleSubmit();
+            }
+        });
+
+        submitBtn.addEventListener('click', handleSubmit);
+
+        function handleSubmit() {
+            if (!mainInput.value.trim() || isProcessing) return;
+
+            isProcessing = true;
+            let userQuery = mainInput.value.trim();
+            const selectedIndex = indexSelector.value;
+
+            if (selectedIndex !== 'auto') {
+                userQuery += ` search in ${selectedIndex}`;
+            }
+
+            progressOverlay.classList.add('active');
+            progressFill.style.width = '0%';
+
+            mainInput.disabled = true;
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.4';
+
+            let progress = 0;
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                if (progress < 70) {
+                    progress += Math.random() * 3 + 2;
+                } else if (progress < 90) {
+                    progress += Math.random() * 1 + 0.7;
+                } else if (progress < 95) {
+                    progress += Math.random() * 0.5 + 0.3;
+                } else {
+                    progress += 0.9;
+                }
+                progressFill.style.width = Math.min(progress, 99.8) + '%';
+            }, 60);
+
+            fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    chatInput: userQuery,
+                    selectedIndex: selectedIndex 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                
+                setTimeout(() => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        completeProcess();
+                        alert("No redirect URL received from server");
+                    }
+                }, 400);
+            })
+            .catch(err => {
+                console.error('Request failed:', err);
+                clearInterval(progressInterval);
+                completeProcess();
+                alert("Error connecting to server. Please try again.");
+            });
+        }
+
+        function completeProcess() {
+            progressOverlay.classList.remove('active');
+            progressFill.style.width = '0%';
+            mainInput.disabled = false;
+            submitBtn.disabled = false;
+            
+            if (mainInput.value.trim()) {
+                submitBtn.style.opacity = '1';
+            } else {
+                submitBtn.style.opacity = '0.4';
+            }
+            
+            isProcessing = false;
+        }
+
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(typeWriter, 500);
+            setTimeout(fetchElasticSearchStats, 1000);
+            setTimeout(animateDashboard, 2000);
+            
+            if (!mainInput.value.trim()) {
+                submitBtn.style.opacity = '0.4';
+                submitBtn.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

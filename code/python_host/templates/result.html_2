@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElasticSearch Assistant - Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Dynamic Background - Same as index.html */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            filter: blur(40px);
+        }
+
+        .floating-element:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: -5%;
+            animation-delay: -5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            bottom: -20%;
+            left: 20%;
+            animation-delay: -10s;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.03));
+        }
+
+        .floating-element:nth-child(4) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 30%;
+            animation-delay: -15s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(100px, -100px) rotate(90deg) scale(1.1); }
+            50% { transform: translate(-50px, -200px) rotate(180deg) scale(0.9); }
+            75% { transform: translate(-150px, -50px) rotate(270deg) scale(1.05); }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(139, 92, 246, 0.6);
+            border-radius: 50%;
+            animation: particle-float 15s infinite linear;
+        }
+
+        .particle:nth-child(odd) {
+            background: rgba(59, 130, 246, 0.4);
+            animation-duration: 20s;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        .chat-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .messages {
+            padding: 30px;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 85%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .assistant-message {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            color: #e2e8f0;
+        }
+
+        .loading {
+            display: none;
+            padding: 15px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 15px;
+            max-width: 85%;
+            color: #94a3b8;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Input Box - Same as index.html */
+        .input-section {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            position: relative;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+            padding: 8px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 1px 0px rgba(255, 255, 255, 0.1) inset;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-container:focus-within {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 
+                0 25px 80px rgba(59, 130, 246, 0.3),
+                0 1px 0px rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            position: relative;
+        }
+
+        #userInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+            padding: 16px 20px;
+            resize: none;
+            outline: none;
+            min-height: 24px;
+            max-height: 200px;
+            font-family: inherit;
+        }
+
+        #userInput::placeholder {
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            border-radius: 16px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .send-btn svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .send-btn:hover:not(:disabled) svg {
+            transform: translateX(2px);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Code styling */
+        pre {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .messages {
+                padding: 20px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            .search-container {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic Background -->
+    <div class="bg-animation">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>ElasticSearch Assistant</h1>
+            <p>Ask questions about your ElasticSearch cluster</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+            
+            <div class="loading" id="loading">
+                Thinking...
+            </div>
+        </div>
+
+        <!-- Input Section - Same style as index.html -->
+        <div class="input-section">
+            <div class="search-container">
+                <div class="search-input-container">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Ask me anything about your ElasticSearch cluster..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendButton">
+                        <span>Send</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 4 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
+
+        const messagesContainer = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const loading = document.getElementById('loading');
+
+        // Auto-resize textarea
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+
+        // Handle Enter key (without Shift)
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Send button click
+        sendButton.addEventListener('click', sendMessage);
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+            
+            // Simple HTML formatting for assistant messages
+            if (!isUser) {
+                content = content
+                    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                    .replace(/`([^`]+)`/g, '<code>$1</code>')
+                    .replace(/\n/g, '<br>');
+            }
+            
+            messageDiv.innerHTML = content;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            loading.style.display = 'block';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideLoading() {
+            loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            messagesContainer.appendChild(errorDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Disable input and button
+            userInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Add user message
+            addMessage(message, true);
+            
+            // Clear input
+            userInput.value = '';
+            userInput.style.height = 'auto';
+
+            // Show loading
+            showLoading();
+
+            try {
+                // Use current domain and try different endpoints
+                const endpoints = ['/chat', '/api/chat', '/query'];
+                let response = null;
+                let lastError = null;
+
+                for (const endpoint of endpoints) {
+                    try {
+                        response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: message,
+                                query: message,
+                                user_input: message
+                            })
+                        });
+
+                        if (response.ok) {
+                            break;
+                        }
+                        lastError = `${endpoint}: ${response.status}`;
+                    } catch (err) {
+                        lastError = `${endpoint}: ${err.message}`;
+                        continue;
+                    }
+                }
+
+                if (!response || !response.ok) {
+                    throw new Error(`All endpoints failed. Last error: ${lastError}`);
+                }
+
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    // Handle different response formats
+                    const responseText = data.response || data.answer || data.result || JSON.stringify(data, null, 2);
+                    addMessage(responseText);
+                }
+
+            } catch (error) {
+                hideLoading();
+                console.error('Error:', error);
+                showError(`Failed to get response: ${error.message}. Please check if your Flask app is running and accessible.`);
+            } finally {
+                // Re-enable input and button
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Focus input on page load
+        window.addEventListener('load', function() {
+            userInput.focus();
+        });
+
+        // Add welcome message
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                addMessage('Hello! I\'m your ElasticSearch assistant. I can help you with cluster analysis, index management, search queries, and more. What would you like to know?');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

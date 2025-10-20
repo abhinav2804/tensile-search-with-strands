@@ -1,0 +1,240 @@
+{
+    "schema": {
+        "mappings": {
+            "properties": {
+                "SEARCH KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MODIFIED KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "QCR KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ATTRIBUTE EXTRACTION FLAG": {
+                    "type": "double"
+                },
+                "SOLR EXECUTION": {
+                    "type": "boolean"
+                },
+                "SOLR STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ALFA EXECUTION": {
+                    "type": "boolean"
+                },
+                "ALFA STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MARS EXECUTION": {
+                    "type": "boolean"
+                },
+                "MARS STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MERI EXECUTION": {
+                    "type": "boolean"
+                },
+                "MERI STATUS": {
+                    "type": "boolean"
+                },
+                "CHATGPT EXECUTION": {
+                    "type": "boolean"
+                },
+                "CHATGPT STATUS": {
+                    "type": "boolean"
+                },
+                "ENSEMBLE RUN": {
+                    "type": "boolean"
+                },
+                "SOLR_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ALFA_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MARS_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MERI_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "CHATGPT_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 1": {
+                    "type": "double"
+                },
+                "NAME 1": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 1": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 2": {
+                    "type": "double"
+                },
+                "NAME 2": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 2": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 3": {
+                    "type": "double"
+                },
+                "NAME 3": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 3": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 4": {
+                    "type": "double"
+                },
+                "NAME 4": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 4": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 5": {
+                    "type": "double"
+                },
+                "NAME 5": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 5": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "auto_queries": []
+}
