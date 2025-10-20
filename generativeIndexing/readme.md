@@ -132,6 +132,8 @@ generativeindexing/
 │       └── logger.py            # Logging setup
 └── requirements.txt             # Dependencies
 
+```
+
 ## 🔒 Security Considerations
 
 - 🔑 **Credentials**: Store secrets in environment variables or use AWS Secrets Manager
