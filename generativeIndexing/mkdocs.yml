@@ -1,0 +1,97 @@
+site_name: Generative Indexing Documentation
+site_description: Documentation for the Generative Indexing service
+site_author: abhinav2804
+repo_url: https://github.com/abhinav2804/tensile-search-with-strands
+repo_name: abhinav2804/tensile-search-with-strands
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed
+  - pymdownx.tasklist
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mermaid2
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [app]
+          options:
+            show_source: true
+            show_root_heading: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+    - Quick Start: getting-started/quickstart.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Components: architecture/components.md
+    - Data Flow: architecture/data-flow.md
+  - API Reference:
+    - Endpoints: api/endpoints.md
+    - Request/Response: api/request-response.md
+    - Error Handling: api/error-handling.md
+  - Components:
+    - Services:
+      - AWS Bedrock: components/services/bedrock.md
+      - DynamoDB: components/services/dynamodb.md
+      - Elasticsearch: components/services/elasticsearch.md
+      - Indexing Pipeline: components/services/indexing-pipeline.md
+    - Processors:
+      - Schema Processor: components/processors/schema.md
+    - Utils:
+      - File Utils: components/utils/file-utils.md
+      - Logger: components/utils/logger.md
+  - Deployment:
+    - Prerequisites: deployment/prerequisites.md
+    - Environment Setup: deployment/environment.md
+    - Security: deployment/security.md
+  - Contributing:
+    - Guidelines: contributing/guidelines.md
+    - Development Setup: contributing/development.md
+    - Testing: contributing/testing.md

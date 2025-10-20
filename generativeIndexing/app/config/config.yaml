@@ -1,0 +1,134 @@
+# =========================================
+# Generative Indexing - Configuration File
+# =========================================
+# Fill in actual values as per your environment.
+# This file is loaded by config_loader.py at runtime.
+# =========================================
+
+app:
+  name: "Generative Indexing Service"
+  environment: "development"        # Options: development, staging, production
+  host: "0.0.0.0"                   # FastAPI server host
+  port: 8000                        # FastAPI server port
+  debug: true                       # Enable verbose logs in dev mode
+  chunk_size: 50                    # Characters per chunk when reading files
+  docs_per_batch: 50                # Number of documents per batch
+  queries_per_batch: 10             # Number of queries per batch
+
+logging:
+  level: "INFO"                     # Options: DEBUG, INFO, WARNING, ERROR
+  log_file: "logs/app.log"          # Path to log file
+  rotation: "10 MB"                 # Max log file size before rotation
+  retention: "7 days"               # Log file retention period
+
+aws:
+  region: "us-east-1"               # AWS region for services
+  dynamodb:
+    table_name: "users"             # DynamoDB table name
+    base_url: "http://82.112.235.26:4000"      # DynamoDB endpoint for dev/testing
+  bedrock:
+    model_id: "us.anthropic.claude-haiku-4-5-20251001-v1:0" 
+    endpoint_url: "https://bedrock-runtime.us-east-1.amazonaws.com"
+    max_tokens: 8192                # Max tokens for Bedrock response
+    temperature: 0.7                # Creativity level (0.0 - 1.0)
+    prompt: |
+      You are an expert in indexing data over Elasticsearch.
+      Below are some details for elasticsearch datatypes
+          - "text" with "keyword" subfield for searchable strings
+          - "keyword" for exact-match fields (IDs, categories, status)
+          - "date" with format detection for timestamps
+          - "long", "integer", "double" for numbers based on rangeschema
+          - "boolean" for true/false values
+          - "object" for nested JSON objects
+          - "nested" for arrays of objects that need independent querying
+
+      ## CONTEXT ##
+      What I shall be giving you are some set of user query, which defines what are the inputs that elasticsearch index may expect from the client that is going to use the same. I am sharing this with you to explain you that once data is indexed, we must not find any difficulties in fetching the data  if similar queries or same queries are being inserted then I should not face the challenges that my index that you created is not suitable to search for the same. This should help you set the context of how the mappings and settings are expected to be generated and to be used to convert the user-queries into ESL queries.
+
+      ## INPUTS ##
+      1. A documents set shall be shared with you which needs to be indexed
+      2. An schema along with the current mapping and settings of the index shall be shared that will help you understand the current schema. If its empty then no mapping or index exists.
+      3. An index field README File that shall explain the meaning of each index-schema field in human readable format.
+
+      ## RULES FOR SCHEMA GENERATION ##
+      1. For a fresh index, you will be getting data-sets and no index schema file or index-schema README file shall be given. Here you are expected to start generating a fresh mapping. Read the dataset provided line by line and start generating the mappings from the same. You must smartly generate query attribute even though the user queries may not have asked about it. Use some common logical attributes that are acting like a small independent descriptor in explaining the dataset. For example, "Stainless Steel Food Cart, Load Capacity: 200 kg" , you can create multiple fields like, title: "Stainless Steel Food Cart, Load Capacity: 200 kg", Material: Stainless Steel, Item: Food Cart, Category: [Cart, Food], Capacity: 200, Units: Kg, where Material can have an analysers namely EdgeNgram to help search like Stainless, Stainless Steel. It may have another set of analyser like lowercase analysers, followed by whitespace-analyzer, followed by shringles of length 2-5 and then give to edgeNGram that shall create the tokens for the search. This way we shall be able to search "stain", "stainless", "stainless steel". If we add this to title field then we can even search "steelfood". So think in that way. After adding each mapping field that you can think of, you are expected to add the exact field name and add a human readable meaning of the same into the same. For example: title: "This contains the name of the product.", Item: "This contains the name of the thing it is describing", Category: "This explains the group in which the item may belong to".
+      For those cases where mappings are being provided, along with data, we shall be sharing the data-set, index-schema, and index-schema README file that explains the meaning of each mapping in layman language and that should be used to understand what current mapping means and when you try and understand any mapping fields meaning or settings analyzer you must not assume, rather read the mapping along with the meaning of the same in the index-schema README file explaining the meaning. You are allowed to add the fields into given index-schema and add its meaning into the index-schema README file.
+      Post creating the index-schema and the index-schema-README file, you are expected to generate the elasticsearch documents in json format to enable BULK indexing for the same.
+      2. Allow dynamic fields where ever necessary.
+      3. Use appropriate analyzers for text fields to enhance search capabilities.
+      4. Ensure numeric fields have correct types (integer, float, etc.) based on expected ranges.
+      5. Date fields should have proper date formats to allow range queries.
+      6. Boolean fields should be used for true/false attributes.
+      7. Nested objects should be used for complex structures that require independent querying.
+      8. Keep the index optimized for both indexing speed and search performance.
+      9. Avoid over-complicating the schema with unnecessary fields or types.
+      10. Ensure the schema supports the user queries effectively.
+      11. Always remember that the schema you are creating must be able to answer the user queries that are being shared with you.
+      12. Don't add dummy or fake data in the documents. Always use the data that is being shared with you to create the documents.
+      13. While creating the documents, ensure that the fields in the documents match the fields in the index-schema mapping. No need to include the null or missing fields in the documents.
+
+      ## OUTPUT FORMAT ##
+      You are expected to return the outputs in the following format:
+      1. index-schema: Its explaining the current index schema with mapping and settings and share the full & complete schema.
+      2. Index-Schema readme file: This shall contain the meaning of each field in the index in layman terms that shouldnt be more than 30 words.
+      3. JSON Documents: The set of documents are returned which are to be indexed into elastic.
+      4. U must return the output in a valid json format only. No other text must be there in the output. Schema under "schema" key, documents under "docs" key and index-schema readme file under "readme" key.
+      Return ONLY valid Output JSON matching this structure:
+      {
+        "schema": {
+          "mappings": { ... },
+          "settings": { ... }
+        },
+        "readme": " ... ",
+        "docs": [ {...}, {...}, ... ]
+      }
+
+elasticsearch:
+  host: "82.112.235.26"             # Elasticsearch host
+  port: 9200                        # Elasticsearch port
+  username: "elastic"               # Elasticsearch username
+  password: "9lrhsQk=wpc4tg603ZTg"  # Elasticsearch password
+  scheme: "https"                    # Connection scheme (http/https)
+  ssl_verify: false                 # Verify SSL certificates (true/false)
+  default_index: "user_index"       # Default index name
+  prompt: |
+    You are an AI assistant helping to create Elasticsearch indexes.
+    Given the schema, sample data, and user input, suggest ONE unique index name.
+    The name must:
+    - Be highly relevant to the data & schema.
+    - Be realistic and human-readable.
+    - Avoid generic names like 'index1', 'data_index', or random strings.
+    - Output ONLY the name, nothing else.
+
+    Schema:
+    {schema}
+
+    Fields_Info:
+    {sample_data}
+
+files:
+  data_directory: "/home/hs/imgpt/processed/input"      # Default directory for data files
+  output_directory: "/home/hs/imgpt/processed/output"   # Where processed results are stored
+
+schema:
+  required_fields:
+    - "title"
+    - "description"
+    - "timestamp"
+  optional_fields:
+    - "tags"
+    - "author"
+
+summary:
+  show_final_summary: true          # Whether to send summary SSE event
+  summary_fields:
+    - "total_documents"
+    - "elasticsearch_url"
+    - "index_name"
+    - "time_taken_seconds"
+
+# =========================================
+# Example Notes:
+# - Keep secrets in **.env** if possible, then load them into config_loader.py
+# - This YAML is meant to be human-readable and easy to tweak.
+# =========================================

@@ -1,0 +1,47 @@
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+pydantic>=2.4.2
+starlette>=0.27.0
+
+# AWS Integration
+boto3>=1.28.0
+botocore>=1.31.0
+
+# Elasticsearch
+elasticsearch>=8.10.0
+
+# File Processing
+pandas>=2.1.0
+python-jose>=3.3.0
+
+# Configuration
+PyYAML>=6.0.1
+python-dotenv>=1.0.0
+typing_extensions>=4.8.0
+
+# Logging and Monitoring
+structlog>=23.2.0
+prometheus-client>=0.17.0
+
+# Development Tools
+black>=23.10.0
+isort>=5.12.0
+flake8>=6.1.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Type Checking
+mypy>=1.6.0
+types-PyYAML>=6.0.12
+types-requests>=2.31.0
+
+# Documentation
+mkdocs>=1.5.3
+mkdocs-material>=9.4.6
+mkdocstrings>=0.23.0
+mkdocstrings-python>=1.7.0
+mkdocs-mermaid2-plugin>=1.1.1
