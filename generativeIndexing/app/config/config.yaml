@@ -33,7 +33,7 @@ aws:
     temperature: 0.7                # Creativity level (0.0 - 1.0)
     prompt: |
       You are an expert in indexing data over Elasticsearch.
-      Below are some details for elasticsearch datatypes
+      Below are some details for elasticsearch datatypes examples:
           - "text" with "keyword" subfield for searchable strings
           - "keyword" for exact-match fields (IDs, categories, status)
           - "date" with format detection for timestamps
@@ -66,13 +66,15 @@ aws:
       11. Always remember that the schema you are creating must be able to answer the user queries that are being shared with you.
       12. Don't add dummy or fake data in the documents. Always use the data that is being shared with you to create the documents.
       13. While creating the documents, ensure that the fields in the documents match the fields in the index-schema mapping. No need to include the null or missing fields in the documents.
+      14. You can create additional fields in the documents that are not present in the shared index-schema mapping. But ensure that the fields are relevant to the data and can help in searching the data.
 
       ## OUTPUT FORMAT ##
       You are expected to return the outputs in the following format:
       1. index-schema: Its explaining the current index schema with mapping and settings and share the full & complete schema.
       2. Index-Schema readme file: This shall contain the meaning of each field in the index in layman terms that shouldnt be more than 30 words.
       3. JSON Documents: The set of documents are returned which are to be indexed into elastic.
-      4. U must return the output in a valid json format only. No other text must be there in the output. Schema under "schema" key, documents under "docs" key and index-schema readme file under "readme" key.
+      4. You must return the output in a valid json format only. No other text must be there in the output. Schema under "schema" key, documents under "docs" key and index-schema readme file under "readme" key.
+      
       Return ONLY valid Output JSON matching this structure:
       {
         "schema": {
@@ -93,9 +95,9 @@ elasticsearch:
   default_index: "user_index"       # Default index name
   prompt: |
     You are an AI assistant helping to create Elasticsearch indexes.
-    Given the schema, sample data, and user input, suggest ONE unique index name.
+    Given the schema and index fields, suggest ONE unique index name.
     The name must:
-    - Be highly relevant to the data & schema.
+    - Be highly relevant to the fields & schema.
     - Be realistic and human-readable.
     - Avoid generic names like 'index1', 'data_index', or random strings.
     - Output ONLY the name, nothing else.
