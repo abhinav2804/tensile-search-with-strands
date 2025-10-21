@@ -37,7 +37,7 @@ def create_streamable_http_transport():
         "Content-Type": "application/json"
     }
     # Use environment variable for MCP URL, default to localhost for development
-    mcp_url = os.getenv("MCP_URL", "http://82.112.235.26:8080/mcp")
+    mcp_url = os.getenv("MCP_URL", "http://elastic-mcp-server:8080/mcp")
     #mcp_url = os.getenv("MCP_URL", "http://localhost:8080/mcp")
     return streamablehttp_client(mcp_url, headers=headers)
 

@@ -1,10 +1,35 @@
 version: '3.8'
 
+networks:
+  mcp-net:
+    driver: bridge
+
 services:
+  mcp-server:
+    image: khemchandrs/elastic-mcp-server:latest
+    container_name: elastic-mcp-server
+    command: ["http"]
+    networks:
+      - mcp-net
+    ports:
+      - "8080:8080"
+    environment:
+      ES_URL: ${ES_URL}
+      ES_API_KEY: ${ES_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   doc-agent-api:
     build: .
     image: ai-strand-agent:latest
     container_name: ai-strand-agent-container
+    networks:
+      - mcp-net
     ports:
       - "5000:5000"
     environment:
@@ -12,31 +37,17 @@ services:
       - AWS_REGION=us-east-1
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      # AWS Credentials
       - AWS_ACCESS_KEY_ID=AKIA2WN2VXZHIYJJHGE7
       - AWS_SECRET_ACCESS_KEY=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
       - BEDROCK_INFERENCE_PROFILE_ARN=arn:aws:bedrock:us-east-1:301697000154:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0
+      - MCP_URL=http://elastic-mcp-server:8080/mcp
     restart: unless-stopped
-    # depends_on:
-    #   - mcp-server
+    depends_on:
+      mcp-server:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-    # Uncomment for production logging
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
-
-  # Add MCP server if needed
-  # mcp-server:
-  #   image: your-mcp-server-image:latest
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - MCP_PORT=8080
-  #   restart: unless-stopped
+      start_period: 60s
