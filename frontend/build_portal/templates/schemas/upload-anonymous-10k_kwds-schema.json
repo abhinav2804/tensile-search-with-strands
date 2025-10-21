@@ -1,0 +1,805 @@
+{
+  "mappings": {
+    "properties": {
+      "search_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "modified_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "qcr_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "attribute_extraction_flag": {
+        "type": "integer"
+      },
+      "solr_execution": {
+        "type": "boolean"
+      },
+      "solr_status": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "alfa_execution": {
+        "type": "boolean"
+      },
+      "alfa_status": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mars_execution": {
+        "type": "boolean"
+      },
+      "mars_status": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "omnimars_execution": {
+        "type": "boolean"
+      },
+      "omnimars_status": {
+        "type": "boolean"
+      },
+      "chatgpt_execution": {
+        "type": "boolean"
+      },
+      "chatgpt_status": {
+        "type": "boolean"
+      },
+      "meri_execution": {
+        "type": "boolean"
+      },
+      "meri_status": {
+        "type": "boolean"
+      },
+      "ensemble_run": {
+        "type": "boolean"
+      },
+      "solr_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "alfa_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mars_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "omnimars_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "chatgpt_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "meri_info": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id_1": {
+        "type": "long"
+      },
+      "name_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_1": {
+        "type": "keyword"
+      },
+      "id_2": {
+        "type": "long"
+      },
+      "name_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_2": {
+        "type": "keyword"
+      },
+      "id_3": {
+        "type": "long"
+      },
+      "name_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_3": {
+        "type": "keyword"
+      },
+      "id_4": {
+        "type": "long"
+      },
+      "name_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_4": {
+        "type": "keyword"
+      },
+      "id_5": {
+        "type": "long"
+      },
+      "name_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_5": {
+        "type": "keyword"
+      },
+      "SEARCH_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MODIFIED_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "QCR_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ATTRIBUTE_EXTRACTION_FLAG": {
+        "type": "integer"
+      },
+      "SOLR_EXECUTION": {
+        "type": "boolean"
+      },
+      "SOLR_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ALFA_EXECUTION": {
+        "type": "boolean"
+      },
+      "ALFA_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MARS_EXECUTION": {
+        "type": "boolean"
+      },
+      "MARS_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "OMNIMARS_EXECUTION": {
+        "type": "boolean"
+      },
+      "OMNIMARS_STATUS": {
+        "type": "boolean"
+      },
+      "CHATGPT_EXECUTION": {
+        "type": "boolean"
+      },
+      "CHATGPT_STATUS": {
+        "type": "boolean"
+      },
+      "MERI_EXECUTION": {
+        "type": "boolean"
+      },
+      "MERI_STATUS": {
+        "type": "boolean"
+      },
+      "ENSEMBLE_RUN": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "SOLR_INFO": {
+        "type": "text"
+      },
+      "ALFA_INFO": {
+        "type": "text"
+      },
+      "MARS_INFO": {
+        "type": "text"
+      },
+      "OMNIMARS_INFO": {
+        "type": "text"
+      },
+      "CHATGPT_INFO": {
+        "type": "text"
+      },
+      "MERI_INFO": {
+        "type": "text"
+      },
+      "ID_1": {
+        "type": "long"
+      },
+      "NAME_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_2": {
+        "type": "long"
+      },
+      "NAME_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_3": {
+        "type": "long"
+      },
+      "NAME_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_4": {
+        "type": "long"
+      },
+      "NAME_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_5": {
+        "type": "long"
+      },
+      "NAME_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contact_city": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contact_city_id": {
+        "type": "integer"
+      },
+      "contact_last_product": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contact_number_type": {
+        "type": "keyword"
+      },
+      "contact_ph_country": {
+        "type": "integer"
+      },
+      "contact_state": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contact_type_remarks": {
+        "type": "text"
+      },
+      "contacts_add_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "contacts_company": {
+        "type": "keyword"
+      },
+      "contacts_glid": {
+        "type": "long"
+      },
+      "contacts_mobile1": {
+        "type": "long"
+      },
+      "contacts_mobile2": {
+        "type": "double"
+      },
+      "contacts_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contacts_type": {
+        "type": "integer"
+      },
+      "country_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "delete_archive_id": {
+        "type": "keyword"
+      },
+      "fk_glusr_usr_id": {
+        "type": "long"
+      },
+      "glusr_usr_logo_img_90x90": {
+        "type": "keyword"
+      },
+      "im_contact_id": {
+        "type": "long"
+      },
+      "is_archive": {
+        "type": "boolean"
+      },
+      "is_blocked": {
+        "type": "boolean"
+      },
+      "is_bulk_lead": {
+        "type": "boolean"
+      },
+      "is_buylead": {
+        "type": "boolean"
+      },
+      "is_call": {
+        "type": "boolean"
+      },
+      "is_catalog_view": {
+        "type": "boolean"
+      },
+      "is_contact_untouched": {
+        "type": "boolean"
+      },
+      "is_enq": {
+        "type": "boolean"
+      },
+      "is_ext": {
+        "type": "boolean"
+      },
+      "is_removed": {
+        "type": "boolean"
+      },
+      "is_starred_lead": {
+        "type": "boolean"
+      },
+      "is_txn_initiator": {
+        "type": "boolean"
+      },
+      "is_wa_reply": {
+        "type": "boolean"
+      },
+      "is_whatsapp": {
+        "type": "boolean"
+      },
+      "label_color": {
+        "type": "keyword"
+      },
+      "label_count": {
+        "type": "integer"
+      },
+      "label_id": {
+        "type": "keyword"
+      },
+      "label_name": {
+        "type": "keyword"
+      },
+      "last_contact_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "last_contact_date_view": {
+        "type": "text"
+      },
+      "last_message": {
+        "type": "text"
+      },
+      "last_product_qty": {
+        "type": "double"
+      },
+      "latest_txn_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "latest_txn_initiator": {
+        "type": "boolean"
+      },
+      "mcat_id": {
+        "type": "keyword"
+      },
+      "mcat_name": {
+        "type": "keyword"
+      },
+      "message_status": {
+        "type": "keyword"
+      },
+      "msg_read_status": {
+        "type": "boolean"
+      },
+      "order_value_slab": {
+        "type": "keyword"
+      },
+      "pii_blocked": {
+        "type": "boolean"
+      },
+      "show_whatsapp_icon": {
+        "type": "boolean"
+      },
+      "source": {
+        "type": "keyword"
+      },
+      "starred_lead_color": {
+        "type": "keyword"
+      },
+      "uniqueId": {
+        "type": "long"
+      },
+      "unread_buyer_count": {
+        "type": "double"
+      },
+      "unread_message_cnt": {
+        "type": "integer"
+      },
+      "wa_sess_exp_time": {
+        "type": "double"
+      },
+      "id1": {
+        "type": "double"
+      },
+      "name1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id2": {
+        "type": "double"
+      },
+      "name2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id3": {
+        "type": "double"
+      },
+      "name3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id4": {
+        "type": "double"
+      },
+      "name4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id5": {
+        "type": "double"
+      },
+      "name5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "searchKeyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "modifiedKeyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "qcrKeyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "attributeExtractionFlag": {
+        "type": "integer"
+      },
+      "solrExecution": {
+        "type": "boolean"
+      },
+      "solrStatus": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "alfaExecution": {
+        "type": "boolean"
+      },
+      "alfaStatus": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "marsExecution": {
+        "type": "boolean"
+      },
+      "marsStatus": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "omniMarsExecution": {
+        "type": "boolean"
+      },
+      "omniMarsStatus": {
+        "type": "boolean"
+      },
+      "chatGptExecution": {
+        "type": "boolean"
+      },
+      "chatGptStatus": {
+        "type": "boolean"
+      },
+      "meriExecution": {
+        "type": "boolean"
+      },
+      "meriStatus": {
+        "type": "boolean"
+      },
+      "ensembleRun": {
+        "type": "boolean"
+      },
+      "solrInfo": {
+        "type": "text"
+      },
+      "alfaInfo": {
+        "type": "text"
+      },
+      "marsInfo": {
+        "type": "text"
+      },
+      "omniMarsInfo": {
+        "type": "text"
+      },
+      "chatGptInfo": {
+        "type": "text"
+      },
+      "meriInfo": {
+        "type": "text"
+      },
+      "line_number": {
+        "type": "long"
+      },
+      "content": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

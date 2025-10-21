@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elastic Search Prompt Interface</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: #0b1220;
+        height: 100vh;
+        overflow: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        flex-direction: column;
+    }
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.8;
+        z-index: 0;
+    }
+    .blob-purple {
+        background: #8b5cf6;
+        width: 300px;
+        height: 300px;
+        top: 20%;
+        left: 58%;
+        box-shadow: 0 0 40px #8b5cf6;
+        animation: driftPurple 55s ease-in-out infinite;
+    }
+    .blob-blue {
+        background: #3b82f6;
+        width: 360px;
+        height: 360px;
+        top: 65%;
+        left: 28%;
+        box-shadow: 0 0 40px #3b82f6;
+        animation: driftBlue 65s ease-in-out infinite;
+    }
+    @keyframes driftPurple {
+        0%   { transform: translate(0, 0) scale(1); }
+        25%  { transform: translate(-60px, -40px) scale(1.05); }
+        50%  { transform: translate(-20px, 30px) scale(1.07); }
+        75%  { transform: translate(-70px, -20px) scale(1.03); }
+        100% { transform: translate(0, 0) scale(1); }
+    }
+    @keyframes driftBlue {
+        0%   { transform: translate(0, 0) scale(1); }
+        25%  { transform: translate(70px, -30px) scale(1.04); }
+        50%  { transform: translate(-20px, 50px) scale(1.06); }
+        75%  { transform: translate(80px, -15px) scale(1.02); }
+        100% { transform: translate(0, 0) scale(1); }
+    }
+    .card {
+        position: relative;
+        background: rgba(20, 28, 46, 0.95);
+        border-radius: 12px;
+        padding: 2.5rem;
+        width: 520px;
+        text-align: center;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        animation: fadeIn 1s ease-out forwards;
+	margin-top:600px;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .title {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(90deg, #38bdf8, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+        color: #94a3b8;
+        height: 1.2rem;
+        margin-bottom: 1.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    textarea {
+        width: 100%;
+        background: rgba(30, 41, 59, 0.9);
+        border: none;
+        border-radius: 8px;
+        padding: 1rem;
+        color: white;
+        font-size: 1rem;
+        resize: none;
+        margin-bottom: 1.5rem;
+        outline: none;
+        transition: box-shadow 0.3s ease;
+        box-sizing: border-box;
+    }
+    textarea:focus {
+        box-shadow: 0 0 0 2px #3b82f6;
+    }
+    button {
+        width: 100%;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        border: none;
+        padding: 0.8rem;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+        font-size: 1rem;
+    }
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="blob blob-purple"></div>
+<div class="blob blob-blue"></div>
+
+<div class="card">
+    <div class="title">Elastic Search Prompt Interface</div>
+    <div class="subtitle" id="dynamicText"></div>
+    <textarea id="userInput" placeholder="Ask Anything..." rows="3"></textarea>
+    <button id="submitBtn">Submit Prompt</button>
+</div>
+
+<script>
+    const phrases = ["Model Context Protocol", "Elastic Search", "AI Powered Search"];
+    const dynamicText = document.getElementById("dynamicText");
+
+    let phraseIndex = 0, charIndex = 0, deleting = false;
+
+    function typeEffect() {
+        let currentPhrase = phrases[phraseIndex];
+        if (!deleting) {
+            dynamicText.textContent = currentPhrase.slice(0, charIndex + 1) + "|";
+            charIndex++;
+            if (charIndex === currentPhrase.length) {
+                deleting = true;
+                setTimeout(typeEffect, 2000);
+                return;
+            }
+        } else {
+            dynamicText.textContent = currentPhrase.slice(0, charIndex - 1) + "|";
+            charIndex--;
+            if (charIndex === 0) {
+                deleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+        }
+        setTimeout(typeEffect, deleting ? 50 : 70);
+    }
+    typeEffect();
+
+    document.getElementById("submitBtn").addEventListener("click", function () {
+        const userText = document.getElementById("userInput").value.trim();
+        const button = document.getElementById("submitBtn");
+
+        if (!userText) {
+            alert("Please enter a prompt!");
+            return;
+        }
+
+        // Disable button and show loading
+        button.disabled = true;
+        button.textContent = "Processing...";
+
+        fetch("/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chatInput: userText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.redirect) {
+                // Redirect to result page
+                window.location.href = data.redirect;
+            } else {
+                alert("Something went wrong!");
+                button.disabled = false;
+                button.textContent = "Submit Prompt";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error calling the API.");
+            button.disabled = false;
+            button.textContent = "Submit Prompt";
+        });
+    });
+</script>
+
+{% include 'templates.html' %}
+
+</body>
+</html>

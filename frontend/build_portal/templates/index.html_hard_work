@@ -1,0 +1,2647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Discovery AI - Smart Shopping Interface</title>
+<meta name="description" content="AI-powered product discovery with natural language search and advanced filtering" />
+
+<!-- Descope Web Component -->
+<script src="https://unpkg.com/@descope/web-component@latest/dist/index.js"></script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg,
+            #0a0a0f 0%,
+            #1a0f2e 15%,
+            #0f1419 30%,
+            #1e1b4b 45%,
+            #312e81 60%,
+            #1e1b4b 75%,
+            #0f1419 90%,
+            #0a0a0f 100%);
+        background-size: 400% 400%;
+        animation: backgroundMove 15s ease infinite;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        background-attachment: fixed;
+    }
+
+    @keyframes backgroundMove {
+        0%, 100% { background-position: 0% 50%; }
+        25% { background-position: 100% 25%; }
+        50% { background-position: 50% 100%; }
+        75% { background-position: 25% 75%; }
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+            radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.25) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(16, 185, 129, 0.2) 0%, transparent 60%),
+            radial-gradient(ellipse at 70% 10%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 30% 70%, rgba(168, 85, 247, 0.2) 0%, transparent 55%);
+        animation: backgroundShift 25s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    @keyframes backgroundShift {
+        0%, 100% {
+            opacity: 0.7;
+            transform: scale(1) rotate(0deg);
+        }
+        25% {
+            opacity: 0.9;
+            transform: scale(1.05) rotate(1deg);
+        }
+        50% {
+            opacity: 0.6;
+            transform: scale(0.95) rotate(-0.8deg);
+        }
+        75% {
+            opacity: 0.8;
+            transform: scale(1.02) rotate(1.2deg);
+        }
+    }
+
+    /* Authentication Header */
+    .auth-header {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.85) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 50px;
+        padding: 0.75rem 1.25rem;
+        backdrop-filter: blur(25px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 0.875rem;
+    }
+
+    .user-name {
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .auth-btn {
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    }
+
+    .logout-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .logout-btn:hover {
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Login Modal Overlay */
+    .auth-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .auth-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .auth-modal-content {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.90) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 450px;
+        width: 90vw;
+        backdrop-filter: blur(25px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        position: relative;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .auth-modal.active .auth-modal-content {
+        transform: scale(1);
+    }
+
+    .auth-modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .auth-modal-close:hover {
+        color: #e2e8f0;
+    }
+
+    .auth-modal-logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-modal-logo img {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        object-fit: cover;
+    }
+
+    .auth-modal-title {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-align: center;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .auth-modal-description {
+        color: #94a3b8;
+        text-align: center;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* Protected Content Overlay */
+    .protected-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        z-index: 150;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .protected-message {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.90) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        backdrop-filter: blur(25px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        max-width: 400px;
+        width: 90vw;
+    }
+
+    .protected-message h3 {
+        color: #f1f5f9;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .protected-message p {
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    /* Enhanced particle system */
+    .particle {
+        position: fixed;
+        border-radius: 50%;
+        z-index: 1;
+        animation: float 12s infinite linear;
+        filter: blur(0.5px);
+    }
+
+    .particle:nth-child(1) {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.6), rgba(139, 92, 246, 0.2));
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .particle:nth-child(2) {
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.1));
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        animation-duration: 16s;
+    }
+
+    .particle:nth-child(3) {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.6), rgba(16, 185, 129, 0.2));
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        animation-duration: 14s;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(100vh) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-10px) scale(1);
+            opacity: 0;
+        }
+    }
+
+    .main-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+        padding-bottom: 140px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        animation: gradientFlow 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        height: 1.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .typewriter {
+        display: inline-block;
+        position: relative;
+    }
+
+    .typewriter::after {
+        content: '|';
+        color: #8b5cf6;
+        animation: blink 1s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+
+    /* Enhanced Real-time stats section */
+    .stats-section {
+        max-width: 1000px;
+        margin: 0 auto 3rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.85) 0%,
+            rgba(30, 41, 59, 0.75) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 18px;
+        padding: 1.8rem;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.8),
+            rgba(16, 185, 129, 0.8),
+            transparent);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #38bdf8, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.8rem;
+        animation: countUp 2s ease-out;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(20px) scale(0.8); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 24px;
+        height: 24px;
+        opacity: 0.6;
+        color: #8b5cf6;
+    }
+
+    /* Enhanced templates section with better positioning */
+    .templates-section {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto 4rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.3s both;
+        position: relative;
+        z-index: 15;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .templates-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #f1f5f9;
+        justify-content: center;
+        text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .templates-title .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        box-shadow: 0 0 20px #8b5cf6;
+        animation: pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+        from { opacity: 0.8; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.3); }
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        align-items: start;
+    }
+
+    .template-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.85) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(25px);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        height: fit-content;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .template-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.8),
+            transparent);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .template-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 80px rgba(139, 92, 246, 0.4);
+        border-color: rgba(139, 92, 246, 0.6);
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.98) 0%,
+            rgba(30, 41, 59, 0.92) 100%);
+    }
+
+    .template-card:hover::before {
+        opacity: 1;
+    }
+
+    .template-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .template-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .template-image::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.2),
+            rgba(59, 130, 246, 0.15));
+        border-radius: 16px;
+    }
+
+    .template-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .template-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .template-text {
+        flex: 1;
+    }
+
+    .template-category {
+        font-size: 0.8rem;
+        color: #93c5fd;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .feature-tag {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+        color: #c4b5fd;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .template-title {
+        font-size: 1.1rem;
+        color: #f9fafb;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .template-description {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        line-height: 1.5;
+    }
+
+    /* Enhanced Features Section */
+    .features-section {
+        max-width: 1200px;
+        margin: 0 auto 3rem auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.4s both;
+        position: relative;
+        z-index: 15;
+    }
+
+    .features-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientFlow 3s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .feature-card {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.9) 0%,
+            rgba(30, 41, 59, 0.8) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        border-radius: 24px;
+        padding: 2.5rem;
+        text-align: center;
+        backdrop-filter: blur(25px);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(59, 130, 246, 0.04) 50%,
+            rgba(16, 185, 129, 0.08) 100%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 30px 80px rgba(59, 130, 246, 0.35);
+        border-color: rgba(59, 130, 246, 0.6);
+    }
+
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1.8rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-icon svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .feature-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #f9fafb;
+        margin-bottom: 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-description {
+        color: #94a3b8;
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+        font-size: 1rem;
+    }
+
+    /* Enhanced Input Section with better visibility */
+    .input-section {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(90vw, 900px);
+        z-index: 200;
+        animation: slideInUp 0.8s ease-out 0.5s both;
+    }
+
+    @keyframes slideInUp {
+        from { transform: translateX(-50%) translateY(100%); }
+        to { transform: translateX(-50%) translateY(0); }
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(145deg,
+            rgba(5, 15, 35, 0.98) 0%,
+            rgba(15, 25, 45, 0.95) 50%,
+            rgba(5, 15, 35, 0.98) 100%);
+        border: 2px solid transparent;
+        border-radius: 50px;
+        backdrop-filter: blur(30px);
+        box-shadow:
+            0 20px 80px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 0 0 1px rgba(139, 92, 246, 0.3);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .progress-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(139, 92, 246, 0.15);
+        border-radius: 50px;
+        z-index: 5;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease;
+    }
+
+    .progress-overlay.active {
+        opacity: 1;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(139, 92, 246, 0.4) 0%,
+            rgba(168, 85, 247, 0.5) 50%,
+            rgba(139, 92, 246, 0.4) 100%);
+        width: 0%;
+        border-radius: 50px;
+        transition: width 0.15s ease-out;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+        border-radius: 50px;
+        animation: progressShine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progressShine {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+    }
+
+    .input-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        background: linear-gradient(90deg,
+            rgba(139, 92, 246, 0.8),
+            rgba(59, 130, 246, 0.9),
+            rgba(16, 185, 129, 0.8),
+            rgba(236, 72, 153, 0.8),
+            rgba(139, 92, 246, 0.8));
+        background-size: 300% 100%;
+        border-radius: 50px;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        animation: borderFlow 2s linear infinite;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    @keyframes borderFlow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+
+    .input-container:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 25px 100px rgba(139, 92, 246, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 0 0 1px rgba(139, 92, 246, 0.5);
+    }
+
+    .input-container:focus-within {
+        transform: translateY(-4px);
+        box-shadow:
+            0 30px 120px rgba(139, 92, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 0 0 1px rgba(139, 92, 246, 0.6);
+    }
+
+    .dropdown-container {
+        position: relative;
+        flex-shrink: 0;
+        margin-left: 1rem;
+        z-index: 10;
+    }
+
+    .dropdown {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        padding: 1rem 1.8rem 1rem 1rem;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1em 1em;
+        min-width: 160px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .dropdown:hover {
+        color: #e2e8f0;
+    }
+
+    .dropdown option {
+        background: rgba(5, 15, 35, 0.98);
+        color: #e2e8f0;
+        padding: 0.5rem;
+    }
+
+    .dropdown-container::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.4), transparent);
+    }
+
+    .main-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #f1f5f9;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 1rem 1.25rem;
+        outline: none;
+        font-family: inherit;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+        z-index: 10;
+        position: relative;
+    }
+
+    .main-input::placeholder {
+        color: #64748b;
+        font-size: 1rem;
+        font-weight: 400;
+        transition: all 0.3s ease;
+    }
+
+    .main-input:focus::placeholder {
+        color: #475569;
+        transform: translateX(4px);
+    }
+
+    .main-input:focus {
+        color: #ffffff;
+    }
+
+    .main-input:-webkit-autofill,
+    .main-input:-webkit-autofill:hover,
+    .main-input:-webkit-autofill:focus,
+    .main-input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px rgba(5, 15, 35, 0.98) inset !important;
+        -webkit-text-fill-color: #f1f5f9 !important;
+        color: #f1f5f9 !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        transition: background-color 5000s ease-in-out 0s;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .main-input:-moz-autofill {
+        background-color: rgba(5, 15, 35, 0.98) !important;
+        color: #f1f5f9 !important;
+        box-shadow: none !important;
+        background-image: none !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .submit-btn {
+        flex-shrink: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.25) 0%,
+            rgba(139, 92, 246, 0.4) 50%,
+            rgba(139, 92, 246, 0.25) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        padding: 0.8rem;
+        margin: 0.4rem;
+        color: #a78bfa;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+            0 6px 20px rgba(139, 92, 246, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        z-index: 10;
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.4),
+            rgba(168, 85, 247, 0.4));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.4) 0%,
+            rgba(139, 92, 246, 0.6) 50%,
+            rgba(139, 92, 246, 0.4) 100%);
+        transform: scale(1.08) rotate(5deg);
+        color: #c4b5fd;
+        box-shadow:
+            0 10px 30px rgba(139, 92, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    .submit-btn:hover::before {
+        opacity: 1;
+    }
+
+    .submit-btn:active {
+        transform: scale(1.05) rotate(2deg);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .submit-btn:disabled:hover {
+        transform: none;
+    }
+
+    .submit-btn svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    .submit-btn:hover svg {
+        transform: translateX(2px) scale(1.15);
+    }
+
+    /* Upload Section */
+    .upload-section {
+        width: min(90vw, 900px);
+        margin: 1rem auto 2rem auto;
+        position: relative;
+        z-index: 15;
+    }
+
+    .upload-container {
+        background: linear-gradient(145deg, rgba(5, 15, 35, 0.95) 0%, rgba(15, 25, 45, 0.92) 50%, rgba(5, 15, 35, 0.95) 100%);
+        border: 2px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        backdrop-filter: blur(30px);
+        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 11rem;
+    }
+
+    .upload-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .upload-title svg {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #8b5cf6;
+    }
+
+    .upload-dropzone {
+        border: 2px dashed rgba(139, 92, 246, 0.4);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background: rgba(139, 92, 246, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .upload-dropzone:hover {
+        border-color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.1);
+    }
+
+    .upload-content svg {
+        width: 48px;
+        height: 48px;
+        color: #8b5cf6;
+        margin: 0 auto 1rem;
+        display: block;
+    }
+
+    .upload-text {
+        color: #e2e8f0;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .files-list {
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .files-list.active {
+        display: block;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem;
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .file-name {
+        color: #e2e8f0;
+    }
+
+    .file-remove {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        padding: 0.25rem;
+        font-size: 1.2rem;
+    }
+
+    .description-section {
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .description-section.active {
+        display: block;
+    }
+
+    .file-description {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        background: rgba(15, 25, 45, 0.8);
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .submit-upload-btn {
+        margin-top: 1rem;
+        padding: 0.75rem 1.25rem;
+        background: #8b5cf6;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    .submit-upload-btn:hover {
+        background: #7c3aed;
+    }
+
+    .submit-upload-btn:disabled {
+        background: #6b7280;
+        cursor: not-allowed;
+    }
+
+    .confirmation-message {
+        margin-top: 0.75rem;
+        display: none;
+        color: #4ade80;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .confirmation-message.active {
+        display: block;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 2500;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+    .loading-content {
+        background: linear-gradient(145deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(30, 41, 59, 0.90) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        backdrop-filter: blur(25px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(139, 92, 246, 0.3);
+        border-top: 3px solid #8b5cf6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        color: #e2e8f0;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .loading-subtext {
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 2.2rem;
+        }
+
+        .main-container {
+            padding: 1rem;
+            padding-bottom: 140px;
+        }
+
+        .templates-grid, .features-grid, .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .input-section {
+            width: min(95vw, 900px);
+        }
+
+        .template-content {
+            gap: 1rem;
+        }
+
+        .template-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .template-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .auth-header {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.6);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.8);
+    }
+</style>
+</head>
+<body>
+
+<!-- Authentication Header -->
+<div class="auth-header">
+    <div id="userInfo" class="user-info" style="display: none;">
+        <div id="userAvatar" class="user-avatar"></div>
+        <span id="userName" class="user-name"></span>
+        <button id="logoutBtn" class="auth-btn logout-btn">Logout</button>
+    </div>
+    <button id="loginBtn" class="auth-btn">Login / Sign Up</button>
+</div>
+
+<!-- Login Modal -->
+<div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <button id="closeModal" class="auth-modal-close">&times;</button>
+        
+        <div class="auth-modal-logo">
+            <img src="https://ph-files.imgix.net/209f596b-d51b-49f0-b1e4-4e3c26fd5ad4.png?auto=format" alt="Product Discovery AI">
+        </div>
+        
+        <h2 class="auth-modal-title">Welcome to Product Discovery AI</h2>
+        <p class="auth-modal-description">
+            Sign in with your email to unlock advanced product search features and personalized recommendations.
+        </p>
+        
+        <descope-wc 
+            project-id="P32OxoFpY0ihVvncEbabQARqzw8I"
+            flow-id="passwords-with-explicit-sign-up"
+            theme="dark"
+            redirect-url=""
+            debug="false">
+        </descope-wc>
+    </div>
+</div>
+
+<!-- Protected Content Overlay -->
+<div id="protectedOverlay" class="protected-overlay">
+    <div class="protected-message">
+        <img src="https://ph-files.imgix.net/209f596b-d51b-49f0-b1e4-4e3c26fd5ad4.png?auto=format" alt="Logo" style="width: 80px; height: 80px; margin: 0 auto 1.5rem; display: block; border-radius: 16px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); object-fit: cover;">
+        <h3>Authentication Required</h3>
+        <p>Please sign in to access the product search functionality and unlock premium features.</p>
+        <button id="authPromptBtn" class="auth-btn">Sign In Now</button>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Searching Products...</div>
+        <div class="loading-subtext">AI is analyzing your request</div>
+    </div>
+</div>
+
+<!-- Enhanced floating particles -->
+<div class="particle" style="left: 15%; animation-delay: 0s;"></div>
+<div class="particle" style="left: 35%; animation-delay: 2s;"></div>
+<div class="particle" style="left: 55%; animation-delay: 4s;"></div>
+<div class="particle" style="left: 75%; animation-delay: 1s;"></div>
+<div class="particle" style="left: 25%; animation-delay: 6s;"></div>
+<div class="particle" style="left: 65%; animation-delay: 3s;"></div>
+
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title">Product Discovery AI</div>
+        <div class="subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </div>
+    </div>
+
+    <!-- Enhanced Real-time Statistics Section -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                <div class="stat-value" id="productCount">2.8M</div>
+                <div class="stat-label">Products Indexed</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                    <path d="M12 3v6"/>
+                </svg>
+                <div class="stat-value" id="categoryCount">1,247</div>
+                <div class="stat-label">Product Categories</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="stat-value" id="brandCount">15.2K</div>
+                <div class="stat-label">Active Brands</div>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <div class="stat-value" id="querySpeed">< 150ms</div>
+                <div class="stat-label">Avg Query Time</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Templates Section -->
+    <div class="templates-section">
+        <div class="templates-title">
+            <span class="dot"></span>
+            <span>Smart Product Search Templates</span>
+        </div>
+
+        <div class="templates-grid">
+            <div class="template-card" data-prompt="Find me a red cotton t-shirt under 500 rupees with Nike brand, plain design without pockets, available for same-day delivery">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Fashion & Apparel
+                            <span class="feature-tag">Express</span>
+                        </div>
+                        <div class="template-title">Specific Clothing Search</div>
+                        <div class="template-description">Find clothing items with exact specifications including color, material, brand, design features, and delivery preferences.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me laptops with 16GB RAM, Intel i7 processor, under 80000 rupees, with SSD storage, good for gaming and video editing">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Electronics & Tech
+                            <span class="feature-tag">Performance</span>
+                        </div>
+                        <div class="template-title">High-Spec Electronics Search</div>
+                        <div class="template-description">Discover electronics with detailed technical specifications, performance requirements, and specific use cases.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Find wireless headphones with active noise cancellation, over 20 hours battery life, under 5000 rupees, compatible with both Android and iPhone">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/3783471/pexels-photo-3783471.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1"/>
+                                <path d="M8 14a5 5 0 1 1 8 0"/>
+                                <path d="M19 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Audio Accessories
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                        <div class="template-title">Audio Equipment with Features</div>
+                        <div class="template-description">Search audio products with advanced features like noise cancellation, long battery life, and device compatibility.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me smartphones with 128GB storage, good camera for photography, 5G support, under 25000 rupees, from Samsung or OnePlus">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Mobile Devices
+                            <span class="feature-tag">5G Ready</span>
+                        </div>
+                        <div class="template-title">Advanced Smartphone Search</div>
+                        <div class="template-description">Find smartphones with specific storage, camera quality, connectivity features, and preferred brand options.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Find home furniture like sofas with leather upholstery, 3-seater, brown color, under 50000 rupees, suitable for living room">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"/>
+                                <path d="M21 9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Home & Furniture
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                        <div class="template-title">Furniture with Material Specs</div>
+                        <div class="template-description">Discover furniture items with specific materials, colors, seating capacity, and room suitability requirements.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me running shoes with cushioned sole, size 9, for daily training, under 3000 rupees, from Adidas or Puma, good for flat feet">
+                <div class="template-content">
+                    <div class="template-image" style="background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=400');">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/>
+                                <path d="M2 18v3c0 .6.4 1 1 1h4c.6 0 1-.4 1-1v-3"/>
+                                <path d="M8 21l8-8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">
+                            Sports & Footwear
+                            <span class="feature-tag">Comfort</span>
+                        </div>
+                        <div class="template-title">Athletic Footwear with Purpose</div>
+                        <div class="template-description">Find sports shoes with specific sole technology, sizing, training purpose, and foot-type compatibility.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Features Section -->
+    <div class="features-section">
+        <div class="features-title">Advanced Product Discovery Features</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 19c-5 0-8-3-8-8s3-8 8-8 8 3 8 8-3 8-8 8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                        <circle cx="12" cy="8" r="1"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Natural Language Search</div>
+                <div class="feature-description">Describe products in plain English with specific attributes, brands, colors, sizes, and features. Our AI understands complex product requirements.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M7 12l3-3 3 3 4-4"/>
+                        <circle cx="7" cy="12" r="1"/>
+                        <circle cx="13" cy="9" r="1"/>
+                        <circle cx="17" cy="5" r="1"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Smart Price Filtering</div>
+                <div class="feature-description">Set precise budget ranges and find products that match your price expectations across multiple categories and brands.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        <path d="M20 3v4"/>
+                        <path d="M22 5h-4"/>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h2"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Specification Matching</div>
+                <div class="feature-description">Match exact technical specifications, materials, dimensions, and performance criteria for electronics, furniture, and other products.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+                        <path d="M8.5 8.5v.01"/>
+                        <path d="M16 15.5v.01"/>
+                        <path d="M12 12v.01"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Multi-Brand Comparison</div>
+                <div class="feature-description">Compare similar products across different brands with detailed attribute matching and feature comparison capabilities.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <circle cx="12" cy="12" r="4"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Delivery & Availability</div>
+                <div class="feature-description">Filter products by delivery speed, stock availability, and location-based delivery options including same-day and express delivery.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/>
+                        <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                        <path d="M4.93 4.93l1.41 1.41"/>
+                        <path d="M17.66 17.66l1.41 1.41"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Real-time Inventory</div>
+                <div class="feature-description">Access live inventory data across multiple retailers and marketplaces to find products that are actually in stock and available.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Input Section -->
+<div class="input-section">
+    <form id="searchForm">
+        <div class="input-container">
+            <!-- Enhanced progress bar with better visibility -->
+            <div class="progress-overlay" id="progressOverlay">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="dropdown-container">
+                <select id="categorySelector" class="dropdown">
+                    <option value="auto">🤖 Smart Choice</option>
+                    <option value="electronics">📱 Electronics</option>
+                    <option value="fashion">👕 Fashion</option>
+                    <option value="home">🏠 Home & Furniture</option>
+                    <option value="sports">⚽ Sports & Fitness</option>
+                    <option value="books">📚 Books & Media</option>
+                    <option value="automotive">🚗 Automotive</option>
+                </select>
+            </div>
+
+            <input id="userInput" class="main-input" type="text" placeholder="Describe the product you're looking for with specific details..." autocomplete="off" value="" />
+
+            <button id="submitBtn" type="submit" class="submit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13"/>
+                    <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Upload Section -->
+<div class="upload-section">
+    <div class="upload-container">
+        <!-- Title -->
+        <div class="upload-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+            </svg>
+            Upload Data Files
+        </div>
+
+        <!-- Drop Zone -->
+        <div id="uploadDropZone" class="upload-dropzone">
+            <input id="fileInput" type="file" multiple accept=".csv,.json,.txt" style="display: none;" />
+
+            <div id="uploadContent" class="upload-content">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <div class="upload-text">Drop CSV, JSON, or TXT files here</div>
+                <div class="upload-subtext">or click to browse files</div>
+            </div>
+        </div>
+
+        <!-- Uploaded Files List -->
+        <div id="uploadedFilesList" class="files-list">
+            <div style="color: #e2e8f0; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                Uploaded Files (<span id="fileCount">0</span>)
+            </div>
+            <div id="filesList"></div>
+        </div>
+
+        <!-- Description + Submit Section -->
+        <div id="descriptionSection" class="description-section">
+            <textarea id="fileDescription" class="file-description" placeholder="Enter a short description for the uploaded data..."></textarea>
+            <button id="submitUploadBtn" class="submit-upload-btn">Submit</button>
+            <div id="confirmationMessage" class="confirmation-message">✅ Data Index Initiated</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ================== SIMPLIFIED EMAIL AUTHENTICATION SYSTEM ==================
+class EmailAuthManager {
+    constructor() {
+        this.currentUser = null;
+        this.isAuthenticated = false;
+        this.API_ENDPOINT = 'http://35.244.59.108:5678/webhook/es_mcp';
+        
+        this.initializeAuth();
+        this.setupEventListeners();
+    }
+
+    initializeAuth() {
+        // Check for existing session
+        const storedUser = this.getStoredUser();
+        if (storedUser && this.isValidSession(storedUser)) {
+            this.setUser(storedUser);
+        }
+
+        // Setup Descope event listeners with proper error handling
+        this.setupDescopeListeners();
+    }
+
+    setupDescopeListeners() {
+        // Wait for Descope component to load
+        setTimeout(() => {
+            const descopeWc = document.querySelector('descope-wc');
+            if (descopeWc) {
+                // Success event
+                descopeWc.addEventListener('success', (e) => {
+                    console.log('Descope success event:', e.detail);
+                    this.handleAuthSuccess(e.detail);
+                });
+
+                // Error event
+                descopeWc.addEventListener('error', (e) => {
+                    console.error('Descope error event:', e.detail);
+                    this.handleAuthError(e.detail);
+                });
+
+                // Ready event
+                descopeWc.addEventListener('ready', () => {
+                    console.log('Descope component ready');
+                });
+
+            } else {
+                console.warn('Descope component not found, retrying...');
+                setTimeout(() => this.setupDescopeListeners(), 1000);
+            }
+        }, 1000);
+    }
+
+    setupEventListeners() {
+        // Login button
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+            this.showAuthModal();
+        });
+
+        // Auth prompt button
+        document.getElementById('authPromptBtn')?.addEventListener('click', () => {
+            this.showAuthModal();
+        });
+
+        // Logout button
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            this.logout();
+        });
+
+        // Close modal button
+        document.getElementById('closeModal')?.addEventListener('click', () => {
+            this.hideAuthModal();
+        });
+
+        // Close modal on background click
+        document.getElementById('authModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'authModal') {
+                this.hideAuthModal();
+            }
+        });
+
+        // Close protected overlay on background click
+        document.getElementById('protectedOverlay')?.addEventListener('click', (e) => {
+            if (e.target.id === 'protectedOverlay') {
+                this.hideProtectedOverlay();
+            }
+        });
+
+        // Close protected overlay on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.hideProtectedOverlay();
+                this.hideAuthModal();
+            }
+        });
+    }
+
+    handleAuthSuccess(authData) {
+        console.log('Processing auth success:', authData);
+        
+        // Extract user information from Descope response
+        const userData = authData.user || {};
+        const sessionData = authData.sessionJwt || authData.sessionToken || '';
+        
+        const user = {
+            id: userData.userId || userData.id || 'user-' + Date.now(),
+            name: userData.name || userData.givenName || userData.email?.split('@')[0] || 'User',
+            email: userData.email || '',
+            token: sessionData,
+            loginTime: Date.now()
+        };
+
+        console.log('Created user object:', user);
+        
+        this.setUser(user);
+        this.storeUser(user);
+        this.hideAuthModal();
+        this.hideProtectedOverlay();
+        
+        // Show success notification
+        this.showNotification('Successfully signed in! Welcome to Product Discovery AI.', 'success');
+    }
+
+    handleAuthError(error) {
+        console.error('Authentication error details:', error);
+        
+        let errorMessage = 'Authentication failed. Please try again.';
+        
+        // Handle specific error types
+        if (error.errorCode) {
+            switch (error.errorCode) {
+                case 'InvalidCredentials':
+                    errorMessage = 'Invalid email or password. Please check your credentials.';
+                    break;
+                case 'UserNotFound':
+                    errorMessage = 'User not found. Please sign up first.';
+                    break;
+                case 'NetworkError':
+                    errorMessage = 'Network error. Please check your connection.';
+                    break;
+                default:
+                    errorMessage = error.errorMessage || errorMessage;
+            }
+        }
+        
+        this.showNotification(errorMessage, 'error');
+    }
+
+    setUser(user) {
+        this.currentUser = user;
+        this.isAuthenticated = true;
+        this.updateUI();
+        console.log('User set successfully:', user);
+    }
+
+    logout() {
+        this.currentUser = null;
+        this.isAuthenticated = false;
+        this.clearStoredUser();
+        this.updateUI();
+        this.showNotification('You have been signed out successfully.', 'info');
+    }
+
+    updateUI() {
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+
+        if (this.isAuthenticated && this.currentUser) {
+            // Show user info, hide login button
+            userInfo.style.display = 'flex';
+            loginBtn.style.display = 'none';
+            
+            // Update user display
+            const initials = this.getInitials(this.currentUser.name);
+            userAvatar.textContent = initials;
+            userName.textContent = this.currentUser.name;
+        } else {
+            // Show login button, hide user info
+            userInfo.style.display = 'none';
+            loginBtn.style.display = 'inline-block';
+        }
+
+        // Update input state
+        this.updateInputState();
+    }
+
+    getInitials(name) {
+        return name
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase())
+            .slice(0, 2)
+            .join('');
+    }
+
+    showAuthModal() {
+        document.getElementById('authModal').classList.add('active');
+    }
+
+    hideAuthModal() {
+        document.getElementById('authModal').classList.remove('active');
+    }
+
+    showProtectedOverlay() {
+        const overlay = document.getElementById('protectedOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+    }
+
+    hideProtectedOverlay() {
+        const overlay = document.getElementById('protectedOverlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+    }
+
+    requireAuth(callback) {
+        if (this.isAuthenticated) {
+            callback();
+        } else {
+            this.showProtectedOverlay();
+        }
+    }
+
+    updateInputState() {
+        const inputContainer = document.querySelector('.input-container');
+        const userInput = document.getElementById('userInput');
+        
+        if (this.isAuthenticated) {
+            inputContainer.style.opacity = '1';
+            userInput.placeholder = 'Describe the product you\'re looking for with specific details...';
+        } else {
+            inputContainer.style.opacity = '0.8';
+            userInput.placeholder = 'Sign in to unlock product search functionality...';
+        }
+    }
+
+    storeUser(user) {
+        try {
+            const userData = {
+                ...user,
+                timestamp: Date.now()
+            };
+            // Using session storage fallback since localStorage is not available
+            window._userSession = userData;
+        } catch (error) {
+            console.warn('Could not store user session:', error);
+        }
+    }
+
+    getStoredUser() {
+        try {
+            return window._userSession || null;
+        } catch (error) {
+            console.warn('Could not retrieve user session:', error);
+            return null;
+        }
+    }
+
+    clearStoredUser() {
+        try {
+            delete window._userSession;
+        } catch (error) {
+            console.warn('Could not clear user session:', error);
+        }
+    }
+
+    isValidSession(user) {
+        if (!user || !user.timestamp) return false;
+        
+        // Session expires after 24 hours
+        const sessionDuration = 24 * 60 * 60 * 1000;
+        return (Date.now() - user.timestamp) < sessionDuration;
+    }
+
+    async makeAPICall(query, category) {
+        if (!this.isAuthenticated) {
+            throw new Error('Authentication required');
+        }
+
+        const requestData = {
+            chatInput: query,
+            category: category,
+            userId: this.currentUser?.id,
+            timestamp: Date.now()
+        };
+
+
+        console.log('Making API call to:', this.API_ENDPOINT);
+        console.log('Request data:', requestData);
+
+	const controller = new AbortController();
+	const id = setTimeout(() => controller.abort(), 120000);
+
+        try {
+            const response = await fetch(this.API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.currentUser?.token || ''}`,
+                },
+                body: JSON.stringify(requestData),
+		signal: controller.signal
+                
+            });
+
+            if (!response.ok) {
+			    console.log(response);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('API Response:', data);
+            return data;
+
+        } catch (error) {
+            console.error('API call failed:', error);
+            throw error;
+        }
+	clearTimeout(id);
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 
+                        type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                        'linear-gradient(135deg, #3b82f6, #1d4ed8)'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            font-size: 0.9rem;
+            font-weight: 600;
+            max-width: 350px;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        `;
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Remove after 4 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 4000);
+    }
+}
+
+// Initialize the authentication system
+const authManager = new EmailAuthManager();
+
+document.addEventListener("DOMContentLoaded", () => {
+    // ================== TEMPLATE CARD FUNCTIONALITY ==================
+    const templateCards = document.querySelectorAll('.template-card');
+    const userInput = document.getElementById('userInput');
+
+    templateCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Check authentication before allowing template use
+            authManager.requireAuth(() => {
+                const promptText = card.getAttribute('data-prompt');
+                if (promptText && userInput) {
+                    userInput.value = promptText;
+                    userInput.focus();
+                    // Scroll to input section
+                    document.querySelector('.input-section').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            });
+        });
+    });
+
+    // ================== SEARCH FORM SUBMISSION ==================
+    const searchForm = document.getElementById('searchForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressFill = document.getElementById('progressFill');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    searchForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Check authentication before allowing search
+        authManager.requireAuth(async () => {
+            const query = userInput.value.trim();
+            const category = document.getElementById('categorySelector').value;
+            
+            if (!query) {
+                userInput.focus();
+                return;
+            }
+
+            // Start loading and progress animation
+            startProgressAnimation();
+            showLoading();
+            
+            try {
+		console.log("atleast ye call ho rha hai");
+                // Make API call
+                const results = await authManager.makeAPICall(query, category);
+                
+		 console.log("ab kuch aaya");
+                // Complete progress
+                completeProgress();
+                
+                // Navigate to results page or handle results
+                setTimeout(() => {
+                    handleSearchResults(query, category, results);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Search failed:', error);
+                authManager.showNotification('Search failed: ' + error.message, 'error');
+                resetProgressAnimation();
+                hideLoading();
+            }
+        });
+    });
+
+    function startProgressAnimation() {
+        submitBtn.disabled = true;
+        progressOverlay.classList.add('active');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 8;
+            if (progress > 90) progress = 90;
+            progressFill.style.width = progress + '%';
+            
+            if (progress >= 90) {
+                clearInterval(interval);
+            }
+        }, 150);
+
+        window._progressInterval = interval;
+    }
+
+    function completeProgress() {
+        if (window._progressInterval) {
+            clearInterval(window._progressInterval);
+        }
+        progressFill.style.width = '100%';
+    }
+
+    function resetProgressAnimation() {
+        submitBtn.disabled = false;
+        progressOverlay.classList.remove('active');
+        progressFill.style.width = '0%';
+        
+        if (window._progressInterval) {
+            clearInterval(window._progressInterval);
+            delete window._progressInterval;
+        }
+    }
+
+    function showLoading() {
+        loadingOverlay.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingOverlay.classList.remove('active');
+    }
+
+function handleSearchResults(query, category, results) {
+    hideLoading();
+    resetProgressAnimation();
+    
+    // Store results for the next page
+    window._searchResults = results;
+    
+    // Also store in session storage as backup
+    try {
+        sessionStorage.setItem('searchResults', JSON.stringify(results));
+        sessionStorage.setItem('currentQuery', query);
+        sessionStorage.setItem('currentCategory', category);
+    } catch (error) {
+        console.warn('Could not store in session storage:', error);
+    }
+    
+    // Create URL with parameters for result page
+    const params = new URLSearchParams({
+        q: query,
+        category: category,
+        timestamp: Date.now(),
+        userId: authManager.currentUser?.id || ''
+    });
+    
+    // Show success notification
+    authManager.showNotification('Search completed! Redirecting to results...', 'success');
+    
+    // Navigate to results page
+    setTimeout(() => {
+        window.location.href = `result?${params.toString()}`;
+    }, 2000);
+}
+    // Allow Enter key submission
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            searchForm.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // ================== INPUT PROTECTION ==================
+    // Protect input field from unauthorized access
+    userInput.addEventListener('click', (e) => {
+        if (!authManager.isAuthenticated) {
+            e.preventDefault();
+            authManager.showProtectedOverlay();
+        }
+    });
+
+    userInput.addEventListener('focus', (e) => {
+        if (!authManager.isAuthenticated) {
+            e.target.blur();
+            authManager.showProtectedOverlay();
+        }
+    });
+
+    // Protect category selector
+    document.getElementById('categorySelector').addEventListener('click', (e) => {
+        if (!authManager.isAuthenticated) {
+            e.preventDefault();
+            authManager.showProtectedOverlay();
+        }
+    });
+
+    // ================== FILE UPLOAD FUNCTIONALITY ==================
+    const uploadDropZone = document.getElementById('uploadDropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadedFilesList = document.getElementById('uploadedFilesList');
+    const filesList = document.getElementById('filesList');
+    const fileCount = document.getElementById('fileCount');
+    const descriptionSection = document.getElementById('descriptionSection');
+    const fileDescription = document.getElementById('fileDescription');
+    const submitUploadBtn = document.getElementById('submitUploadBtn');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    let uploadedFiles = [];
+
+    // Drag & Drop Listeners
+    uploadDropZone.addEventListener('click', () => {
+        authManager.requireAuth(() => {
+            fileInput.click();
+        });
+    });
+
+    uploadDropZone.addEventListener('dragover', handleDragOver);
+    uploadDropZone.addEventListener('dragleave', handleDragLeave);
+    uploadDropZone.addEventListener('drop', handleDrop);
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        if (!authManager.isAuthenticated) {
+            authManager.showProtectedOverlay();
+            return;
+        }
+        uploadDropZone.style.borderColor = '#8b5cf6';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.1)';
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadDropZone.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+        uploadDropZone.style.background = 'rgba(139, 92, 246, 0.05)';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        handleDragLeave(e);
+        
+        authManager.requireAuth(() => {
+            const files = Array.from(e.dataTransfer.files);
+            processFiles(files);
+        });
+    }
+
+    function handleFileSelect(e) {
+        authManager.requireAuth(() => {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        });
+    }
+
+    async function processFiles(files) {
+        const validFiles = files.filter(file =>
+            file.type === 'text/csv' ||
+            file.type === 'application/json' ||
+            file.type === 'text/plain' ||
+            file.name.endsWith('.csv') ||
+            file.name.endsWith('.json') ||
+            file.name.endsWith('.txt')
+        );
+
+        if (validFiles.length === 0) {
+            authManager.showNotification('Please upload CSV, JSON, or TXT files only.', 'error');
+            return;
+        }
+
+        // Show upload progress
+        document.getElementById('uploadContent').innerHTML = `
+            <div style="color: #8b5cf6; font-size: 1rem; margin-bottom: 0.5rem;">
+                Uploading files...
+            </div>
+            <div style="width: 100%; height: 4px; background: rgba(139, 92, 246, 0.2); border-radius: 2px; overflow: hidden;">
+                <div id="uploadProgress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #a855f7); border-radius: 2px; transition: width 0.3s ease;"></div>
+            </div>
+        `;
+
+        let progress = 0;
+        const progressBar = document.getElementById('uploadProgress');
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            progressBar.style.width = progress + '%';
+        }, 200);
+
+        try {
+            uploadedFiles = [];
+            for (const file of validFiles) {
+                const content = await readFileContent(file);
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    content: content,
+                    uploadedAt: new Date().toISOString(),
+                    userId: authManager.currentUser?.id
+                });
+            }
+
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+
+            setTimeout(() => {
+                updateFilesList();
+                resetUploadZone();
+                descriptionSection.classList.add('active');
+            }, 1000);
+
+        } catch (error) {
+            clearInterval(progressInterval);
+            console.error('File processing error:', error);
+            authManager.showNotification('Error processing files: ' + error.message, 'error');
+        }
+    }
+
+    function updateFilesList() {
+        if (uploadedFiles.length > 0) {
+            uploadedFilesList.classList.add('active');
+            fileCount.textContent = uploadedFiles.length;
+            filesList.innerHTML = uploadedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-name">
+                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                    </div>
+                    <button class="file-remove" onclick="removeFile(${index})">×</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    window.removeFile = function(index) {
+        uploadedFiles.splice(index, 1);
+        updateFilesList();
+        if (uploadedFiles.length === 0) {
+            uploadedFilesList.classList.remove('active');
+            descriptionSection.classList.remove('active');
+        }
+    };
+
+    function resetUploadZone() {
+        document.getElementById('uploadContent').innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <div class="upload-text">Drop CSV, JSON, or TXT files here</div>
+            <div class="upload-subtext">or click to browse files</div>
+        `;
+    }
+
+    function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    if (file.name.endsWith('.json') || file.type === 'application/json') {
+                        JSON.parse(content); // Validate JSON
+                    }
+                    resolve(content);
+                } catch (error) {
+                    reject(new Error(`Invalid JSON format in "${file.name}"`));
+                }
+            };
+            reader.onerror = () => reject(new Error(`Failed to read "${file.name}"`));
+            reader.readAsText(file);
+        });
+    }
+
+    // Upload submit handler
+    submitUploadBtn.addEventListener('click', async () => {
+        if (!authManager.isAuthenticated) {
+            authManager.showProtectedOverlay();
+            return;
+        }
+
+        confirmationMessage.classList.remove('active');
+        submitUploadBtn.disabled = true;
+        submitUploadBtn.textContent = "Submitting...";
+
+        const description = fileDescription.value.trim();
+
+        try {
+            // Simulate upload process with authentication
+            await simulateAuthenticatedUpload(uploadedFiles, description);
+            
+            // Show success message
+            confirmationMessage.classList.add('active');
+            confirmationMessage.style.color = "#4ade80";
+            confirmationMessage.innerHTML = "✅ File Successfully Uploaded<br>✅ Data Index Initiated";
+            
+        } catch (err) {
+            confirmationMessage.classList.add('active');
+            confirmationMessage.style.color = "#f87171";
+            confirmationMessage.textContent = "❌ Upload Failed: " + err.message;
+        } finally {
+            submitUploadBtn.disabled = false;
+            submitUploadBtn.textContent = "Submit";
+        }
+    });
+
+    async function simulateAuthenticatedUpload(files, description) {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // In a real implementation, you would send files to your API here
+        const uploadData = {
+            files: files.map(f => ({
+                name: f.name,
+                size: f.size,
+                type: f.type,
+                content: f.content
+            })),
+            description: description,
+            userId: authManager.currentUser?.id,
+            timestamp: Date.now()
+        };
+
+        console.log('Upload data prepared:', uploadData);
+        
+        // Simulate random success/failure for demo
+        if (Math.random() > 0.1) { // 90% success rate
+            return { success: true, message: "Files uploaded successfully" };
+        } else {
+            throw new Error("Network connection failed");
+        }
+    }
+
+    // ================== TYPEWRITER EFFECT ==================
+    const phrases = [
+        "🛍️ Smart Product Discovery",
+        "🔍 Detailed Specification Search", 
+        "💎 Premium Quality Matching",
+        "🎯 Precision Product Finder",
+        "⚡ Instant Attribute Matching",
+        "🧠 AI-Powered Shopping Assistant"
+    ];
+    let currentPhrase = 0, currentChar = 0, isDeleting = false;
+    
+    function typeWriter() {
+        const typewriterElement = document.getElementById('typewriter');
+        if (!typewriterElement) return;
+        
+        const current = phrases[currentPhrase];
+        
+        if (isDeleting) {
+            typewriterElement.textContent = current.substring(0, currentChar - 1);
+            currentChar--;
+        } else {
+            typewriterElement.textContent = current.substring(0, currentChar + 1);
+            currentChar++;
+        }
+        
+        let typeSpeed = isDeleting ? 60 : 100;
+        
+        if (!isDeleting && currentChar === current.length) {
+            typeSpeed = 1500; 
+            isDeleting = true;
+        } else if (isDeleting && currentChar === 0) {
+            isDeleting = false;
+            currentPhrase = (currentPhrase + 1) % phrases.length;
+            typeSpeed = 300;
+        }
+        
+        setTimeout(typeWriter, typeSpeed);
+    }
+
+    // ================== STATS ANIMATION ==================
+    function animateStats() {
+        const stats = [
+            { element: 'productCount', values: ['2.8M','2.9M','3.0M'], colors: ['#10b981','#10b981','#10b981'], interval: 5000 },
+            { element: 'categoryCount', values: ['1,247','1,251','1,253'], colors: ['#3b82f6','#3b82f6','#3b82f6'], interval: 7000 },
+            { element: 'brandCount', values: ['15.2K','15.3K','15.4K'], colors: ['#8b5cf6','#8b5cf6','#8b5cf6'], interval: 4000 },
+            { element: 'querySpeed', values: ['< 150ms','< 120ms','< 180ms'], colors: ['#f59e0b','#10b981','#f59e0b'], interval: 8000 }
+        ];
+        
+        stats.forEach(stat => {
+            let index = 0;
+            setInterval(() => {
+                const element = document.getElementById(stat.element);
+                if (element) {
+                    element.style.opacity = '0.6';
+                    element.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        element.textContent = stat.values[index];
+                        element.style.color = stat.colors[index];
+                        element.style.opacity = '1';
+                        element.style.transform = 'scale(1)';
+                        index = (index + 1) % stat.values.length;
+                    }, 200);
+                }
+            }, stat.interval);
+        });
+    }
+
+    // Initialize typewriter and stats
+    setTimeout(typeWriter, 300);
+    animateStats();
+
+    // Initial UI state update
+    authManager.updateUI();
+});
+
+// Export auth manager for use in other pages if needed
+window.authManager = authManager;
+</script>
+
+</body>
+</html>

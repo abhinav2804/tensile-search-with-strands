@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElasticSearch AI - Intelligent Query Interface</title>
+<meta name="description" content="AI-powered ElasticSearch interface with natural language querying and advanced analytics" />
+
+<style>
+
+    /* Auth Header Styles */
+    .auth-header {
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding: 1rem;
+        z-index: 1000;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #95a5a6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-auth {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        background: #3498db;
+        color: white;
+        transition: background-color 0.3s;
+    }
+
+    .btn-auth:hover {
+        background: #2980b9;
+    }
+
+    .btn-logout {
+        background: #e74c3c;
+    }
+
+    .btn-logout:hover {
+        background: #c0392b;
+    }
+
+
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, 
+            #0a0a0f 0%, 
+            #1a0f2e 15%,
+            #0f1419 30%, 
+            #1e1b4b 45%, 
+            #312e81 60%,
+            #1e1b4b 75%,
+            #0f1419 90%, 
+            #0a0a0f 100%);
+        background-size: 400% 400%;
+        animation: backgroundMove 15s ease infinite;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    @keyframes backgroundMove {
+        0%, 100% { background-position: 0% 50%; }
+        25% { background-position: 100% 25%; }
+        50% { background-position: 50% 100%; }
+        75% { background-position: 25% 75%; }
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.25) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(16, 185, 129, 0.2) 0%, transparent 60%),
+            radial-gradient(ellipse at 70% 10%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 30% 70%, rgba(168, 85, 247, 0.2) 0%, transparent 55%);
+        animation: backgroundShift 25s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    @keyframes backgroundShift {
+        0%, 100% { 
+            opacity: 0.7; 
+            transform: scale(1) rotate(0deg); 
+        }
+        25% { 
+            opacity: 0.9; 
+            transform: scale(1.05) rotate(1deg); 
+        }
+        50% { 
+            opacity: 0.6; 
+            transform: scale(0.95) rotate(-0.8deg); 
+        }
+        75% { 
+            opacity: 0.8; 
+            transform: scale(1.02) rotate(1.2deg); 
+        }
+    }
+
+    .particle {
+        position: fixed;
+        border-radius: 50%;
+        z-index: 1;
+        animation: float 12s infinite linear;
+        filter: blur(0.5px);
+    }
+
+    .particle:nth-child(1) {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.6), rgba(139, 92, 246, 0.2));
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .particle:nth-child(2) {
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.1));
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        animation-duration: 16s;
+    }
+
+    .particle:nth-child(3) {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.6), rgba(16, 185, 129, 0.2));
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        animation-duration: 14s;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(100vh) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-10px) scale(1);
+            opacity: 0;
+        }
+    }
+
+    .main-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+        padding-bottom: 120px; /* Space for fixed input */
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        animation: gradientFlow 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        height: 1.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .typewriter {
+        display: inline-block;
+        position: relative;
+    }
+
+    .typewriter::after {
+        content: '|';
+        color: #8b5cf6;
+        animation: blink 1s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+
+    .templates-section {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .templates-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 1.4rem;
+        color: #e5e7eb;
+        justify-content: center;
+    }
+
+    .templates-title .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        box-shadow: 0 0 15px #8b5cf6;
+        animation: pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+        from { opacity: 0.8; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.2); }
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        align-items: start;
+    }
+
+    .template-card {
+        background: rgba(17, 24, 39, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        backdrop-filter: blur(15px);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        height: fit-content;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+    }
+
+    .template-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .template-card:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    .template-card:hover::before {
+        opacity: 1;
+    }
+
+    .template-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .template-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .template-icon svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    .analytics { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+    .performance { background: linear-gradient(135deg, #10b981, #047857); }
+    .logs { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .security { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .search { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .cluster { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+    .template-text {
+        flex: 1;
+    }
+
+    .template-category {
+        font-size: 0.75rem;
+        color: #93c5fd;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .template-title {
+        font-size: 1rem;
+        color: #f9fafb;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+
+    .template-description {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        line-height: 1.4;
+    }
+
+    .input-section {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(90vw, 900px);
+        z-index: 100;
+        animation: slideInUp 0.8s ease-out 0.5s both;
+    }
+
+    @keyframes slideInUp {
+        from { transform: translateX(-50%) translateY(100%); }
+        to { transform: translateX(-50%) translateY(0); }
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(145deg, 
+            rgba(15, 23, 42, 0.95) 0%, 
+            rgba(30, 41, 59, 0.9) 50%, 
+            rgba(15, 23, 42, 0.95) 100%);
+        border: 2px solid transparent;
+        border-radius: 50px;
+        backdrop-filter: blur(20px);
+        box-shadow: 
+            0 15px 50px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 0 0 1px rgba(139, 92, 246, 0.15);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .progress-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(139, 92, 246, 0.12);
+        border-radius: 50px;
+        z-index: 5;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease;
+    }
+
+    .progress-overlay.active {
+        opacity: 1;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, 
+            rgba(139, 92, 246, 0.25) 0%,
+            rgba(168, 85, 247, 0.35) 50%,
+            rgba(139, 92, 246, 0.25) 100%);
+        width: 0%;
+        border-radius: 50px;
+        transition: width 0.1s ease-out;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .input-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        background: linear-gradient(90deg, 
+            rgba(139, 92, 246, 0.6), 
+            rgba(59, 130, 246, 0.8), 
+            rgba(16, 185, 129, 0.6), 
+            rgba(236, 72, 153, 0.7),
+            rgba(139, 92, 246, 0.6));
+        background-size: 300% 100%;
+        border-radius: 50px;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        animation: borderFlow 2s linear infinite;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    @keyframes borderFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .input-container:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 20px 60px rgba(139, 92, 246, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            0 0 0 1px rgba(139, 92, 246, 0.3);
+    }
+
+    .input-container:focus-within {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 25px 70px rgba(139, 92, 246, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 0 0 1px rgba(139, 92, 246, 0.4);
+    }
+
+    .dropdown-container {
+        position: relative;
+        flex-shrink: 0;
+        margin-left: 1rem;
+        z-index: 10;
+    }
+
+    .dropdown {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 500;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        padding: 1rem 1.5rem 1rem 1rem;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1em 1em;
+        min-width: 140px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .dropdown:hover {
+        color: #e2e8f0;
+    }
+
+    .dropdown-container::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.3), transparent);
+    }
+
+    .main-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #f1f5f9;
+        font-size: 1rem;
+        font-weight: 400;
+        padding: 1rem 1.25rem;
+        outline: none;
+        font-family: inherit;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+        z-index: 10;
+        position: relative;
+    }
+
+    .main-input::placeholder {
+        color: #64748b;
+        font-size: 1rem;
+        font-weight: 400;
+        transition: all 0.3s ease;
+    }
+
+    .main-input:focus::placeholder {
+        color: #475569;
+        transform: translateX(4px);
+    }
+
+    .main-input:focus {
+        color: #ffffff;
+    }
+
+    .submit-btn {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.2) 0%, 
+            rgba(139, 92, 246, 0.3) 50%, 
+            rgba(139, 92, 246, 0.2) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        padding: 0.75rem;
+        margin: 0.4rem;
+        color: #a78bfa;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+            0 3px 12px rgba(139, 92, 246, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        z-index: 10;
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.3), 
+            rgba(168, 85, 247, 0.3));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.3) 0%, 
+            rgba(139, 92, 246, 0.5) 50%, 
+            rgba(139, 92, 246, 0.3) 100%);
+        transform: scale(1.05) rotate(3deg);
+        color: #c4b5fd;
+        box-shadow: 
+            0 6px 20px rgba(139, 92, 246, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    .submit-btn:hover::before {
+        opacity: 1;
+    }
+
+    .submit-btn:active {
+        transform: scale(1.02) rotate(1deg);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .submit-btn:disabled:hover {
+        transform: none;
+    }
+
+    .submit-btn svg {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    .submit-btn:hover svg {
+        transform: translateX(1px) scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 2.2rem;
+        }
+        
+        .main-container {
+            padding: 1rem;
+            padding-bottom: 120px;
+        }
+        
+        .templates-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .input-section {
+            width: min(95vw, 900px);
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.5);
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.7);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="auth-header">
+    <div id="authButtons" style="display: block;">
+        <button class="btn-auth" onclick="window.location.href='login.html'">Login</button>
+    </div>
+    <div id="userSection" class="user-profile" style="display: none;">
+        <div class="user-avatar">U</div>
+        <span id="userName"></span>
+        <button class="btn-auth btn-logout" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<!-- Floating particles -->
+<div class="particle" style="left: 15%; animation-delay: 0s;"></div>
+<div class="particle" style="left: 35%; animation-delay: 2s;"></div>
+<div class="particle" style="left: 55%; animation-delay: 4s;"></div>
+<div class="particle" style="left: 75%; animation-delay: 1s;"></div>
+
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title">ElasticSearch AI</div>
+        <div class="subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </div>
+    </div>
+
+    <!-- Templates Section -->
+    <div class="templates-section">
+        <div class="templates-title">
+            <span class="dot"></span>
+            <span>ElasticSearch Query Templates</span>
+        </div>
+
+        <div class="templates-grid">
+            <div class="template-card" data-prompt="Show me all indices with document counts, storage sizes, and health status, sorted by size">
+                <div class="template-content">
+                    <div class="template-icon analytics">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Index Management</div>
+                        <div class="template-title">Index Overview & Statistics</div>
+                        <div class="template-description">Get comprehensive index information including document counts, storage sizes, and health status across your cluster.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Check cluster health, node status, and identify any shards that are unassigned or relocating">
+                <div class="template-content">
+                    <div class="template-icon cluster">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Cluster Health</div>
+                        <div class="template-title">Cluster Status & Shard Analysis</div>
+                        <div class="template-description">Monitor cluster health, node performance, and identify problematic shards requiring attention.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me mapping structure and field types for my main indices">
+                <div class="template-content">
+                    <div class="template-icon search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Schema Analysis</div>
+                        <div class="template-title">Index Mapping & Field Types</div>
+                        <div class="template-description">Explore index mappings, field types, and data structure to understand your schema design.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Analyze search performance, slow queries, and query response times from the last hour">
+                <div class="template-content">
+                    <div class="template-icon performance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Query Performance</div>
+                        <div class="template-title">Search Performance Analysis</div>
+                        <div class="template-description">Monitor query performance, identify slow searches, and analyze response time patterns.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Show me recent documents from the last 10 minutes with error status or warning levels">
+                <div class="template-content">
+                    <div class="template-icon logs">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Error Monitoring</div>
+                        <div class="template-title">Recent Errors & Warnings</div>
+                        <div class="template-description">Find recent error documents and warning-level events to troubleshoot issues quickly.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card" data-prompt="Create aggregation showing document count trends by day for the last week">
+                <div class="template-content">
+                    <div class="template-icon security">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Data Analytics</div>
+                        <div class="template-title">Time-based Aggregations</div>
+                        <div class="template-description">Generate time-series aggregations to analyze data patterns and trends over specific periods.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Input Section -->
+<div class="input-section">
+    <div class="input-container">
+        <!-- Full overlay progress bar -->
+        <div class="progress-overlay" id="progressOverlay">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="dropdown-container">
+            <select id="indexSelector" class="dropdown">
+                <option value="auto">AI Choice</option>
+                <option value="contactbook_main_70">contactbook_main_70</option>
+                <option value="contactbook_main_20">contactbook_main_20</option>
+                <option value="contactbook_main_00">contactbook_main_00</option>
+                <option value="contactbook_arch_70">contactbook_arch_70</option>
+                <option value="contactbook_arch_20">contactbook_arch_20</option>
+                <option value="contactbook_arch_00">contactbook_arch_00</option>
+                <option value="logs-*">logs-*</option>
+                <option value="metricbeat-*">metricbeat-*</option>
+                <option value="winlogbeat-*">winlogbeat-*</option>
+                <option value="auditbeat-*">auditbeat-*</option>
+                <option value="packetbeat-*">packetbeat-*</option>
+            </select>
+        </div>
+        
+        <input id="userInput" class="main-input" type="text" placeholder="Ask me anything about your ElasticSearch data..." />
+        
+        <button id="submitBtn" class="submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"/>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Typewriter effect for subtitle
+    const phrases = [
+        "AI Powered Search",
+        "Natural Language Queries", 
+        "Real-time Analytics"
+    ];
+    
+    let currentPhrase = 0;
+    let currentChar = 0;
+    let isDeleting = false;
+    
+    function typeWriter() {
+        const typewriterElement = document.getElementById('typewriter');
+        if (!typewriterElement) return;
+        
+        const current = phrases[currentPhrase];
+        
+        if (isDeleting) {
+            typewriterElement.textContent = current.substring(0, currentChar - 1);
+            currentChar--;
+        } else {
+            typewriterElement.textContent = current.substring(0, currentChar + 1);
+            currentChar++;
+        }
+        
+        let typeSpeed = isDeleting ? 60 : 100;
+        
+        if (!isDeleting && currentChar === current.length) {
+            typeSpeed = 1200;
+            isDeleting = true;
+        } else if (isDeleting && currentChar === 0) {
+            isDeleting = false;
+            currentPhrase = (currentPhrase + 1) % phrases.length;
+            typeSpeed = 200;
+        }
+        
+        setTimeout(typeWriter, typeSpeed);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(typeWriter, 300);
+    });
+	
+    // Template click → fill input
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const prompt = card.getAttribute('data-prompt');
+            document.getElementById('userInput').value = prompt;
+            document.getElementById('userInput').focus();
+        });
+    });
+
+    // Enhanced submit functionality with realistic progress
+    const submitBtn = document.getElementById('submitBtn');
+    const mainInput = document.getElementById('userInput');
+    const progressOverlay = document.getElementById('progressOverlay');
+    const progressFill = document.getElementById('progressFill');
+    const indexSelector = document.getElementById('indexSelector');
+    let progressInterval;
+    let isProcessing = false;
+
+    // Handle input events
+    mainInput.addEventListener('input', () => {
+        if (mainInput.value.trim()) {
+            submitBtn.style.opacity = '1';
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.style.opacity = '0.4';
+            submitBtn.disabled = true;
+        }
+    });
+
+    // Handle Enter key
+    mainInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
+
+    // Handle submit button click
+    submitBtn.addEventListener('click', handleSubmit);
+
+    function handleSubmit() {
+        if (!mainInput.value.trim() || isProcessing) return;
+
+        isProcessing = true;
+        let userQuery = mainInput.value.trim();
+        const selectedIndex = indexSelector.value;
+
+        // Append index selection to query if not "auto"
+        if (selectedIndex !== 'auto') {
+            userQuery += ` search in ${selectedIndex}`;
+        }
+
+        // Show progress overlay
+        progressOverlay.classList.add('active');
+        progressFill.style.width = '0%';
+
+        // Disable input and button
+        mainInput.disabled = true;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.4';
+
+        // Realistic progress animation that slows down near completion
+        let progress = 0;
+        let progressSpeed = 0.8; // Start fast
+        
+        clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+            // Slow down as we approach completion
+            if (progress < 70) {
+                progress += Math.random() * 3 + 1.5; // Fast initial progress
+            } else if (progress < 90) {
+                progress += Math.random() * 1 + 0.8; // Medium progress
+            } else if (progress < 95) {
+                progress += Math.random() * 0.5 + 0.2; // Slow progress
+            } else {
+                progress += 0.1; // Very slow near end
+            }
+            
+            progressFill.style.width = Math.min(progress, 99.5) + '%';
+        }, 80);
+
+        console.log('Processing query:', userQuery);
+        console.log('Selected index:', selectedIndex);
+
+        // Call backend
+        fetch("/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                chatInput: userQuery,
+                selectedIndex: selectedIndex 
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Complete progress immediately when response received
+            clearInterval(progressInterval);
+            progressFill.style.width = '100%';
+            
+            setTimeout(() => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    completeProcess();
+                    alert("No redirect URL received from server");
+                }
+            }, 300); // Small delay to show completed progress
+        })
+        .catch(err => {
+            console.error('Request failed:', err);
+            clearInterval(progressInterval);
+            completeProcess();
+            alert("Error connecting to server. Please try again.");
+        });
+    }
+
+    function completeProcess() {
+        // Hide progress overlay
+        progressOverlay.classList.remove('active');
+        progressFill.style.width = '0%';
+        
+        // Re-enable input and button
+        mainInput.disabled = false;
+        submitBtn.disabled = false;
+        
+        // Reset button opacity based on input state
+        if (mainInput.value.trim()) {
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.style.opacity = '0.4';
+        }
+        
+        isProcessing = false;
+    }
+
+    // Initialize button state
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!mainInput.value.trim()) {
+            submitBtn.style.opacity = '0.4';
+            submitBtn.disabled = true;
+        }
+    });
+</script>
+</body>
+</html>

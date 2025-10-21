@@ -1,0 +1,71 @@
+{
+  "domain": "healthcare",
+  "portal_name": "Healthcare Data Portal",
+  "entity_name": "record",
+  "search_placeholder": "Search patients, appointments, treatments...",
+  "upload_description": "Upload patient records, appointment data, or medical information",
+  "primary_actions": [
+    "search",
+    "filter",
+    "analyze",
+    "report"
+  ],
+  "color_scheme": "#10b981",
+  "templates": [
+    {
+      "prompt": "Search records by Country",
+      "category": "Field Search",
+      "tag": "Field-Country",
+      "title": "Country Search",
+      "description": "Find records with specific Country values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by Number of employees",
+      "category": "Field Search",
+      "tag": "Field-Number of employees",
+      "title": "Number Of Employees Search",
+      "description": "Find records with specific Number of employees values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by Index",
+      "category": "Field Search",
+      "tag": "Field-Index",
+      "title": "Index Search",
+      "description": "Find records with specific Index values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by Founded",
+      "category": "Field Search",
+      "tag": "Field-Founded",
+      "title": "Founded Search",
+      "description": "Find records with specific Founded values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by Organization Id",
+      "category": "Field Search",
+      "tag": "Field-Organization Id",
+      "title": "Organization Id Search",
+      "description": "Find records with specific Organization Id values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by Description",
+      "category": "Field Search",
+      "tag": "Field-Description",
+      "title": "Description Search",
+      "description": "Find records with specific Description values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}

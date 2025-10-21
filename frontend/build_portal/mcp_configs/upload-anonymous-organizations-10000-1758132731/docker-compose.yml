@@ -1,0 +1,28 @@
+networks:
+  elasticsearch-network:
+    external: true
+services:
+  mcp-upload-anonymous-organizations-10000-1758132731:
+    container_name: mcp-upload-anonymous-organizations-10000-1758132731
+    depends_on: []
+    environment:
+      ELASTICSEARCH_INDEX: upload-anonymous-organizations-10000-1758132731
+      ELASTICSEARCH_URL: http://54.227.251.28:9205
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: elasticsearch-upload-anonymous-organizations-10000-1758132731
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+      - CMD
+      - curl
+      - -f
+      - http://localhost:8080/health
+      timeout: 10s
+    image: mcp-elasticsearch:latest
+    networks:
+    - elasticsearch-network
+    ports:
+    - 10205:8080
+    restart: unless-stopped
+version: '3.8'

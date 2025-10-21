@@ -1,0 +1,69 @@
+{
+  "domain": "general",
+  "portal_name": "Business Intelligence Portal",
+  "entity_name": "organization",
+  "search_placeholder": "Search for businesses",
+  "upload_description": "This portal handles general business data, including information about organizations, their industries, and employees.",
+  "primary_actions": [
+    "Search Businesses",
+    "View Industry Trends",
+    "Analyze Employee Data"
+  ],
+  "color_scheme": "#4CAF50",
+  "templates": [
+    {
+      "prompt": "Search for organizations in the Dairy industry with at least 5000 employees",
+      "category": "Industry Analysis",
+      "tag": "Workforce",
+      "title": "Large Dairy Employers",
+      "description": "Find large dairy organizations based on employee count",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>",
+      "image": "https://images.pexels.com/photos/5113796/pexels-photo-5113796.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find organizations founded between 1980 and 2000 in Botswana, Sri Lanka, or Iran",
+      "category": "Regional Analysis",
+      "tag": "Established",
+      "title": "Mature Organizations in Developing Markets",
+      "description": "Discover well-established organizations in select emerging markets",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/><polyline points='9 22 9 12 15 12 15 22'/></svg>",
+      "image": "https://images.pexels.com/photos/1509428/pexels-photo-1509428.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search for organizations with 'Nanotechnology' in the industry field",
+      "category": "Industry Trends",
+      "tag": "Emerging",
+      "title": "Nanotechnology Organizations",
+      "description": "Find companies operating in the nanotechnology industry",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22'/></svg>",
+      "image": "https://images.pexels.com/photos/1509170/pexels-photo-1509170.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find organizations with 'Robles' in the name",
+      "category": "Targeted Search",
+      "tag": "Specific",
+      "title": "Organizations with 'Robles' in Name",
+      "description": "Search for companies with a specific name pattern",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/><polyline points='9 22 9 12 15 12 15 22'/></svg>",
+      "image": "https://images.pexels.com/photos/1181673/pexels-photo-1181673.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find organizations in the 'Hospital / Health Care' industry that were founded after 2010",
+      "category": "Industry Analysis",
+      "tag": "Emerging",
+      "title": "New Healthcare Organizations",
+      "description": "Discover recently founded companies in the healthcare industry",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>",
+      "image": "https://images.pexels.com/photos/3182745/pexels-photo-3182745.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search for organizations with 'Diaz' or 'Haley' in the name that have between 3000 and 5000 employees",
+      "category": "Targeted Search",
+      "tag": "Workforce",
+      "title": "Mid-Sized Organizations with Specific Names",
+      "description": "Find companies with particular name patterns and employee counts",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>",
+      "image": "https://images.pexels.com/photos/5113477/pexels-photo-5113477.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ]
+}

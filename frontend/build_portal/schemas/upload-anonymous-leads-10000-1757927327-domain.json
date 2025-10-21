@@ -1,0 +1,53 @@
+{
+  "domain": "education",
+  "portal_name": "Education Management Portal",
+  "entity_name": "record",
+  "search_placeholder": "Search students, courses, grades...",
+  "upload_description": "Upload student data, course information, or academic records",
+  "primary_actions": [
+    "search",
+    "filter",
+    "analyze",
+    "report"
+  ],
+  "color_scheme": "#ef4444",
+  "templates": [
+    {
+      "prompt": "Search records with specific Notes values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Notes Search",
+      "description": "Find records by Notes criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific First Name values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "First Name Search",
+      "description": "Find records by First Name criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Source values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Source Search",
+      "description": "Find records by Source criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Website values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Website Search",
+      "description": "Find records by Website criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}

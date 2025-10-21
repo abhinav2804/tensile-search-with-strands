@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Instance Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-nav a {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .header-nav a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .log-info {
+            color: #4fc3f7;
+        }
+
+        .log-success {
+            color: #81c784;
+        }
+
+        .log-error {
+            color: #e57373;
+        }
+
+        .log-warning {
+            color: #ffb74d;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-unknown {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .instance-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instance-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .instance-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .link-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .link-button:hover {
+            background: #5568d3;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Remote Instance Manager</h1>
+            <p>Manage Elasticsearch and MCP instances on remote server (82.112.235.26)</p>
+            <div class="header-nav">
+                <a href="/logs">📋 View Logs</a>
+            </div>
+        </div>
+
+        <!-- Create Instance -->
+        <div class="card">
+            <h2>Create New Instance</h2>
+            <form id="createInstanceForm">
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="text" id="userId" placeholder="Enter user ID (e.g., U123456)" required>
+                </div>
+                <div class="form-group">
+                    <label for="sshPassword">SSH Password (optional)</label>
+                    <input type="password" id="sshPassword" placeholder="Leave empty to use SSH key">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="openBrowser" checked>
+                        Open browser tabs after creation
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">🚀 Create Instances</button>
+            </form>
+        </div>
+
+        <!-- Instance Status -->
+        <div class="card">
+            <h2>Check Instance Status</h2>
+            <div class="form-group">
+                <label for="statusUserId">User ID</label>
+                <input type="text" id="statusUserId" placeholder="Enter user ID">
+            </div>
+            <button onclick="checkStatus()" class="btn btn-primary">📊 Check Status</button>
+            <button onclick="stopInstances()" class="btn btn-danger">🛑 Stop Instances</button>
+            
+            <div id="statusResult" class="hidden">
+                <div id="statusContent"></div>
+            </div>
+        </div>
+
+        <!-- All Instances -->
+        <div class="card">
+            <h2>All Instances</h2>
+            <button onclick="listAllInstances()" class="btn btn-primary">📋 Refresh List</button>
+            
+            <div id="instancesList">
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <!-- Logs -->
+        <div class="card">
+            <h2>📋 Activity Logs</h2>
+            <button onclick="clearLogs()" class="btn btn-secondary">🗑️ Clear Logs</button>
+            <div id="logContainer" class="log-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Logging functions
+        function addLog(message, type = 'info') {
+            console.log(`[${type}] ${message}`);
+            
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '';
+            addLog('Logs cleared', 'info');
+        }
+
+        // Create instances
+        document.getElementById('createInstanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const sshPassword = document.getElementById('sshPassword').value;
+            const openBrowser = document.getElementById('openBrowser').checked;
+            
+            addLog(`🚀 Creating instances for user: ${userId}`, 'info');
+            addLog(`📡 Connecting to remote server...`, 'info');
+            
+            try {
+                const response = await fetch('/api/instances/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        ssh_password: sshPassword || undefined,
+                        open_browser: openBrowser
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog('✅ Instances created successfully!', 'success');
+                    addLog(`📊 Elasticsearch: ${result.elasticsearch.url}`, 'success');
+                    addLog(`🔌 MCP: ${result.mcp.url}`, 'success');
+                    
+                    // Show links
+                    const esUrl = result.elasticsearch.url;
+                    const mcpUrl = result.mcp.url;
+                    
+                    addLog(`🌐 Opening browser tabs...`, 'info');
+                    
+                    // Refresh instances list
+                    setTimeout(() => listAllInstances(), 2000);
+                } else {
+                    addLog(`❌ Failed to create instances: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        // Check status
+        async function checkStatus() {
+            const userId = document.getElementById('statusUserId').value;
+            
+            if (!userId) {
+                addLog('⚠️ Please enter a user ID', 'warning');
+                return;
+            }
+            
+            addLog(`📊 Checking status for user: ${userId}`, 'info');
+            
+            try {
+                const response = await fetch(`/api/instances/status/${userId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog('✅ Status retrieved successfully', 'success');
+                    
+                    const statusDiv = document.getElementById('statusResult');
+                    const contentDiv = document.getElementById('statusContent');
+                    
+                    contentDiv.innerHTML = `
+                        <div class="instance-card">
+                            <h3>Elasticsearch</h3>
+                            <span class="status-badge status-${result.elasticsearch.live_status.status}">${result.elasticsearch.live_status.status}</span>
+                            <div class="instance-info">
+                                <div class="info-item">
+                                    <span class="info-label">URL</span>
+                                    <span class="info-value">${result.elasticsearch.database_info?.url || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Port</span>
+                                    <span class="info-value">${result.elasticsearch.database_info?.port || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Cluster</span>
+                                    <span class="info-value">${result.elasticsearch.database_info?.cluster_name || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Directory</span>
+                                    <span class="info-value">${result.elasticsearch.live_status.directory}</span>
+                                </div>
+                            </div>
+                            ${result.elasticsearch.database_info?.url ? `<a href="${result.elasticsearch.database_info.url}" target="_blank" class="link-button">Open Elasticsearch</a>` : ''}
+                        </div>
+                        
+                        <div class="instance-card">
+                            <h3>MCP</h3>
+                            <span class="status-badge status-${result.mcp.live_status.status}">${result.mcp.live_status.status}</span>
+                            <div class="instance-info">
+                                <div class="info-item">
+                                    <span class="info-label">URL</span>
+                                    <span class="info-value">${result.mcp.database_info?.url || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Port</span>
+                                    <span class="info-value">${result.mcp.database_info?.port || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Connected ES</span>
+                                    <span class="info-value">${result.mcp.database_info?.connected_es || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Directory</span>
+                                    <span class="info-value">${result.mcp.live_status.directory}</span>
+                                </div>
+                            </div>
+                            ${result.mcp.database_info?.url ? `<a href="${result.mcp.database_info.url}" target="_blank" class="link-button">Open MCP</a>` : ''}
+                        </div>
+                    `;
+                    
+                    statusDiv.classList.remove('hidden');
+                } else {
+                    addLog(`❌ Failed to get status: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Stop instances
+        async function stopInstances() {
+            const userId = document.getElementById('statusUserId').value;
+            
+            if (!userId) {
+                addLog('⚠️ Please enter a user ID', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to stop instances for user ${userId}?`)) {
+                return;
+            }
+            
+            addLog(`🛑 Stopping instances for user: ${userId}`, 'info');
+            
+            try {
+                const response = await fetch(`/api/instances/stop/${userId}`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog('✅ Instances stopped successfully', 'success');
+                    setTimeout(() => checkStatus(), 1000);
+                } else {
+                    addLog(`❌ Failed to stop instances: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // List all instances
+        async function listAllInstances() {
+            addLog('📋 Loading all instances...', 'info');
+            
+            const listDiv = document.getElementById('instancesList');
+            listDiv.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const response = await fetch('/api/instances/list');
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog(`✅ Found ${result.total_count} users with instances`, 'success');
+                    
+                    if (result.instances.length === 0) {
+                        listDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No instances found</p>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    result.instances.forEach(instance => {
+                        html += `
+                            <div class="instance-card">
+                                <h3>${instance.email || instance.user_id}</h3>
+                                <p style="color: #666; font-size: 14px; margin-bottom: 10px;">${instance.name || 'No name'}</p>
+                                
+                                ${instance.elasticsearch ? `
+                                    <div style="margin-bottom: 15px;">
+                                        <strong>Elasticsearch:</strong>
+                                        <span class="status-badge status-${instance.elasticsearch.status}">${instance.elasticsearch.status || 'unknown'}</span>
+                                        <div style="margin-top: 5px;">
+                                            <span class="info-value">${instance.elasticsearch.url}</span>
+                                            <a href="${instance.elasticsearch.url}" target="_blank" class="link-button">Open</a>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${instance.mcp ? `
+                                    <div>
+                                        <strong>MCP:</strong>
+                                        <span class="status-badge status-${instance.mcp.status}">${instance.mcp.status || 'unknown'}</span>
+                                        <div style="margin-top: 5px;">
+                                            <span class="info-value">${instance.mcp.url}</span>
+                                            <a href="${instance.mcp.url}" target="_blank" class="link-button">Open</a>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    listDiv.innerHTML = html;
+                } else {
+                    addLog(`❌ Failed to list instances: ${result.error}`, 'error');
+                    listDiv.innerHTML = `<p style="text-align: center; color: #e57373; padding: 20px;">Error: ${result.error}</p>`;
+                }
+                
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+                listDiv.innerHTML = `<p style="text-align: center; color: #e57373; padding: 20px;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Initialize
+        addLog('🚀 Remote Instance Manager initialized', 'info');
+        addLog('📡 Ready to manage instances on 82.112.235.26', 'info');
+        
+        // Load instances on page load
+        listAllInstances();
+    </script>
+</body>
+</html>
