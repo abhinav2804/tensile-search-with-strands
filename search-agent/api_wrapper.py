@@ -31,11 +31,15 @@ class QueryResponse(BaseModel):
 
 def create_streamable_http_transport():
     """Create HTTP transport for MCP client"""
+    import os
     headers = {
         "Authorization": f"ApiKey QmhMczhKa0JoSVNaRlVzNkp1U1E6RlA4X2FENFdGR2hubU5wRHZ1QjJVUQ==",
         "Content-Type": "application/json"
     }
-    return streamablehttp_client("http://localhost:8080/mcp", headers=headers)
+    # Use environment variable for MCP URL, default to localhost for development
+    mcp_url = os.getenv("MCP_URL", "http://82.112.235.26:8080/mcp")
+    #mcp_url = os.getenv("MCP_URL", "http://localhost:8080/mcp")
+    return streamablehttp_client(mcp_url, headers=headers)
 
 async def initialize_agent():
     """Initialize the AI agent with MCP tools and Bedrock model"""
@@ -49,51 +53,55 @@ async def initialize_agent():
             temperature=0.3,
         )
         
-        # Create MCP client
-        mcp_client = MCPClient(create_streamable_http_transport)
+        # Try to create MCP client, but don't fail if it's not available
+        mcp_tools = []
+        try:
+            mcp_client = MCPClient(create_streamable_http_transport)
+            mcp_client.__enter__()
+            mcp_tools = mcp_client.list_tools_sync()
+            logger.info(f"Found {len(mcp_tools)} MCP tools")
+        except Exception as mcp_error:
+            logger.warning(f"MCP client not available: {mcp_error}")
+            logger.info("Continuing without MCP tools...")
+            mcp_client = None
         
-        # Enter the MCP client context and keep it active
-        mcp_client.__enter__()
-        
-        # Get MCP tools
-        mcp_tools = mcp_client.list_tools_sync()
-        logger.info(f"Found {len(mcp_tools)} MCP tools")
-        
-        # Debug: Check what attributes the MCP tool has
+        # Process MCP tools if available
+        filtered_mcp_tools = []
         if mcp_tools:
+            # Debug: Check what attributes the MCP tool has
             logger.info(f"MCP tool attributes: {dir(mcp_tools[0])}")
             logger.info(f"First tool: {mcp_tools[0]}")
-        
-        # Filter out problematic tools - check different possible attribute names
-        problematic_tools = ['get_mappings', 'esql']
-        filtered_mcp_tools = []
-        
-        for tool in mcp_tools:
-            # Try different attribute names that might contain the tool name
-            tool_name = None
-            if hasattr(tool, 'name'):
-                tool_name = tool.name
-            elif hasattr(tool, '_name'):
-                tool_name = tool._name
-            elif hasattr(tool, 'tool_name'):
-                tool_name = tool.tool_name
-            elif hasattr(tool, '__name__'):
-                tool_name = tool.__name__
             
-            logger.info(f"Tool name found: {tool_name}")
+            # Filter out problematic tools - check different possible attribute names
+            problematic_tools = ['get_mappings', 'esql']
             
-            if tool_name and tool_name not in problematic_tools:
-                filtered_mcp_tools.append(tool)
-            elif tool_name is None:
-                # If we can't find the name, include it for now
-                filtered_mcp_tools.append(tool)
+            for tool in mcp_tools:
+                # Try different attribute names that might contain the tool name
+                tool_name = None
+                if hasattr(tool, 'name'):
+                    tool_name = tool.name
+                elif hasattr(tool, '_name'):
+                    tool_name = tool._name
+                elif hasattr(tool, 'tool_name'):
+                    tool_name = tool.tool_name
+                elif hasattr(tool, '__name__'):
+                    tool_name = tool.__name__
+                
+                logger.info(f"Tool name found: {tool_name}")
+                
+                if tool_name and tool_name not in problematic_tools:
+                    filtered_mcp_tools.append(tool)
+                elif tool_name is None:
+                    # If we can't find the name, include it for now
+                    filtered_mcp_tools.append(tool)
+            
+            logger.info(f"Original MCP tools: {len(mcp_tools)}")
+            logger.info(f"Filtered out {len(mcp_tools) - len(filtered_mcp_tools)} problematic tools: {problematic_tools}")
         
         # Add your custom elastic tools to replace broken MCP functionality
         custom_elastic_tools = [get_elastic_index_mapping]
         all_tools = filtered_mcp_tools + custom_elastic_tools
         
-        logger.info(f"Original MCP tools: {len(mcp_tools)}")
-        logger.info(f"Filtered out {len(mcp_tools) - len(filtered_mcp_tools)} problematic tools: {problematic_tools}")
         logger.info(f"Available tools: {len(filtered_mcp_tools)} working MCP tools + {len(custom_elastic_tools)} custom elastic tools = {len(all_tools)} total")
         
         # Create agent with filtered MCP tools and custom elastic tools using the system prompt
@@ -149,11 +157,25 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Detailed health check"""
+    tools_count = 0
+    if agent:
+        try:
+            # Try different possible attribute names for tools
+            if hasattr(agent, 'tools'):
+                tools_count = len(agent.tools)
+            elif hasattr(agent, '_tools'):
+                tools_count = len(agent._tools)
+            else:
+                # If no tools attribute found, just set to 0
+                tools_count = 0
+        except Exception:
+            tools_count = 0
+    
     return {
         "status": "healthy",
         "agent_initialized": agent is not None,
         "mcp_enabled": mcp_client is not None,
-        "tools_count": len(agent.tools) if agent else 0
+        "tools_count": tools_count
     }
 
 @app.post("/query", response_model=QueryResponse)
@@ -263,7 +285,15 @@ async def list_tools():
     
     try:
         tools_info = []
-        for tool in agent.tools:
+        agent_tools = []
+        
+        # Try to get tools from different possible attributes
+        if hasattr(agent, 'tools'):
+            agent_tools = agent.tools
+        elif hasattr(agent, '_tools'):
+            agent_tools = agent._tools
+        
+        for tool in agent_tools:
             tool_name = getattr(tool, 'name', None) or getattr(tool, '__name__', 'Unknown')
             tool_doc = getattr(tool, '__doc__', 'No description available')
             tools_info.append({

@@ -19,7 +19,7 @@ A production-ready FastAPI wrapper that provides REST API endpoints to interact 
 - **AWS Account** with Bedrock access
 - **AWS Credentials** configured (IAM role, access keys, or AWS CLI)
 - **Elasticsearch cluster** accessible via the configured endpoint
-- **MCP Server** running on localhost:8080 (for enhanced tool support)
+- **MCP Server** running on 82.112.235.26:8080 (for enhanced tool support)
 
 ## 🛠️ Installation & Setup
 

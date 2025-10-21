@@ -3,17 +3,22 @@ version: '3.8'
 services:
   doc-agent-api:
     build: .
+    image: ai-strand-agent:latest
+    container_name: ai-strand-agent-container
     ports:
       - "5000:5000"
     environment:
       - AWS_DEFAULT_REGION=us-east-1
+      - AWS_REGION=us-east-1
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      # Add your AWS credentials as environment variables
-      # - AWS_ACCESS_KEY_ID=your_access_key
-      # - AWS_SECRET_ACCESS_KEY=your_secret_key
-      # Or use AWS IAM roles if running on EC2/ECS
+      # AWS Credentials
+      - AWS_ACCESS_KEY_ID=AKIA2WN2VXZHIYJJHGE7
+      - AWS_SECRET_ACCESS_KEY=l6P8H3bq4DWvdjwONfD7FhfbB/5xc4ZNw36XScyu
+      - BEDROCK_INFERENCE_PROFILE_ARN=arn:aws:bedrock:us-east-1:301697000154:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0
     restart: unless-stopped
+    # depends_on:
+    #   - mcp-server
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -26,3 +31,12 @@ services:
     #   options:
     #     max-size: "10m"
     #     max-file: "3"
+
+  # Add MCP server if needed
+  # mcp-server:
+  #   image: your-mcp-server-image:latest
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - MCP_PORT=8080
+  #   restart: unless-stopped
