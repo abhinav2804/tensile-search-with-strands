@@ -1,3 +1,21 @@
+"""
+File Upload API - Tensile Search System
+========================================
+
+This Flask API manages file uploads for the Tensile Search platform. It handles:
+1. User data file uploads (CSV, JSON, XML, etc.) - the actual dataset to be indexed
+2. User query file uploads - example search queries for schema generation context
+
+Architecture Role:
+- Acts as the data ingestion layer for the Indexing Agent
+- Stores files in organized per-user directories for processing
+- Supports multiple authentication methods (Basic, Bearer, API Key)
+- Integrates with the frontend portal and indexing pipeline
+
+Data Flow:
+Frontend Upload → This API → /var/www/es/{userid}/ → Indexing Agent reads files
+"""
+
 from flask import Flask, request, jsonify
 import os
 import uuid
@@ -12,7 +30,12 @@ import sseclient
 app = Flask(__name__)
 
 # Configuration
+# BASE_DIR: Root directory where all user files are stored
+# Structure: /var/www/es/{userid}/data/ and /var/www/es/{userid}/query/
 BASE_DIR = "/var/www/es"
+
+# ALLOWED_EXTENSIONS: File types accepted by the system
+# These formats are supported by the Indexing Agent's data processing pipeline
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'json', 'csv', 'xml', 'doc', 'docx'}
 
 # 1. Define the base URL
@@ -25,6 +48,8 @@ INDEXING_AGENT_PARAMS = {
     "user_query_path": ""
 }
 # Authentication configuration
+# Multi-auth support: Can use Basic Auth, Bearer tokens, or API Keys
+# In production, these should be environment variables or AWS Secrets Manager
 API_KEYS = {
     'admin': 'admin123',
     'user1': 'user1pass',
@@ -39,12 +64,44 @@ API_KEYS = {
 # }
 
 def allowed_file(filename):
-    """Check if file extension is allowed"""
+    """
+    Validate file extension against allowed types.
+    
+    Security measure to prevent malicious file uploads. Only files with
+    extensions in ALLOWED_EXTENSIONS can be uploaded and processed by
+    the Indexing Agent.
+    
+    Args:
+        filename (str): Name of the uploaded file
+        
+    Returns:
+        bool: True if file extension is allowed, False otherwise
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def require_auth(f):
-    """Decorator to require authentication for endpoints"""
+    """
+    Authentication decorator supporting multiple auth methods.
+    
+    This decorator enforces authentication on API endpoints using:
+    1. Basic Auth: Authorization: Basic base64(username:password)
+    2. API Key: X-API-Key: your_api_key
+    3. Bearer Token: Authorization: Bearer your_token
+    
+    In the AWS architecture, this provides a security layer before data
+    reaches the Indexing Agent. For production, consider AWS Cognito or
+    API Gateway authentication instead.
+    
+    Args:
+        f (function): The route function to protect
+        
+    Returns:
+        function: Decorated function with authentication check
+        
+    Raises:
+        401: If authentication fails or credentials are invalid
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         auth_header = request.headers.get('Authorization')
@@ -85,12 +142,31 @@ def require_auth(f):
     return decorated_function
 
 def create_directory_structure(userid):
-    """Create directory structure for user"""
+    """
+    Create organized directory structure for user files.
+    
+    Directory Layout:
+    /var/www/es/{userid}/
+    ├── data/       - User's dataset files (CSV, JSON, etc.)
+    └── query/      - User's example query files (for schema context)
+    
+    The Indexing Agent reads from these directories to:
+    1. Load data files for processing
+    2. Parse query files to understand search intent
+    3. Generate optimal Elasticsearch schema based on both
+    
+    Args:
+        userid (str): Unique user identifier
+        
+    Returns:
+        tuple: (user_dir, data_dir, query_dir) absolute paths
+    """
     user_dir = os.path.join(BASE_DIR, str(userid))
     data_dir = os.path.join(user_dir, "data")
     query_dir = os.path.join(user_dir, "query")
     
     # Create directories if they don't exist
+    # exist_ok=True prevents errors if directories already exist
     os.makedirs(data_dir, exist_ok=True)
     os.makedirs(query_dir, exist_ok=True)
     
@@ -99,10 +175,38 @@ def create_directory_structure(userid):
 @app.route('/upload', methods=['POST'])
 @require_auth
 def upload_file():
-    """Upload file endpoint"""
-
-    endOfFile = False
-
+    """
+    Primary file upload endpoint for the Tensile Search system.
+    
+    This endpoint receives files from the frontend portal and stores them
+    for processing by the Indexing Agent. It handles two types of files:
+    
+    1. DATA files: The actual dataset to be indexed (e.g., products.csv)
+    2. QUERY files: Example search queries for schema generation context
+    
+    Request Parameters:
+        userid (str): Unique identifier for the user
+        filetype (str): Either 'data' or 'query'
+        file (file): The uploaded file object
+    
+    Response:
+        200: Success with file details (path, size, unique filename)
+        400: Invalid request (missing params, invalid filetype, bad file)
+        500: Server error during upload
+    
+    Integration with Indexing Agent:
+        After upload, the frontend calls the Indexing Agent's 
+        /triggerIndexingLive endpoint with:
+        - user_id={userid}
+        - data_path=/var/www/es/{userid}/data/
+        - user_query_path=/var/www/es/{userid}/query/
+        
+    Security:
+        - Requires authentication via @require_auth decorator
+        - Validates file extensions against ALLOWED_EXTENSIONS
+        - Uses secure_filename() to prevent directory traversal attacks
+        - Adds UUID to prevent filename collisions
+    """
     try:
         # Validate required parameters
         if 'userid' not in request.form:
