@@ -1,0 +1,312 @@
+{
+    "schema": {
+        "mappings": {
+            "properties": {
+                "SEARCH KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MODIFIED KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "QCR KEYWORD": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ATTRIBUTE EXTRACTION FLAG": {
+                    "type": "double"
+                },
+                "DEBUG_INFO.TOP_MCATS_DEBUG_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SOLR EXECUTION": {
+                    "type": "double"
+                },
+                "SOLR STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ALFA EXECUTION": {
+                    "type": "double"
+                },
+                "ALFA STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MARS EXECUTION": {
+                    "type": "double"
+                },
+                "MARS STATUS": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MERI EXECUTION": {
+                    "type": "double"
+                },
+                "MERI STATUS": {
+                    "type": "double"
+                },
+                "CHATGPT EXECUTION": {
+                    "type": "double"
+                },
+                "CHATGPT STATUS": {
+                    "type": "double"
+                },
+                "ENSEMBLE RUN": {
+                    "type": "double"
+                },
+                "SOLR_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ALFA_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MARS_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MERI_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "CHATGPT_INFO": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ID 1": {
+                    "type": "double"
+                },
+                "NAME 1": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 1": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "FREQUENCY 1": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SLAB 1": {
+                    "type": "double"
+                },
+                "ID 2": {
+                    "type": "double"
+                },
+                "NAME 2": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 2": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "FREQUENCY 2": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SLAB 2": {
+                    "type": "double"
+                },
+                "ID 3": {
+                    "type": "double"
+                },
+                "NAME 3": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 3": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "FREQUENCY 3": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SLAB 3": {
+                    "type": "double"
+                },
+                "ID 4": {
+                    "type": "double"
+                },
+                "NAME 4": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 4": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "FREQUENCY 4": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SLAB 4": {
+                    "type": "double"
+                },
+                "ID 5": {
+                    "type": "double"
+                },
+                "NAME 5": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "MCAT_ACCURACY_LEVEL 5": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "FREQUENCY 5": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "SLAB 5": {
+                    "type": "double"
+                },
+                "displayid": {
+                    "type": "double"
+                }
+            }
+        }
+    },
+    "auto_queries": []
+}

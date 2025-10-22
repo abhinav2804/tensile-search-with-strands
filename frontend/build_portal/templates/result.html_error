@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Results - Elastic Search</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/json-viewer-js@latest/json-viewer.css">
+<style>
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: #0b1220;
+        min-height: 100vh;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(90deg, #38bdf8, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        color: #94a3b8;
+        font-size: 1.2rem;
+    }
+    .query-section {
+        background: rgba(20, 28, 46, 0.95);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .query-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .query-text {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    .response-section {
+        background: rgba(20, 28, 46, 0.95);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .response-label {
+        color: #10b981;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .response-text {
+        color: #e2e8f0;
+        font-size: 1rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: rgba(30, 41, 59, 0.5);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #10b981;
+    }
+    .actions {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    .button {
+        display: inline-block;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 0.5rem;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+    .button-secondary {
+        background: rgba(71, 85, 105, 0.5);
+        border: 1px solid rgba(71, 85, 105, 0.7);
+    }
+    .button-secondary:hover {
+        box-shadow: 0 6px 20px rgba(71, 85, 105, 0.3);
+    }
+    .timestamp {
+        text-align: center;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-top: 2rem;
+    }
+</style>
+</head>
+<body>
+    <h1>Elastic Search Prompt Interface</h1>
+    <input type="text" id="query" placeholder="Enter your query">
+    <button onclick="search()">Search</button>
+
+    <div id="json"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/json-viewer-js@latest/json-viewer.js"></script>
+    <script>
+        async function search() {
+            let query = document.getElementById("query").value;
+            let res = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query })
+            });
+            let data = await res.json();
+
+            let viewer = new JSONViewer();
+            document.getElementById("json").innerHTML = "";
+            document.getElementById("json").appendChild(viewer.getContainer());
+            viewer.showJSON(data.response);
+        }
+    </script>
+</body>
+</html>

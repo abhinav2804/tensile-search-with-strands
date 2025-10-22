@@ -25,7 +25,7 @@ aws:
   region: "us-east-1"               # AWS region for services
   dynamodb:
     table_name: "users"             # DynamoDB table name
-    base_url: "http://82.112.235.26:4000"      # DynamoDB endpoint for dev/testing
+    base_url: "https://82.112.235.26:4000"      # DynamoDB endpoint for dev/testing
   bedrock:
     model_id: "us.anthropic.claude-haiku-4-5-20251001-v1:0" 
     endpoint_url: "https://bedrock-runtime.us-east-1.amazonaws.com"

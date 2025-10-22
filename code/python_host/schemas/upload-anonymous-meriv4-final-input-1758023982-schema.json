@@ -1,0 +1,274 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "q": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 200
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "isq": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 512
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "display_id": {
+          "type": "keyword",
+          "ignore_above": 65,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "upload_id": {
+          "type": "long"
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with q",
+    "Find records where q contains specific value",
+    "Search for records with q like 'cocoyaya king series connor hookah rainbow'",
+    "Show all records with isq",
+    "Find records where isq contains specific value",
+    "Show all records with display_id",
+    "Find records where display_id contains specific value",
+    "Search for records with display_id like '\"2856479865748\"'",
+    "Show all records with upload_id",
+    "Find records where upload_id contains specific value",
+    "Find records with upload_id greater than 2591615",
+    "Find records with upload_id less than 2591615",
+    "Find products under $50",
+    "Show high-rated products",
+    "Products with free shipping",
+    "Search by brand",
+    "Filter by category",
+    "Recently added products",
+    "Products on sale",
+    "Out of stock items",
+    "Popular products this month",
+    "Products with customer reviews",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-16T17:29:42.355367",
+  "domain_info": {
+    "domain": "ecommerce",
+    "portal_name": "Product Discovery Portal",
+    "entity_name": "product",
+    "search_placeholder": "Search products by name, brand, category, price...",
+    "upload_description": "Upload product catalogs, inventory data, or customer data",
+    "primary_actions": [
+      "search",
+      "filter",
+      "compare",
+      "analyze"
+    ],
+    "color_scheme": "#8b5cf6",
+    "templates": [
+      {
+        "prompt": "Search records by upload_id",
+        "category": "Field Search",
+        "tag": "Field-upload_id",
+        "title": "Upload_Id Search",
+        "description": "Find records with specific upload_id values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by q",
+        "category": "Field Search",
+        "tag": "Field-q",
+        "title": "Q Search",
+        "description": "Find records with specific q values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by display_id",
+        "category": "Field Search",
+        "tag": "Field-display_id",
+        "title": "Display_Id Search",
+        "description": "Find records with specific display_id values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by isq",
+        "category": "Field Search",
+        "tag": "Field-isq",
+        "title": "Isq Search",
+        "description": "Find records with specific isq values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search all records",
+        "category": "General Search",
+        "tag": "General",
+        "title": "General Search",
+        "description": "Search all records in the dataset",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search all records",
+        "category": "General Search",
+        "tag": "General",
+        "title": "General Search",
+        "description": "Search all records in the dataset",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 8331,
+  "file_processed": "temp_meriv4_final_input.csv"
+}

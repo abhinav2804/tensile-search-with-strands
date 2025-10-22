@@ -32,7 +32,7 @@ pip install -r requirements.txt
 2. Create the base directory (if not exists):
 ```bash
 sudo mkdir -p /var/www/es
-sudo chmod 755 /var/www/es
+sudo chmod 777 /var/www/es
 ```
 
 ## Authentication

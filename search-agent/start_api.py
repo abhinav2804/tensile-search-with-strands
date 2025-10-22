@@ -17,7 +17,7 @@ def main():
     
     try:
         uvicorn.run(
-            "api_wrapper:app",
+            "strand_agent_api:app",
             host="0.0.0.0",
             port=5000,
             reload=True,  # Auto-reload on code changes

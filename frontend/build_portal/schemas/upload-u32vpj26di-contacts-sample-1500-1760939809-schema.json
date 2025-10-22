@@ -1,0 +1,303 @@
+{
+    "schema": {
+        "mappings": {
+            "properties": {
+                "contact_city": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contact_city_id": {
+                    "type": "double"
+                },
+                "contact_last_product": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contact_number_type": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contact_ph_country": {
+                    "type": "double"
+                },
+                "contact_state": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contact_type_remarks": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contacts_add_date": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contacts_company": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contacts_glid": {
+                    "type": "double"
+                },
+                "contacts_mobile1": {
+                    "type": "double"
+                },
+                "contacts_mobile2": {
+                    "type": "double"
+                },
+                "contacts_name": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "contacts_type": {
+                    "type": "double"
+                },
+                "country_name": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "delete_archive_id": {
+                    "type": "double"
+                },
+                "fk_glusr_usr_id": {
+                    "type": "double"
+                },
+                "glusr_usr_logo_img_90x90": {
+                    "type": "double"
+                },
+                "im_contact_id": {
+                    "type": "double"
+                },
+                "is_archive": {
+                    "type": "double"
+                },
+                "is_blocked": {
+                    "type": "double"
+                },
+                "is_bulk_lead": {
+                    "type": "double"
+                },
+                "is_buylead": {
+                    "type": "double"
+                },
+                "is_call": {
+                    "type": "double"
+                },
+                "is_catalog_view": {
+                    "type": "double"
+                },
+                "is_contact_untouched": {
+                    "type": "double"
+                },
+                "is_enq": {
+                    "type": "double"
+                },
+                "is_ext": {
+                    "type": "double"
+                },
+                "is_removed": {
+                    "type": "double"
+                },
+                "is_starred_lead": {
+                    "type": "double"
+                },
+                "is_txn_initiator": {
+                    "type": "double"
+                },
+                "is_wa_reply": {
+                    "type": "double"
+                },
+                "is_whatsapp": {
+                    "type": "double"
+                },
+                "label_color": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "label_count": {
+                    "type": "double"
+                },
+                "label_id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "label_name": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "last_contact_date": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "last_contact_date_view": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "last_message": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "last_product_qty": {
+                    "type": "double"
+                },
+                "latest_txn_date": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "latest_txn_initiator": {
+                    "type": "double"
+                },
+                "mcat_id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "mcat_name": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "message_status": {
+                    "type": "double"
+                },
+                "msg_read_status": {
+                    "type": "double"
+                },
+                "order_value_slab": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "pii_blocked": {
+                    "type": "double"
+                },
+                "show_whatsapp_icon": {
+                    "type": "double"
+                },
+                "source": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "starred_lead_color": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "uniqueId": {
+                    "type": "double"
+                },
+                "unread_buyer_count": {
+                    "type": "double"
+                },
+                "unread_message_cnt": {
+                    "type": "double"
+                },
+                "wa_sess_exp_time": {
+                    "type": "double"
+                }
+            }
+        }
+    },
+    "auto_queries": []
+}

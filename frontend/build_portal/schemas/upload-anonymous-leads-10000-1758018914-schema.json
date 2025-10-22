@@ -1,0 +1,416 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "Index": {
+          "type": "long",
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Account Id": {
+          "type": "keyword",
+          "ignore_above": 65,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Lead Owner": {
+          "type": "keyword",
+          "ignore_above": 71,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "First Name": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 111
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "Last Name": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 111
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "Company": {
+          "type": "keyword",
+          "ignore_above": 85,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Phone 1": {
+          "type": "keyword",
+          "ignore_above": 72,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Phone 2": {
+          "type": "keyword",
+          "ignore_above": 72,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Email 1": {
+          "type": "keyword",
+          "ignore_above": 90,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Email 2": {
+          "type": "keyword",
+          "ignore_above": 91,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Website": {
+          "type": "keyword",
+          "ignore_above": 88,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Source": {
+          "type": "keyword",
+          "ignore_above": 70,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Deal Stage": {
+          "type": "keyword",
+          "ignore_above": 63,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "Notes": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 172
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with Index",
+    "Find records where Index contains specific value",
+    "Find records with Index greater than 1",
+    "Find records with Index less than 1",
+    "Show all records with Account Id",
+    "Find records where Account Id contains specific value",
+    "Search for records with Account Id like '2FCBFE58CC70308'",
+    "Show all records with Lead Owner",
+    "Find records where Lead Owner contains specific value",
+    "Search for records with Lead Owner like 'Selena Doyle'",
+    "Show all records with First Name",
+    "Find records where First Name contains specific value",
+    "Search for records with First Name like 'Jaime'",
+    "Show all records with Last Name",
+    "Find records where Last Name contains specific value",
+    "Search for records with Last Name like 'Hayes'",
+    "Students by grade level",
+    "Course enrollment numbers",
+    "Students with low attendance",
+    "Upcoming exams",
+    "Teacher schedules",
+    "Parent contact information",
+    "Students needing support",
+    "Graduation requirements",
+    "Extracurricular participation",
+    "Academic performance trends",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-16T16:05:14.660701",
+  "domain_info": {
+    "domain": "education",
+    "portal_name": "Education Management Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search students, courses, grades...",
+    "upload_description": "Upload student data, course information, or academic records",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "report"
+    ],
+    "color_scheme": "#ef4444",
+    "templates": [
+      {
+        "prompt": "Search records by Email 2",
+        "category": "Field Search",
+        "tag": "Field-Email 2",
+        "title": "Email 2 Search",
+        "description": "Find records with specific Email 2 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Last Name",
+        "category": "Field Search",
+        "tag": "Field-Last Name",
+        "title": "Last Name Search",
+        "description": "Find records with specific Last Name values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Account Id",
+        "category": "Field Search",
+        "tag": "Field-Account Id",
+        "title": "Account Id Search",
+        "description": "Find records with specific Account Id values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by First Name",
+        "category": "Field Search",
+        "tag": "Field-First Name",
+        "title": "First Name Search",
+        "description": "Find records with specific First Name values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Phone 1",
+        "category": "Field Search",
+        "tag": "Field-Phone 1",
+        "title": "Phone 1 Search",
+        "description": "Find records with specific Phone 1 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Website",
+        "category": "Field Search",
+        "tag": "Field-Website",
+        "title": "Website Search",
+        "description": "Find records with specific Website values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 10000,
+  "file_processed": "temp_leads-10000.csv"
+}

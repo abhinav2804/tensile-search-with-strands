@@ -1,0 +1,334 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "Index": {
+          "type": "long"
+        },
+        "Organization Id": {
+          "type": "keyword",
+          "ignore_above": 65,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "Name": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 135
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "Website": {
+          "type": "keyword",
+          "ignore_above": 87,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "Country": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 151
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "Description": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 159
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "Founded": {
+          "type": "long"
+        },
+        "Industry": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 151
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "Number of employees": {
+          "type": "long"
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with Index",
+    "Find records where Index contains specific value",
+    "Find records with Index greater than 1",
+    "Find records with Index less than 1",
+    "Show all records with Organization Id",
+    "Find records where Organization Id contains specific value",
+    "Search for records with Organization Id like '522816eF8fdBE6d'",
+    "Show all records with Name",
+    "Find records where Name contains specific value",
+    "Search for records with Name like 'Mckinney PLC'",
+    "Show all records with Website",
+    "Find records where Website contains specific value",
+    "Search for records with Website like 'http://soto.com/'",
+    "Show all records with Country",
+    "Find records where Country contains specific value",
+    "Search for records with Country like 'Sri Lanka'",
+    "Patients scheduled for today",
+    "Find patients by diagnosis",
+    "Upcoming appointments",
+    "Search medical records",
+    "Find doctors by specialty",
+    "Patients with pending tests",
+    "Emergency contacts needed",
+    "Insurance verification pending",
+    "Medication refills due",
+    "Follow-up appointments needed",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-16T18:51:59.248655",
+  "domain_info": {
+    "domain": "healthcare",
+    "portal_name": "Healthcare Data Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search patients, appointments, treatments...",
+    "upload_description": "Upload patient records, appointment data, or medical information",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "report"
+    ],
+    "color_scheme": "#10b981",
+    "templates": [
+      {
+        "prompt": "Search records by Country",
+        "category": "Field Search",
+        "tag": "Field-Country",
+        "title": "Country Search",
+        "description": "Find records with specific Country values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Number of employees",
+        "category": "Field Search",
+        "tag": "Field-Number of employees",
+        "title": "Number Of Employees Search",
+        "description": "Find records with specific Number of employees values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Index",
+        "category": "Field Search",
+        "tag": "Field-Index",
+        "title": "Index Search",
+        "description": "Find records with specific Index values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Founded",
+        "category": "Field Search",
+        "tag": "Field-Founded",
+        "title": "Founded Search",
+        "description": "Find records with specific Founded values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Organization Id",
+        "category": "Field Search",
+        "tag": "Field-Organization Id",
+        "title": "Organization Id Search",
+        "description": "Find records with specific Organization Id values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by Description",
+        "category": "Field Search",
+        "tag": "Field-Description",
+        "title": "Description Search",
+        "description": "Find records with specific Description values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 10000,
+  "file_processed": "temp_organizations-10000.csv"
+}

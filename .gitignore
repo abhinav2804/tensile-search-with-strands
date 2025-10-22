@@ -1,3 +1,7 @@
+# Project specific
+indexing-agent/app/indexing-agent
+indexing-agent/output_dir/
+
 # Python virtual environments
 venv*/
 **/venv*/

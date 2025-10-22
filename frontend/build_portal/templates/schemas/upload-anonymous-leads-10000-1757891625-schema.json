@@ -1,0 +1,84 @@
+{
+  "mappings": {
+    "properties": {
+      "Index": {
+        "type": "long"
+      },
+      "Account Id": {
+        "type": "keyword"
+      },
+      "Lead Owner": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "First Name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Last Name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Company": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Phone 1": {
+        "type": "keyword"
+      },
+      "Phone 2": {
+        "type": "keyword"
+      },
+      "Email 1": {
+        "type": "keyword"
+      },
+      "Email 2": {
+        "type": "keyword"
+      },
+      "Website": {
+        "type": "keyword"
+      },
+      "Source": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Deal Stage": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Notes": {
+        "type": "text"
+      }
+    }
+  }
+}

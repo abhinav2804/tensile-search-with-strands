@@ -27,7 +27,7 @@ graph LR
     B --> G[SSE Updates]
 ```
 
-![Detailed Architecture Diagram](./static/architecture-diagram_svg.svg)
+![Detailed Architecture Diagram](./static/architecture_diagram_svg.svg)
 
 This architecture diagram illustrates the complete system flow, showing how different components interact with each other.
 
@@ -47,8 +47,8 @@ This architecture diagram illustrates the complete system flow, showing how diff
 
 ```bash
 # Create and activate virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv indexing-agent
+source indexing-agent/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -83,7 +83,7 @@ app:
 
 ```bash
 # Production
-python app/main.py
+python -m app.main
 
 # Development with hot reload
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -176,7 +176,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 🔄 Processing Flow
 
-![Detailed Processing Flow Diagram](./static/flow-diagram.svg)
+![Detailed Processing Flow Diagram](./static/flow_diagram_svg.svg)
 
 This flow diagram shows the step-by-step processing of documents through the system, from input to final indexing.
 

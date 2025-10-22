@@ -48,7 +48,7 @@ The dashboard fetches live data from the backend API (see main project README fo
 
 ## Example Screenshot
 
-![Dashboard Example](https://raw.githubusercontent.com/abhinav2804/tensile-search-with-strands/main/generativeIndexing/ui/static/dashboard-screenshot.png)
+![Dashboard Example](../generativeIndexing/ui/static/dashboard-screenshot.png)
 
 ---
 Made with ❤️ for Generative Indexing

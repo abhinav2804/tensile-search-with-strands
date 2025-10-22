@@ -1,0 +1,139 @@
+version: '3.8'
+
+networks:
+  mcp-net-b64325fd:
+    driver: bridge
+  ext-net-b64325fd:
+    driver: bridge
+
+services:
+  elasticsearch-b64325fd:
+    image: elastic/elasticsearch:8.18.8
+    container_name: elasticsearch-b64325fd
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
+      - ELASTIC_PASSWORD=changeme
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - mcp-net-b64325fd
+      - ext-net-b64325fd
+    ports:
+      - "7001:9200"
+      - "7101:9300"
+    volumes:
+      - elasticsearch_data_b64325fd:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:changeme -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  elasticsearch-init-b64325fd:
+    image: curlimages/curl:latest
+    container_name: elasticsearch-init-b64325fd
+    networks:
+      - mcp-net-b64325fd
+    depends_on:
+      elasticsearch-b64325fd:
+        condition: service_healthy
+    command: 
+      - sh
+      - -c
+      - |
+        echo 'Waiting for Elasticsearch to be ready...'
+        sleep 10
+        echo 'Creating API key for MCP server...'
+        response=$$(curl -s -u elastic:changeme -X POST 'http://elasticsearch-b64325fd:9200/_security/api_key' -H 'Content-Type: application/json' -d '{
+          "name": "mcp-server-b64325fd",
+          "expiration": "30d",
+          "role_descriptors": {
+            "mcp_role": {
+              "cluster": ["all"],
+              "index": [{
+                "names": ["*"],
+                "privileges": ["all"]
+              }]
+            }
+          }
+        }')
+        echo 'API Key Response:'
+        echo "$$response"
+        encoded_key=$$(echo "$$response" | grep -o '"encoded":"[^"]*"' | cut -d'"' -f4)
+        echo "Generated Encoded API Key: $$encoded_key"
+        echo "$$encoded_key" > /tmp/api_key.txt
+        echo 'API key generation completed'
+    restart: "no"
+    volumes:
+      - api_key_data_b64325fd:/tmp
+
+  mcp-server-b64325fd:
+    image: khemchandrs/elastic-mcp-server:latest
+    container_name: elastic-mcp-server-b64325fd
+    command: ["http"]
+    networks:
+      - mcp-net-b64325fd
+      - ext-net-b64325fd
+    dns:
+      - 8.8.8.8
+    ports:
+      - "7002:8080"
+    environment:
+      ES_URL: http://elasticsearch-b64325fd:9200
+      ES_API_KEY: VzR4bERKb0J0MHlzNUl2dmFWUHQ6UFhhWW9ZbG5xc05wZVhBZThSMUppUQ==
+    restart: unless-stopped
+    depends_on:
+      elasticsearch-b64325fd:
+        condition: service_healthy
+      elasticsearch-init-b64325fd:
+        condition: service_completed_successfully
+    volumes:
+      - api_key_data_b64325fd:/tmp
+    healthcheck:
+      test: ["CMD", "sh", "-c", "netstat -ln | grep :8080"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  doc-agent-api-b64325fd:
+    build: .
+    image: ai-strand-agent:latest
+    container_name: ai-strand-agent-container-b64325fd
+    networks:
+      - mcp-net-b64325fd
+      - ext-net-b64325fd
+    dns:
+      - 8.8.8.8
+    ports:
+      - "7003:5000"
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_REGION=us-east-1
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - AWS_ACCESS_KEY_ID=AKIA2WN2VXZHIYJJHGE7
+      - AWS_SECRET_ACCESS_KEY=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
+      - BEDROCK_INFERENCE_PROFILE_ARN=arn:aws:bedrock:us-east-1:301697000154:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0
+      - MCP_URL=http://elastic-mcp-server-b64325fd:8080/mcp
+    restart: unless-stopped
+    depends_on:
+      elasticsearch-b64325fd:
+        condition: service_healthy
+      mcp-server-b64325fd:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  elasticsearch_data_b64325fd:
+    driver: local
+  api_key_data_b64325fd:
+    driver: local

@@ -19,7 +19,7 @@ A production-ready FastAPI wrapper that provides REST API endpoints to interact 
 - **AWS Account** with Bedrock access
 - **AWS Credentials** configured (IAM role, access keys, or AWS CLI)
 - **Elasticsearch cluster** accessible via the configured endpoint
-- **MCP Server** running on localhost:8080 (for enhanced tool support)
+- **MCP Server** running on 82.112.235.26:8080 (for enhanced tool support)
 
 ## 🛠️ Installation & Setup
 
@@ -206,7 +206,7 @@ elastic_api_key = "your_api_key"
 ```
 
 ### AWS Bedrock Configuration
-Edit `api_wrapper.py` to configure:
+Edit `strand_agent_api.py` to configure:
 ```python
 bedrock_model = BedrockModel(
     model_id="your-model-arn",
@@ -253,7 +253,7 @@ The API provides detailed error responses:
 ## 🏗️ Project Structure
 
 ```
-├── api_wrapper.py              # Main FastAPI application
+├── strand_agent_api.py         # Main Strand Agent FastAPI application
 ├── start_api.py               # Development startup script
 ├── elastic_mapping_tool.py    # Elasticsearch tools and functions
 ├── elasticsearch_agent_prompt.py # AI system prompt

@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Discovery AI - Search Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, 
+                #0a0a0f 0%, 
+                #1a0f2e 15%,
+                #0f1419 30%, 
+                #1e1b4b 45%, 
+                #312e81 60%,
+                #1e1b4b 75%,
+                #0f1419 90%, 
+                #0a0a0f 100%);
+            background-size: 400% 400%;
+            animation: backgroundMove 25s ease infinite;
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            background-attachment: fixed;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 25%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 25% 75%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 25% 25%, rgba(59, 130, 246, 0.4) 0%, transparent 70%),
+                radial-gradient(ellipse at 75% 35%, rgba(139, 92, 246, 0.35) 0%, transparent 65%),
+                radial-gradient(ellipse at 45% 85%, rgba(16, 185, 129, 0.3) 0%, transparent 75%),
+                radial-gradient(ellipse at 85% 75%, rgba(236, 72, 153, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 15% 90%, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
+            animation: backgroundPulse 40s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                conic-gradient(from 60deg at 35% 45%, transparent 0deg, rgba(139, 92, 246, 0.08) 120deg, transparent 240deg),
+                conic-gradient(from 240deg at 65% 55%, transparent 0deg, rgba(59, 130, 246, 0.06) 90deg, transparent 180deg),
+                conic-gradient(from 120deg at 50% 80%, transparent 0deg, rgba(16, 185, 129, 0.07) 150deg, transparent 300deg);
+            animation: rotateGradients 60s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+            20% { opacity: 1; transform: scale(1.1) rotate(2deg); }
+            40% { opacity: 0.85; transform: scale(0.95) rotate(-1.5deg); }
+            60% { opacity: 1; transform: scale(1.05) rotate(1.8deg); }
+            80% { opacity: 0.9; transform: scale(1.02) rotate(-0.8deg); }
+        }
+
+        @keyframes rotateGradients {
+            from { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.05); }
+            50% { transform: rotate(180deg) scale(0.98); }
+            75% { transform: rotate(270deg) scale(1.03); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 140px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 1.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 35%, #10b981 70%, #ec4899 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 4s ease-in-out infinite;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: linear-gradient(135deg,
+                rgba(139, 92, 246, 0.2) 0%,
+                rgba(139, 92, 246, 0.4) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #a78bfa;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg,
+                rgba(139, 92, 246, 0.4) 0%,
+                rgba(139, 92, 246, 0.6) 100%);
+            color: #c4b5fd;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .query-display {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.9) 0%, 
+                rgba(30, 41, 59, 0.8) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .query-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.8), 
+                rgba(59, 130, 246, 0.8), 
+                rgba(16, 185, 129, 0.8),
+                rgba(139, 92, 246, 0.8));
+            background-size: 300% 100%;
+            animation: borderFlow 4s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .query-label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: #8b5cf6;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .query-text {
+            font-size: 1.2rem;
+            color: #f1f5f9;
+            font-weight: 600;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .results-container {
+            flex: 1;
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(30, 41, 59, 0.85) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+            backdrop-filter: blur(30px);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1.2s ease-out 0.3s both;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.9), 
+                rgba(59, 130, 246, 0.9), 
+                rgba(16, 185, 129, 0.9),
+                rgba(236, 72, 153, 0.9),
+                rgba(139, 92, 246, 0.9));
+            background-size: 400% 100%;
+            animation: borderFlow 5s linear infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-content {
+            padding: 2.5rem;
+            max-height: none;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .results-title {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .result-count {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+            color: #6ee7b7;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .category-badge {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            color: #c4b5fd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-text {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .details-text {
+            font-size: 1.05rem;
+            color: #cbd5e1;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlights-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .highlights-title {
+            color: #10b981;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .highlights-text {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .price-range {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+            color: #38bdf8;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin: 1rem 0;
+        }
+
+        /* Product Table Styles */
+        .product-table-container {
+            margin: 2rem 0;
+            background: linear-gradient(145deg,
+                rgba(17, 24, 39, 0.9) 0%,
+                rgba(30, 41, 59, 0.8) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(25px);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .product-table th {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            color: #10b981;
+            font-weight: 700;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            color: #e2e8f0;
+            vertical-align: top;
+        }
+
+        .product-table tr:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .product-name-cell {
+            font-weight: 600;
+            color: #f1f5f9;
+            max-width: 200px;
+        }
+
+        .brand-cell {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .features-cell {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 250px;
+        }
+
+        .rating-cell {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .price-cell {
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .input-section {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(90vw, 900px);
+            z-index: 200;
+            animation: slideInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(145deg, 
+                rgba(5, 15, 35, 0.98) 0%, 
+                rgba(15, 25, 45, 0.95) 50%, 
+                rgba(5, 15, 35, 0.98) 100%);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            backdrop-filter: blur(30px);
+            box-shadow: 
+                0 20px 80px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 0 1px rgba(139, 92, 246, 0.3);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.8), 
+                rgba(59, 130, 246, 0.9), 
+                rgba(16, 185, 129, 0.8), 
+                rgba(236, 72, 153, 0.8),
+                rgba(139, 92, 246, 0.8));
+            background-size: 300% 100%;
+            border-radius: 50px;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            animation: borderFlow 2s linear infinite;
+        }
+
+        .input-container:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 25px 100px rgba(139, 92, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(139, 92, 246, 0.5);
+        }
+
+        .input-container:focus-within {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 30px 120px rgba(139, 92, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                0 0 0 1px rgba(139, 92, 246, 0.6);
+        }
+
+        .dropdown-container {
+            position: relative;
+            flex-shrink: 0;
+            margin-left: 1rem;
+            z-index: 10;
+        }
+
+        .dropdown {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            padding: 1rem 1.8rem 1rem 1rem;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1em 1em;
+            min-width: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:hover {
+            color: #e2e8f0;
+        }
+
+        .dropdown option {
+            background: rgba(5, 15, 35, 0.98);
+            color: #e2e8f0;
+            padding: 0.5rem;
+        }
+
+        .dropdown-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.4), transparent);
+        }
+
+        .main-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 1rem 1.25rem;
+            outline: none;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+            z-index: 10;
+            position: relative;
+        }
+
+        .main-input::placeholder {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+
+        .main-input:focus::placeholder {
+            color: #475569;
+            transform: translateX(4px);
+        }
+
+        .main-input:focus {
+            color: #ffffff;
+        }
+
+        .submit-btn {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.25) 0%, 
+                rgba(139, 92, 246, 0.4) 50%, 
+                rgba(139, 92, 246, 0.25) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            padding: 0.8rem;
+            margin: 0.4rem;
+            color: #a78bfa;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 6px 20px rgba(139, 92, 246, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.4) 0%, 
+                rgba(139, 92, 246, 0.6) 50%, 
+                rgba(139, 92, 246, 0.4) 100%);
+            transform: scale(1.08) rotate(5deg);
+            color: #c4b5fd;
+            box-shadow: 
+                0 10px 30px rgba(139, 92, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .submit-btn:hover svg {
+            transform: translateX(2px) scale(1.15);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2rem; }
+            .container { padding: 1.5rem; padding-bottom: 140px; }
+            .input-section { width: min(95vw, 900px); }
+            .input-container { min-height: 60px; }
+            .submit-btn { width: 44px; height: 44px; }
+            .results-content { padding: 1.5rem; }
+            .back-button { position: relative; top: 0; left: 0; margin-bottom: 1rem; }
+            .product-table-container { overflow-x: auto; }
+            .product-table th, .product-table td { padding: 0.75rem 0.5rem; font-size: 0.8rem; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.3); }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(139, 92, 246, 0.6); 
+            border-radius: 4px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5"/>
+                <path d="M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Search
+        </a>
+
+        <header class="header">
+            <h1>Search Results</h1>
+            <p>AI-powered product discovery with intelligent matching</p>
+        </header>
+
+        <div class="query-display">
+            <div class="query-label">🔍 PRODUCT QUERY</div>
+            <div id="queryText" class="query-text">Loading your search query...</div>
+        </div>
+
+        <div class="results-container">
+            <div id="resultsContent" class="results-content">
+                <div class="results-header">
+                    <div class="results-title">
+                        <span>Search Results</span>
+                        <span id="resultCount" class="result-count">Loading...</span>
+                    </div>
+                    <div id="categoryBadge" class="category-badge">Processing...</div>
+                </div>
+
+                <div class="summary-section">
+                    <div id="summaryText" class="summary-text">
+                        Analyzing your search query and matching products from our comprehensive database...
+                    </div>
+                </div>
+
+                <div id="detailsText" class="details-text">
+                    Please wait while we process your request and gather the most relevant product information.
+                </div>
+
+                <div class="highlights-section">
+                    <div class="highlights-title">✨ Key Highlights</div>
+                    <div id="highlightsText" class="highlights-text">
+                        Loading product insights and recommendations...
+                    </div>
+                </div>
+
+                <div id="priceRange" class="price-range" style="display: none;">
+                    Price Range: Loading...
+                </div>
+
+                <div class="product-table-container">
+                    <table id="productTable" class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Brand</th>
+                                <th>Key Features</th>
+                                <th>Rating</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Products will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-section">
+        <form id="searchForm">
+            <div class="input-container">
+                <div class="dropdown-container">
+                    <select id="categorySelector" class="dropdown">
+                        <option value="auto">🔍 Auto-detect</option>
+                        <option value="electronics">📱 Electronics</option>
+                        <option value="fashion">👕 Fashion</option>
+                        <option value="home">🏠 Home & Furniture</option>
+                        <option value="sports">⚽ Sports & Fitness</option>
+                        <option value="automotive">🚗 Automotive</option>
+                    </select>
+                </div>
+                
+                <input id="userInput" class="main-input" type="text" placeholder="Ask a follow-up question or search for more products..." value="" autocomplete="off" />
+                
+                <button id="submitBtn" type="submit" class="submit-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13"/>
+                        <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Template query mappings with realistic product data
+        const templateResults = {
+            'Find me a red cotton t-shirt under 500 rupees with Nike brand, plain design without pockets, available for same-day delivery': {
+                category: "Fashion & Apparel",
+                resultCount: 4,
+                summary: "Found 4 premium Nike cotton t-shirts matching your color, material, and delivery requirements within your budget range.",
+                details: "Our search identified several Nike cotton t-shirts in red color that meet your specific criteria. All products feature 100% cotton material, plain design without pockets, and are available for same-day delivery in your area.",
+                highlights: "Top matches include Nike's premium cotton collection with moisture-wicking technology, pre-shrunk fabric, and reinforced stitching. All products come with Nike's quality guarantee and are available in multiple sizes.",
+                priceRange: "₹399 - ₹499",
+                products: [
+                    { 
+                        name: "Nike Dri-FIT Cotton Tee", 
+                        brand: "Nike", 
+                        price: "₹449", 
+                        features: "100% Cotton, Plain Design, Moisture-Wicking",
+                        rating: "4.5",
+                        badges: ["Express Delivery", "Premium Quality"]
+                    },
+                    { 
+                        name: "Nike Essential Cotton T-Shirt", 
+                        brand: "Nike", 
+                        price: "₹399", 
+                        features: "Pure Cotton, No Pockets, Pre-Shrunk",
+                        rating: "4.3",
+                        badges: ["Same Day", "Best Seller"]
+                    },
+                    { 
+                        name: "Nike Classic Fit Cotton Tee", 
+                        brand: "Nike", 
+                        price: "₹479", 
+                        features: "Soft Cotton, Plain Red, Reinforced Seams",
+                        rating: "4.6",
+                        badges: ["Express Delivery", "Premium"]
+                    },
+                    { 
+                        name: "Nike Everyday Cotton T-Shirt", 
+                        brand: "Nike", 
+                        price: "₹429", 
+                        features: "100% Cotton, Simple Design, Comfortable Fit",
+                        rating: "4.4",
+                        badges: ["Same Day", "Top Rated"]
+                    }
+                ]
+            },
+            'Show me laptops with 16GB RAM, Intel i7 processor, under 80000 rupees, with SSD storage, good for gaming and video editing': {
+                category: "Electronics & Tech",
+                resultCount: 6,
+                summary: "Found 6 high-performance laptops with Intel i7 processors, 16GB RAM, and SSD storage optimized for gaming and video editing within your budget.",
+                details: "Our search identified powerful laptops from leading brands including ASUS, HP, and Dell that meet your performance specifications. All models feature Intel i7 processors (10th gen or newer), 16GB RAM, SSD storage, and dedicated graphics cards suitable for gaming and video editing tasks.",
+                highlights: "Top matches include gaming laptops with NVIDIA RTX graphics, high refresh rate displays, advanced cooling systems, and professional-grade video editing capabilities. All models support 4K video rendering and modern gaming at high settings.",
+                priceRange: "₹65,999 - ₹79,999",
+                products: [
+                    { 
+                        name: "ASUS ROG Strix G15", 
+                        brand: "ASUS", 
+                        price: "₹74,999", 
+                        features: "Intel i7-11800H, 16GB RAM, 512GB SSD, RTX 3060",
+                        rating: "4.7",
+                        badges: ["Gaming Ready", "Premium"]
+                    },
+                    { 
+                        name: "HP Pavilion Gaming 15", 
+                        brand: "HP", 
+                        price: "₹68,999", 
+                        features: "Intel i7-10750H, 16GB RAM, 1TB SSD, GTX 1660Ti",
+                        rating: "4.5",
+                        badges: ["Best Value", "Video Editing"]
+                    },
+                    { 
+                        name: "Dell G15 Gaming Laptop", 
+                        brand: "Dell", 
+                        price: "₹72,999", 
+                        features: "Intel i7-11800H, 16GB RAM, 512GB SSD, RTX 3050Ti",
+                        rating: "4.4",
+                        badges: ["Gaming", "Professional"]
+                    },
+                    { 
+                        name: "ASUS TUF Gaming A15", 
+                        brand: "ASUS", 
+                        price: "₹69,999", 
+                        features: "Intel i7-11370H, 16GB RAM, 1TB SSD, RTX 3050",
+                        rating: "4.6",
+                        badges: ["Durable", "Gaming Ready"]
+                    },
+                    { 
+                        name: "HP Omen 15", 
+                        brand: "HP", 
+                        price: "₹76,999", 
+                        features: "Intel i7-11800H, 16GB RAM, 512GB SSD, RTX 3060",
+                        rating: "4.5",
+                        badges: ["High Performance", "Premium"]
+                    },
+                    { 
+                        name: "Lenovo Legion 5", 
+                        brand: "Lenovo", 
+                        price: "₹71,999", 
+                        features: "Intel i7-10750H, 16GB RAM, 1TB SSD, RTX 3050Ti",
+                        rating: "4.3",
+                        badges: ["Gaming", "Value Pick"]
+                    }
+                ]
+            },
+            'Find wireless headphones with active noise cancellation, over 20 hours battery life, under 5000 rupees, compatible with both Android and iPhone': {
+                category: "Audio Equipment",
+                resultCount: 5,
+                summary: "Found 5 premium wireless headphones with active noise cancellation, 20+ hours battery life, and universal device compatibility within your budget.",
+                details: "Our search identified high-quality wireless headphones from Sony, JBL, and other trusted brands featuring active noise cancellation technology, extended battery life exceeding 25 hours, and seamless compatibility with both Android and iPhone devices via Bluetooth 5.0+.",
+                highlights: "Top matches include industry-leading noise cancellation technology, quick charge capabilities, premium audio drivers, and comprehensive warranty coverage. All products support voice assistants and hands-free calling.",
+                priceRange: "₹3,999 - ₹4,999",
+                products: [
+                    { 
+                        name: "Sony WH-CH720N", 
+                        brand: "Sony", 
+                        price: "₹4,799", 
+                        features: "Active Noise Cancelling, 35Hr Battery, Quick Charge",
+                        rating: "4.4",
+                        badges: ["Premium", "ANC"]
+                    },
+                    { 
+                        name: "JBL Tune 760NC", 
+                        brand: "JBL", 
+                        price: "₹4,299", 
+                        features: "ANC, 35Hr Playtime, Pure Bass Sound",
+                        rating: "4.3",
+                        badges: ["Best Value", "Long Battery"]
+                    },
+                    { 
+                        name: "Audio-Technica ATH-ANC500BT", 
+                        brand: "Audio-Technica", 
+                        price: "₹4,999", 
+                        features: "QuietPoint ANC, 25Hr Battery, Hi-Res Audio",
+                        rating: "4.5",
+                        badges: ["Premium", "Hi-Res"]
+                    },
+                    { 
+                        name: "Sennheiser HD 350BT", 
+                        brand: "Sennheiser", 
+                        price: "₹4,599", 
+                        features: "Bluetooth 5.0, 30Hr Battery, Foldable Design",
+                        rating: "4.6",
+                        badges: ["Premium", "Durable"]
+                    },
+                    { 
+                        name: "Boat Nirvana 751 ANC", 
+                        brand: "Boat", 
+                        price: "₹3,999", 
+                        features: "Hybrid ANC, 54Hr Playtime, ASAP Charge",
+                        rating: "4.2",
+                        badges: ["Budget Friendly", "Long Battery"]
+                    }
+                ]
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQueryResults();
+            initializeSearchForm();
+        });
+
+        function loadQueryResults() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q') || localStorage.getItem('currentQuery') || 'Find me a high-quality product with specific features...';
+            
+            // Update query display
+            document.getElementById('queryText').textContent = query;
+
+            // Find matching template result or use default
+            let resultData = templateResults[query];
+            
+            if (!resultData) {
+                // Generate generic results for non-template queries
+                resultData = generateGenericResults(query);
+            }
+
+            // Populate results after small delay for loading effect
+            setTimeout(() => {
+                populateResults(resultData);
+            }, 1500);
+        }
+
+        function generateGenericResults(query) {
+            const categories = [
+                { name: "Electronics & Tech" },
+                { name: "Fashion & Apparel" },
+                { name: "Home & Furniture" },
+                { name: "Sports & Fitness" },
+                { name: "Audio Equipment" }
+            ];
+            
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const resultCount = Math.floor(Math.random() * 5) + 3;
+            
+            return {
+                category: randomCategory.name,
+                resultCount: resultCount,
+                summary: `Found ${resultCount} products matching your search criteria with verified quality and competitive pricing.`,
+                details: "Our AI-powered search analyzed your requirements and identified products from trusted brands with high customer ratings and reliable availability.",
+                highlights: "Top matches include products with excellent customer reviews, warranty coverage, and competitive pricing from authorized retailers.",
+                priceRange: "₹1,999 - ₹15,999",
+                products: [
+                    { 
+                        name: "Premium Product Match", 
+                        brand: "Top Brand", 
+                        price: "₹8,999", 
+                        features: "Advanced Features, Premium Quality",
+                        rating: "4.5",
+                        badges: ["Premium", "Top Rated"]
+                    },
+                    { 
+                        name: "Value Product Option", 
+                        brand: "Trusted Brand", 
+                        price: "₹5,499", 
+                        features: "Essential Features, Good Quality",
+                        rating: "4.2",
+                        badges: ["Best Value", "Popular"]
+                    },
+                    { 
+                        name: "Professional Grade Product", 
+                        brand: "Pro Brand", 
+                        price: "₹12,999", 
+                        features: "Professional Grade, Enhanced Performance",
+                        rating: "4.7",
+                        badges: ["Professional", "Premium"]
+                    }
+                ]
+            };
+        }
+
+        function populateResults(data) {
+            // Update category and results info
+            document.getElementById('categoryBadge').textContent = data.category;
+            document.getElementById('resultCount').textContent = `${data.resultCount} Results`;
+
+            // Update content sections
+            document.getElementById('summaryText').textContent = data.summary;
+            document.getElementById('detailsText').textContent = data.details;
+            document.getElementById('highlightsText').textContent = data.highlights;
+
+            // Update price range
+            const priceRangeElement = document.getElementById('priceRange');
+            priceRangeElement.textContent = `Price Range: ${data.priceRange}`;
+            priceRangeElement.style.display = 'inline-block';
+
+            // Generate product table
+            const productTable = document.getElementById('productTable');
+            if (productTable) {
+                const tbody = productTable.querySelector('tbody');
+                tbody.innerHTML = generateProductTableRows(data.products);
+            } else {
+                console.error('Product table element not found');
+            }
+        }
+
+        function generateProductTableRows(products) {
+            return products.map(product => `
+                <tr>
+                    <td class="product-name-cell">${product.name}</td>
+                    <td class="brand-cell">${product.brand}</td>
+                    <td class="features-cell">${product.features}</td>
+                    <td class="rating-cell">${product.rating}/5</td>
+                    <td class="price-cell">${product.price}</td>
+                </tr>
+            `).join('');
+        }
+
+        function initializeSearchForm() {
+            const searchForm = document.getElementById('searchForm');
+            const userInput = document.getElementById('userInput');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Form submission
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const query = userInput.value.trim();
+                if (query) {
+                    // Redirect to new search with updated query
+                    const params = new URLSearchParams({
+                        q: query,
+                        category: document.getElementById('categorySelector').value,
+                        timestamp: Date.now()
+                    });
+                    window.location.href = `result.html?${params.toString()}`;
+                }
+            });
+
+            // Input validation
+            userInput.addEventListener('input', () => {
+                submitBtn.disabled = !userInput.value.trim();
+            });
+
+            // Initial button state
+            submitBtn.disabled = !userInput.value.trim();
+        }
+    </script>
+</body>
+</html>

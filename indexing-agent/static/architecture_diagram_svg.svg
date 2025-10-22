@@ -7,7 +7,7 @@
     Generative Indexing Architecture
   </text>
   <text x="400" y="70" font-family="Arial, sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">
-    AI-Powered Document Processing & Search Pipeline
+    AI-Powered Document Processing and Search Pipeline
   </text>
   
   <!-- Input Layer -->
@@ -23,7 +23,8 @@
   </text>
   
   <!-- Arrow 1 -->
-  <path d="M 400 220 L 400 270" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="220" x2="400" y2="270" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="400,270 395,260 405,260" fill="#60a5fa"/>
   
   <!-- FastAPI Core -->
   <rect x="250" y="270" width="300" height="120" rx="12" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
@@ -34,14 +35,15 @@
     Pipeline Orchestration
   </text>
   <text x="400" y="350" font-family="Arial, sans-serif" font-size="12" fill="#dbeafe" text-anchor="middle">
-    • Real-time SSE Updates
+    Real-time SSE Updates
   </text>
   <text x="400" y="370" font-family="Arial, sans-serif" font-size="12" fill="#dbeafe" text-anchor="middle">
-    • Smart Chunking (1000 chars)
+    Smart Chunking (1000 chars)
   </text>
   
   <!-- Arrow 2 -->
-  <path d="M 400 390 L 400 440" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="390" x2="400" y2="440" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="400,440 395,430 405,430" fill="#60a5fa"/>
   
   <!-- Service Layer -->
   <!-- DynamoDB -->
@@ -90,10 +92,16 @@
   </text>
   
   <!-- Arrows from services -->
-  <path d="M 150 560 L 150 640 L 400 640" stroke="#60a5fa" stroke-width="2" fill="none"/>
-  <path d="M 400 560 L 400 640" stroke="#60a5fa" stroke-width="2" fill="none"/>
-  <path d="M 650 560 L 650 640 L 400 640" stroke="#60a5fa" stroke-width="2" fill="none"/>
-  <path d="M 400 640 L 400 690" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <line x1="150" y1="560" x2="150" y2="640" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="150" y1="640" x2="400" y2="640" stroke="#60a5fa" stroke-width="2"/>
+  
+  <line x1="400" y1="560" x2="400" y2="640" stroke="#60a5fa" stroke-width="2"/>
+  
+  <line x1="650" y1="560" x2="650" y2="640" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="650" y1="640" x2="400" y2="640" stroke="#60a5fa" stroke-width="2"/>
+  
+  <line x1="400" y1="640" x2="400" y2="690" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="400,690 395,680 405,680" fill="#60a5fa"/>
   
   <!-- Elasticsearch Output -->
   <rect x="300" y="690" width="200" height="100" rx="12" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
@@ -146,11 +154,4 @@
   <text x="650" y="865" font-family="Arial, sans-serif" font-size="10" fill="#94a3b8">
     Configuration
   </text>
-  
-  <!-- Arrow marker definition -->
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#60a5fa"/>
-    </marker>
-  </defs>
 </svg>

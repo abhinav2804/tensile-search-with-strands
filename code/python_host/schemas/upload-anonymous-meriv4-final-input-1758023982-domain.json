@@ -1,0 +1,71 @@
+{
+  "domain": "ecommerce",
+  "portal_name": "Product Discovery Portal",
+  "entity_name": "product",
+  "search_placeholder": "Search products by name, brand, category, price...",
+  "upload_description": "Upload product catalogs, inventory data, or customer data",
+  "primary_actions": [
+    "search",
+    "filter",
+    "compare",
+    "analyze"
+  ],
+  "color_scheme": "#8b5cf6",
+  "templates": [
+    {
+      "prompt": "Search records by upload_id",
+      "category": "Field Search",
+      "tag": "Field-upload_id",
+      "title": "Upload_Id Search",
+      "description": "Find records with specific upload_id values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by q",
+      "category": "Field Search",
+      "tag": "Field-q",
+      "title": "Q Search",
+      "description": "Find records with specific q values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by display_id",
+      "category": "Field Search",
+      "tag": "Field-display_id",
+      "title": "Display_Id Search",
+      "description": "Find records with specific display_id values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by isq",
+      "category": "Field Search",
+      "tag": "Field-isq",
+      "title": "Isq Search",
+      "description": "Find records with specific isq values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search all records",
+      "category": "General Search",
+      "tag": "General",
+      "title": "General Search",
+      "description": "Search all records in the dataset",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search all records",
+      "category": "General Search",
+      "tag": "General",
+      "title": "General Search",
+      "description": "Search all records in the dataset",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}

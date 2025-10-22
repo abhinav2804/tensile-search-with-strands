@@ -5,12 +5,25 @@ import base64
 from functools import wraps
 from werkzeug.utils import secure_filename
 
+import requests
+import json # Used for pretty-printing the response
+import sseclient
+
 app = Flask(__name__)
 
 # Configuration
 BASE_DIR = "/var/www/es"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'json', 'csv', 'xml', 'doc', 'docx'}
 
+# 1. Define the base URL
+INDEXING_AGENT_URL = "http://localhost:8000/triggerIndexingLive"
+
+# 2. Define the query parameters (everything after the '?')
+INDEXING_AGENT_PARAMS = {
+    "user_id": "",
+    "data_path": "",
+    "user_query_path": ""
+}
 # Authentication configuration
 API_KEYS = {
     'admin': 'admin123',
@@ -87,6 +100,9 @@ def create_directory_structure(userid):
 @require_auth
 def upload_file():
     """Upload file endpoint"""
+
+    endOfFile = False
+
     try:
         # Validate required parameters
         if 'userid' not in request.form:
@@ -113,6 +129,11 @@ def upload_file():
         if not allowed_file(file.filename):
             return jsonify({'error': 'File type not allowed'}), 400
         
+
+        if '##last-input##' in file.filename:
+            # The filename contains the substring
+            endOfFile = True
+
         # Create base directory if it doesn't exist
         os.makedirs(BASE_DIR, exist_ok=True)
         
@@ -134,17 +155,99 @@ def upload_file():
         
         file.save(file_path)
         
+        if endOfFile:
+            INDEXING_AGENT_PARAMS["user_id"] = userid
+            INDEXING_AGENT_PARAMS["data_path"] = data_dir
+            INDEXING_AGENT_PARAMS["user_query_path"] = query_dir
+            indexingResponse = callIndexingAgent()
+
+            if indexingResponse:
+                print("Indexing response received", indexingResponse)
+
         return jsonify({
             'message': 'File uploaded successfully',
             'userid': userid,
             'filetype': filetype,
             'filename': unique_filename,
             'file_path': file_path,
-            'file_size': os.path.getsize(file_path)
+            'file_size': os.path.getsize(file_path),
+            'target-dir': target_dir
         }), 200
+
         
     except Exception as e:
         return jsonify({'error': f'Upload failed: {str(e)}'}), 500
+
+
+def callIndexingAgent():
+    try:
+        print(INDEXING_AGENT_PARAMS)
+        response = requests.get(INDEXING_AGENT_URL, params=INDEXING_AGENT_PARAMS, stream=True, timeout=300)
+
+        response.raise_for_status() # Raises an HTTPError for bad responses (4xx or 5xx)
+
+        print("SSE Client Created")
+        event_count = 0
+        for line in response.iter_lines(decode_unicode=True):
+            if line:
+                # SSE format: "data: {json}"
+                if line.startswith('data: '):
+                    event_count += 1
+                    data = line[6:]  # Remove "data: " prefix
+                    
+                    try:
+                        event_data = json.loads(data)
+                        print("-" * 30)
+                        print(f"Event #{event_count} Received!")
+                        print(f"  Step: {event_data.get('step')}")
+                        print(f"  Status: {event_data.get('status')}")
+                        print(f"  Progress: {event_data.get('progress')}%")
+                        print(f"  Details: {event_data.get('details')}")
+                        if 'summary' in event_data:
+                            print(f"  Summary: {event_data.get('summary')}")
+                        print("-" * 30)
+                    except json.JSONDecodeError as je:
+                        print(f"Failed to parse event data: {data}")
+                        print(f"JSON Error: {je}")
+        
+        print(f"SSE stream ended. Total events received: {event_count}")
+        print("Indexing process completed successfully!")
+        print("SSE Client ended")
+        # 5. Process the response
+        print("Request Successful!")
+        print(f"Status Code: {response.status_code}")
+
+        # Check content type and print relevant data
+        if response.headers.get('Content-Type', '').startswith('application/json'):
+            # If the response is JSON, print it nicely
+            print("Response JSON:")
+            # Use json.dumps for pretty printing the JSON object
+            print(json.dumps(response.json(), indent=4))
+        else:
+            # Otherwise, print the raw text content
+            print("Response Text:")
+        
+        return {
+            'success': True, 
+            'message': 'Indexing completed',
+            'events_processed': event_count
+        }
+        
+    except requests.exceptions.Timeout as errt:
+        print(f"TIMEOUT ERROR: {errt}")
+        return {'success': False, 'error': f"Timeout Error: {errt}"}
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP ERROR: {errh}")
+        print(f"Response content: {response.text if 'response' in locals() else 'No response'}")
+        return {'success': False, 'error': f"HTTP Error: {errh}"}
+    except requests.exceptions.ConnectionError as errc:
+        print(f"CONNECTION ERROR: {errc}")
+        return {'success': False, 'error': f"Error Connecting: {errc}"}
+    except Exception as err:
+        print(f"UNEXPECTED ERROR: {err}")
+        import traceback
+        traceback.print_exc()
+        return {'success': False, 'error': f"An unexpected error occurred: {err}"}
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -188,4 +291,4 @@ def list_user_files(userid):
 if __name__ == '__main__':
     # Create base directory if it doesn't exist
     os.makedirs(BASE_DIR, exist_ok=True)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=7001)

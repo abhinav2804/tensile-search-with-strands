@@ -1,0 +1,51 @@
+{
+  "mappings": {
+    "properties": {
+      "Index": {
+        "type": "long"
+      },
+      "Organization Id": {
+        "type": "keyword"
+      },
+      "Name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Website": {
+        "type": "keyword"
+      },
+      "Country": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Description": {
+        "type": "text"
+      },
+      "Founded": {
+        "type": "long"
+      },
+      "Industry": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Number of employees": {
+        "type": "long"
+      }
+    }
+  }
+}

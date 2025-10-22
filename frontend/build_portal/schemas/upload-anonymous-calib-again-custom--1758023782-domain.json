@@ -1,0 +1,71 @@
+{
+  "domain": "real_estate",
+  "portal_name": "Property Management Portal",
+  "entity_name": "property",
+  "search_placeholder": "Search properties by location, price, features...",
+  "upload_description": "Upload property listings, rental data, or market information",
+  "primary_actions": [
+    "search",
+    "filter",
+    "compare",
+    "analyze"
+  ],
+  "color_scheme": "#14b8a6",
+  "templates": [
+    {
+      "prompt": "Search records by MARS STATUS",
+      "category": "Field Search",
+      "tag": "Field-MARS STATUS",
+      "title": "Mars Status Search",
+      "description": "Find records with specific MARS STATUS values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by ALFA STATUS",
+      "category": "Field Search",
+      "tag": "Field-ALFA STATUS",
+      "title": "Alfa Status Search",
+      "description": "Find records with specific ALFA STATUS values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by MODIFIED KEYWORD",
+      "category": "Field Search",
+      "tag": "Field-MODIFIED KEYWORD",
+      "title": "Modified Keyword Search",
+      "description": "Find records with specific MODIFIED KEYWORD values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by SOLR_INFO",
+      "category": "Field Search",
+      "tag": "Field-SOLR_INFO",
+      "title": "Solr_Info Search",
+      "description": "Find records with specific SOLR_INFO values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by ID 1",
+      "category": "Field Search",
+      "tag": "Field-ID 1",
+      "title": "Id 1 Search",
+      "description": "Find records with specific ID 1 values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records by MERI EXECUTION",
+      "category": "Field Search",
+      "tag": "Field-MERI EXECUTION",
+      "title": "Meri Execution Search",
+      "description": "Find records with specific MERI EXECUTION values",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}
