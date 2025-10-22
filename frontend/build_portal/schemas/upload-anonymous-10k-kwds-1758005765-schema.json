@@ -1,0 +1,268 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 191
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "line_number": {
+          "type": "long",
+          "searchable": false,
+          "query_referenced": false
+        },
+        "filename": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 117
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with content",
+    "Find records where content contains specific value",
+    "Search for records with content like 'q'",
+    "Show all records with line_number",
+    "Find records where line_number contains specific value",
+    "Find records with line_number greater than 1",
+    "Find records with line_number less than 1",
+    "Show all records with filename",
+    "Find records where filename contains specific value",
+    "Search for records with filename like 'temp_10k_kwds.txt'",
+    "Students by grade level",
+    "Course enrollment numbers",
+    "Students with low attendance",
+    "Upcoming exams",
+    "Teacher schedules",
+    "Parent contact information",
+    "Students needing support",
+    "Graduation requirements",
+    "Extracurricular participation",
+    "Academic performance trends",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-16T12:26:05.229570",
+  "domain_info": {
+    "domain": "education",
+    "portal_name": "Education Management Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search students, courses, grades...",
+    "upload_description": "Upload student data, course information, or academic records",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "report"
+    ],
+    "color_scheme": "#ef4444",
+    "templates": [
+      {
+        "prompt": "Search records by content",
+        "category": "Field Search",
+        "tag": "Field-content",
+        "title": "Content Search",
+        "description": "Find records with specific content values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by filename",
+        "category": "Field Search",
+        "tag": "Field-filename",
+        "title": "Filename Search",
+        "description": "Find records with specific filename values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by line_number",
+        "category": "Field Search",
+        "tag": "Field-line_number",
+        "title": "Line_Number Search",
+        "description": "Find records with specific line_number values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search all records",
+        "category": "General Search",
+        "tag": "General",
+        "title": "General Search",
+        "description": "Search all records in the dataset",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search all records",
+        "category": "General Search",
+        "tag": "General",
+        "title": "General Search",
+        "description": "Search all records in the dataset",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search all records",
+        "category": "General Search",
+        "tag": "General",
+        "title": "General Search",
+        "description": "Search all records in the dataset",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 8750,
+  "file_processed": "temp_10k_kwds.txt"
+}

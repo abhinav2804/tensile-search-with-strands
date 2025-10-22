@@ -1,0 +1,135 @@
+{
+  "schema": {
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates": {
+            "match": "*date*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 89
+            }
+          },
+          "searchable": true
+        },
+        "line_number": {
+          "type": "long",
+          "searchable": false
+        },
+        "filename": {
+          "type": "text",
+          "analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 67
+            }
+          },
+          "searchable": true
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with content",
+    "Find records where content contains specific value",
+    "Search for records with content like 'q'",
+    "Show all records with line_number",
+    "Find records where line_number contains specific value",
+    "Find records with line_number greater than 1",
+    "Find records with line_number less than 1",
+    "Show all records with filename",
+    "Find records where filename contains specific value",
+    "Search for records with filename like 'temp_10k_kwds.txt'",
+    "Students by grade level",
+    "Course enrollment numbers",
+    "Students with low attendance",
+    "Upcoming exams",
+    "Teacher schedules",
+    "Parent contact information",
+    "Students needing support",
+    "Graduation requirements",
+    "Extracurricular participation",
+    "Academic performance trends",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-15T17:26:41.716373",
+  "domain_info": {
+    "domain": "education",
+    "portal_name": "Education Management Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search students, courses, grades...",
+    "upload_description": "Upload student data, course information, or academic records",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "report"
+    ],
+    "color_scheme": "#ef4444",
+    "templates": [
+      {
+        "prompt": "Search records with specific line_number values",
+        "category": "Field Search",
+        "tag": "Targeted",
+        "title": "Line_Number Search",
+        "description": "Find records by line_number criteria",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records with specific filename values",
+        "category": "Field Search",
+        "tag": "Targeted",
+        "title": "Filename Search",
+        "description": "Find records by filename criteria",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records with specific content values",
+        "category": "Field Search",
+        "tag": "Targeted",
+        "title": "Content Search",
+        "description": "Find records by content criteria",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 8750,
+  "file_processed": "temp_10k_kwds.txt"
+}

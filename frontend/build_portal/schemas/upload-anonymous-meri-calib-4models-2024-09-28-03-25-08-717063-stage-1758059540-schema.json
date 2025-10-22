@@ -1,0 +1,744 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "SEARCH KEYWORD": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 512
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MODIFIED KEYWORD": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 263
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "QCR KEYWORD": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 278
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "ATTRIBUTE EXTRACTION FLAG": {
+          "type": "long"
+        },
+        "DEBUG_INFO.TOP_MCATS_DEBUG_INFO": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 441
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "SOLR EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 54,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SOLR STATUS": {
+          "type": "keyword",
+          "ignore_above": 57,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "ALFA EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 54,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "ALFA STATUS": {
+          "type": "keyword",
+          "ignore_above": 57,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "MARS EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 54,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "MARS STATUS": {
+          "type": "keyword",
+          "ignore_above": 57,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "MERI EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "MERI STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "CHATGPT EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "CHATGPT STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "ENSEMBLE RUN": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SOLR_INFO": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 175
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "ALFA_INFO": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 361
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MARS_INFO": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 306
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MERI_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "CHATGPT_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "ID 1": {
+          "type": "long"
+        },
+        "NAME 1": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 147
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MCAT_ACCURACY_LEVEL 1": {
+          "type": "keyword",
+          "ignore_above": 56,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "FREQUENCY 1": {
+          "type": "keyword",
+          "ignore_above": 59,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SLAB 1": {
+          "type": "long"
+        },
+        "ID 2": {
+          "type": "long"
+        },
+        "NAME 2": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 162
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MCAT_ACCURACY_LEVEL 2": {
+          "type": "keyword",
+          "ignore_above": 54,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "FREQUENCY 2": {
+          "type": "keyword",
+          "ignore_above": 59,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SLAB 2": {
+          "type": "long"
+        },
+        "ID 3": {
+          "type": "long"
+        },
+        "NAME 3": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 165
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MCAT_ACCURACY_LEVEL 3": {
+          "type": "keyword",
+          "ignore_above": 56,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "FREQUENCY 3": {
+          "type": "keyword",
+          "ignore_above": 59,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SLAB 3": {
+          "type": "long"
+        },
+        "ID 4": {
+          "type": "long"
+        },
+        "NAME 4": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 153
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MCAT_ACCURACY_LEVEL 4": {
+          "type": "keyword",
+          "ignore_above": 53,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "FREQUENCY 4": {
+          "type": "keyword",
+          "ignore_above": 59,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SLAB 4": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "ID 5": {
+          "type": "long"
+        },
+        "NAME 5": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 147
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          }
+        },
+        "MCAT_ACCURACY_LEVEL 5": {
+          "type": "keyword",
+          "ignore_above": 53,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "FREQUENCY 5": {
+          "type": "keyword",
+          "ignore_above": 59,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "SLAB 5": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          }
+        },
+        "displayid": {
+          "type": "long"
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with SEARCH KEYWORD",
+    "Find records where SEARCH KEYWORD contains specific value",
+    "Search for records with SEARCH KEYWORD like 'Blue+Plastic++Cooler+Side+Grill'",
+    "Show all records with MODIFIED KEYWORD",
+    "Find records where MODIFIED KEYWORD contains specific value",
+    "Search for records with MODIFIED KEYWORD like 'blue plastic cooler side grill'",
+    "Show all records with QCR KEYWORD",
+    "Find records where QCR KEYWORD contains specific value",
+    "Search for records with QCR KEYWORD like 'Blue+Plastic++Cooler+Side+Grill'",
+    "Show all records with ATTRIBUTE EXTRACTION FLAG",
+    "Find records where ATTRIBUTE EXTRACTION FLAG contains specific value",
+    "Find records with ATTRIBUTE EXTRACTION FLAG greater than 0",
+    "Find records with ATTRIBUTE EXTRACTION FLAG less than 0",
+    "Show all records with DEBUG_INFO.TOP_MCATS_DEBUG_INFO",
+    "Find records where DEBUG_INFO.TOP_MCATS_DEBUG_INFO contains specific value",
+    "Patients scheduled for today",
+    "Find patients by diagnosis",
+    "Upcoming appointments",
+    "Search medical records",
+    "Find doctors by specialty",
+    "Patients with pending tests",
+    "Emergency contacts needed",
+    "Insurance verification pending",
+    "Medication refills due",
+    "Follow-up appointments needed",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-17T03:22:21.614574",
+  "domain_info": {
+    "domain": "healthcare",
+    "portal_name": "Healthcare Data Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search patients, appointments, treatments...",
+    "upload_description": "Upload patient records, appointment data, or medical information",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "report"
+    ],
+    "color_scheme": "#10b981",
+    "templates": [
+      {
+        "prompt": "Search records by ID 3",
+        "category": "Field Search",
+        "tag": "Field-ID 3",
+        "title": "Id 3 Search",
+        "description": "Find records with specific ID 3 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by ID 4",
+        "category": "Field Search",
+        "tag": "Field-ID 4",
+        "title": "Id 4 Search",
+        "description": "Find records with specific ID 4 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by FREQUENCY 1",
+        "category": "Field Search",
+        "tag": "Field-FREQUENCY 1",
+        "title": "Frequency 1 Search",
+        "description": "Find records with specific FREQUENCY 1 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by SLAB 4",
+        "category": "Field Search",
+        "tag": "Field-SLAB 4",
+        "title": "Slab 4 Search",
+        "description": "Find records with specific SLAB 4 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by SLAB 1",
+        "category": "Field Search",
+        "tag": "Field-SLAB 1",
+        "title": "Slab 1 Search",
+        "description": "Find records with specific SLAB 1 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by MCAT_ACCURACY_LEVEL 2",
+        "category": "Field Search",
+        "tag": "Field-MCAT_ACCURACY_LEVEL 2",
+        "title": "Mcat_Accuracy_Level 2 Search",
+        "description": "Find records with specific MCAT_ACCURACY_LEVEL 2 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 9426,
+  "file_processed": "temp_meri_calib_4models_2024-09-28-03-25-08-717063_stage.csv"
+}

@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elastic Search Prompt Interface</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, 
+            #0a0a0f 0%, 
+            #1a0f2e 15%,
+            #0f1419 30%, 
+            #1e1b4b 45%, 
+            #312e81 60%,
+            #1e1b4b 75%,
+            #0f1419 90%, 
+            #0a0a0f 100%);
+        background-size: 400% 400%;
+        animation: backgroundMove 15s ease infinite;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    @keyframes backgroundMove {
+        0%, 100% { background-position: 0% 50%; }
+        25% { background-position: 100% 25%; }
+        50% { background-position: 50% 100%; }
+        75% { background-position: 25% 75%; }
+    }
+
+    /* Enhanced animated background layers */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.4) 0%, transparent 60%),
+            radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 90%, rgba(16, 185, 129, 0.3) 0%, transparent 70%),
+            radial-gradient(ellipse at 70% 10%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+            radial-gradient(ellipse at 30% 70%, rgba(168, 85, 247, 0.3) 0%, transparent 65%);
+        animation: backgroundShift 25s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            conic-gradient(from 0deg at 20% 30%, transparent 0deg, rgba(139, 92, 246, 0.1) 60deg, transparent 120deg),
+            conic-gradient(from 180deg at 80% 70%, transparent 0deg, rgba(59, 130, 246, 0.08) 90deg, transparent 180deg);
+        animation: rotateBackground 30s linear infinite;
+        z-index: 1;
+    }
+
+    @keyframes backgroundShift {
+        0%, 100% { 
+            opacity: 0.9; 
+            transform: scale(1) rotate(0deg) translate(0, 0); 
+        }
+        25% { 
+            opacity: 1; 
+            transform: scale(1.08) rotate(1deg) translate(10px, -5px); 
+        }
+        50% { 
+            opacity: 0.8; 
+            transform: scale(0.95) rotate(-0.8deg) translate(-8px, 12px); 
+        }
+        75% { 
+            opacity: 1; 
+            transform: scale(1.03) rotate(1.2deg) translate(5px, -10px); 
+        }
+    }
+
+    @keyframes rotateBackground {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Floating particles - Enhanced */
+    .particle {
+        position: fixed;
+        border-radius: 50%;
+        z-index: 1;
+        animation: float 15s infinite linear;
+        filter: blur(1px);
+    }
+
+    .particle:nth-child(1) {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.8), rgba(139, 92, 246, 0.3));
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+    }
+
+    .particle:nth-child(2) {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.7), rgba(59, 130, 246, 0.2));
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        animation-duration: 20s;
+    }
+
+    .particle:nth-child(3) {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.3));
+        box-shadow: 0 0 18px rgba(16, 185, 129, 0.6);
+        animation-duration: 18s;
+    }
+
+    .particle:nth-child(4) {
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.9), rgba(236, 72, 153, 0.4));
+        box-shadow: 0 0 12px rgba(236, 72, 153, 0.7);
+        animation-duration: 22s;
+    }
+
+    .particle:nth-child(5) {
+        width: 7px;
+        height: 7px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.3));
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+        animation-duration: 16s;
+    }
+
+    .particle:nth-child(6) {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(34, 197, 94, 0.7), rgba(34, 197, 94, 0.2));
+        box-shadow: 0 0 16px rgba(34, 197, 94, 0.5);
+        animation-duration: 19s;
+    }
+
+    .particle:nth-child(7) {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, rgba(249, 115, 22, 0.8), rgba(249, 115, 22, 0.3));
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+        animation-duration: 17s;
+    }
+
+    .particle:nth-child(8) {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.9), rgba(99, 102, 241, 0.4));
+        box-shadow: 0 0 22px rgba(99, 102, 241, 0.7);
+        animation-duration: 21s;
+    }
+
+    .particle:nth-child(9) {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(244, 63, 94, 0.8), rgba(244, 63, 94, 0.3));
+        box-shadow: 0 0 18px rgba(244, 63, 94, 0.6);
+        animation-duration: 23s;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(100vh) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-10px) scale(1);
+            opacity: 0;
+        }
+    }
+
+    .main-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+    }
+
+    /* Header */
+    .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #38bdf8, #d946ef, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        animation: gradientFlow 4s ease-in-out infinite;
+    }
+
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        color: #94a3b8;
+        margin-bottom: 2rem;
+        height: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .typewriter {
+        display: inline-block;
+        position: relative;
+    }
+
+    .typewriter::after {
+        content: '|';
+        color: #8b5cf6;
+        animation: blink 1s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+
+    /* Templates Section */
+    .templates-section {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .templates-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: #e5e7eb;
+        justify-content: center;
+    }
+
+    .templates-title .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        box-shadow: 0 0 20px #8b5cf6;
+        animation: pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+        from { opacity: 0.8; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.2); }
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+        align-items: start;
+    }
+
+    .template-card {
+        background: rgba(17, 24, 39, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        height: fit-content;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+    }
+
+    .template-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .template-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+        border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    .template-card:hover::before {
+        opacity: 1;
+    }
+
+    .template-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    .template-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .template-icon svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .analytics { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+    .performance { background: linear-gradient(135deg, #10b981, #047857); }
+    .logs { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .security { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .search { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .cluster { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+    .template-text {
+        flex: 1;
+    }
+
+    .template-category {
+        font-size: 0.8rem;
+        color: #93c5fd;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 0.75rem;
+    }
+
+    .template-title {
+        font-size: 1.2rem;
+        color: #f9fafb;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .template-description {
+        font-size: 0.95rem;
+        color: #9ca3af;
+        line-height: 1.5;
+    }
+
+    /* Enhanced Input Section */
+    .input-section {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(90vw, 1000px);
+        z-index: 100;
+        animation: slideInUp 0.8s ease-out 0.5s both;
+    }
+
+    @keyframes slideInUp {
+        from { transform: translateX(-50%) translateY(100%); }
+        to { transform: translateX(-50%) translateY(0); }
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(145deg, 
+            rgba(15, 23, 42, 0.98) 0%, 
+            rgba(30, 41, 59, 0.95) 50%, 
+            rgba(15, 23, 42, 0.98) 100%);
+        border: 2px solid transparent;
+        border-radius: 50px;
+        backdrop-filter: blur(25px);
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 0 0 1px rgba(139, 92, 246, 0.2);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    /* Animated border gradient */
+    .input-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        background: linear-gradient(90deg, 
+            rgba(139, 92, 246, 0.6), 
+            rgba(59, 130, 246, 0.8), 
+            rgba(16, 185, 129, 0.6), 
+            rgba(236, 72, 153, 0.7),
+            rgba(139, 92, 246, 0.6));
+        background-size: 300% 100%;
+        border-radius: 50px;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        animation: borderFlow 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    @keyframes borderFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .input-container:hover::before {
+        opacity: 1;
+    }
+
+    .input-container:focus-within::before {
+        opacity: 1;
+        animation-duration: 2s;
+    }
+
+    .input-container:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 25px 70px rgba(139, 92, 246, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 0 0 1px rgba(139, 92, 246, 0.4);
+    }
+
+    .input-container:focus-within {
+        transform: translateY(-3px);
+        box-shadow: 
+            0 30px 80px rgba(139, 92, 246, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 0 0 1px rgba(139, 92, 246, 0.6);
+    }
+
+    .dropdown-container {
+        position: relative;
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+
+    .dropdown {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        font-weight: 500;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        padding: 1rem 2rem 1rem 1rem;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.2em 1.2em;
+        min-width: 140px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .dropdown:hover {
+        color: #e2e8f0;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a78bfa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    }
+
+    .dropdown:focus {
+        color: #8b5cf6;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a78bfa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    }
+
+    .dropdown-container::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 60%;
+        background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.4), transparent);
+    }
+
+    .main-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #f1f5f9;
+        font-size: 1.1rem;
+        font-weight: 400;
+        padding: 1.25rem 1.5rem;
+        outline: none;
+        font-family: inherit;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+    }
+
+    .main-input::placeholder {
+        color: #64748b;
+        font-size: 1.1rem;
+        font-weight: 400;
+        transition: all 0.3s ease;
+    }
+
+    .main-input:focus::placeholder {
+        color: #475569;
+        transform: translateX(4px);
+    }
+
+    .main-input:focus {
+        color: #ffffff;
+    }
+
+    .submit-btn {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.2) 0%, 
+            rgba(139, 92, 246, 0.3) 50%, 
+            rgba(139, 92, 246, 0.2) 100%);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        padding: 0.75rem;
+        margin: 0.5rem;
+        color: #a78bfa;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+            0 4px 15px rgba(139, 92, 246, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.4), 
+            rgba(168, 85, 247, 0.4));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg, 
+            rgba(139, 92, 246, 0.4) 0%, 
+            rgba(139, 92, 246, 0.6) 50%, 
+            rgba(139, 92, 246, 0.4) 100%);
+        transform: scale(1.08) rotate(5deg);
+        color: #c4b5fd;
+        box-shadow: 
+            0 8px 25px rgba(139, 92, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    .submit-btn:hover::before {
+        opacity: 1;
+    }
+
+    .submit-btn:active {
+        transform: scale(1.02) rotate(2deg);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .submit-btn:disabled:hover {
+        transform: none;
+    }
+
+    .submit-btn svg {
+        width: 22px;
+        height: 22px;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    }
+
+    .submit-btn:hover svg {
+        transform: translateX(2px) scale(1.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .title {
+            font-size: 2.5rem;
+        }
+        
+        .main-container {
+            padding: 1rem;
+        }
+        
+        .templates-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .input-section {
+            padding: 1rem;
+        }
+        
+        .input-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .dropdown-container {
+            width: 100%;
+        }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.6);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.8);
+    }
+
+    /* Progress bar inside submit button */
+    .progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8b5cf6, #3b82f6, #10b981);
+        width: 0%;
+        transition: width 0.2s linear;
+        border-radius: 0 0 50% 50%;
+        z-index: 2;
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+<div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+<div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+<div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+<div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+<div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+<div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+<div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
+<div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
+
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title">ElasticSearch AI</div>
+        <div class="subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </div>
+    </div>
+
+    <!-- Templates Section -->
+    <div class="templates-section">
+        <div class="templates-title">
+            <span class="dot"></span>
+            <span>Quick Templates</span>
+        </div>
+
+        <div class="templates-grid">
+            <!-- Index Analytics -->
+            <div class="template-card" data-prompt="Show me a list of all indices with their document counts, storage sizes, and replica status, sorted by size.">
+                <div class="template-content">
+                    <div class="template-icon analytics">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Log Analysis</div>
+                        <div class="template-title">Recent Logs & Aggregations</div>
+                        <div class="template-description">Analyze log patterns, error rates, and trends from the last hour with aggregations.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Audit -->
+            <div class="template-card" data-prompt="List all users and their roles in the cluster, including security settings.">
+                <div class="template-content">
+                    <div class="template-icon security">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Security</div>
+                        <div class="template-title">User & Role Audit</div>
+                        <div class="template-description">Review user permissions, roles, and security settings across your cluster.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cluster Health -->
+            <div class="template-card" data-prompt="Check the health status of all indices and highlight any issues.">
+                <div class="template-content">
+                    <div class="template-icon cluster">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Health Check</div>
+                        <div class="template-title">Cluster Health Status</div>
+                        <div class="template-description">Check cluster and index health status, identify issues and monitor recovery.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Monitoring -->
+            <div class="template-card" data-prompt="Give me an overview of cluster health, node stats, and resource usage.">
+                <div class="template-content">
+                    <div class="template-icon performance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Performance</div>
+                        <div class="template-title">Cluster Performance Stats</div>
+                        <div class="template-description">Monitor cluster health, node performance, and resource utilization in real-time.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Query -->
+            <div class="template-card" data-prompt="Search my index for the latest 10 documents, sorted by timestamp.">
+                <div class="template-content">
+                    <div class="template-icon search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Search</div>
+                        <div class="template-title">Advanced Search Query</div>
+                        <div class="template-description">Execute complex search queries with filtering, sorting, and aggregations.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Analysis -->
+            <div class="template-card" data-prompt="Analyze logs from the last hour and show error rates grouped by log level.">
+                <div class="template-content">
+                    <div class="template-icon logs">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="template-text">
+                        <div class="template-category">Log Analysis</div>
+                        <div class="template-title">Recent Logs & Aggregations</div>
+                        <div class="template-description">Analyze log patterns, error rates, and trends from the last hour with aggregations.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Input Section -->
+<div class="input-section">
+    <div class="input-container">
+        <div class="dropdown-container">
+            <select id="indexSelector" class="dropdown">
+                <option value="auto">AI Choice</option>
+                <option value="logs-*">logs-*</option>
+                <option value="metrics-*">metrics-*</option>
+                <option value="filebeat-*">filebeat-*</option>
+                <option value="metricbeat-*">metricbeat-*</option>
+                <option value="winlogbeat-*">winlogbeat-*</option>
+                <option value="auditbeat-*">auditbeat-*</option>
+                <option value="packetbeat-*">packetbeat-*</option>
+                <option value="custom-index">Custom Index</option>
+            </select>
+        </div>
+        
+        <input id="userInput" class="main-input" type="text" placeholder="Ask me anything about your ElasticSearch data..." />
+        
+        <button id="submitBtn" class="submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"/>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Typewriter effect for subtitle
+    const phrases = [
+        "AI Powered Search",
+        "Model Context Protocol", 
+        "Elastic Search"
+    ];
+    
+    let currentPhrase = 0;
+    let currentChar = 0;
+    let isDeleting = false;
+    
+    function typeWriter() {
+        const typewriterElement = document.getElementById('typewriter');
+        if (!typewriterElement) return;
+        
+        const current = phrases[currentPhrase];
+        
+        if (isDeleting) {
+            typewriterElement.textContent = current.substring(0, currentChar - 1);
+            currentChar--;
+        } else {
+            typewriterElement.textContent = current.substring(0, currentChar + 1);
+            currentChar++;
+        }
+        
+        let typeSpeed = isDeleting ? 80 : 120;
+        
+        if (!isDeleting && currentChar === current.length) {
+            typeSpeed = 1500; // Pause at end
+            isDeleting = true;
+        } else if (isDeleting && currentChar === 0) {
+            isDeleting = false;
+            currentPhrase = (currentPhrase + 1) % phrases.length;
+            typeSpeed = 300; // Pause before next phrase
+        }
+        
+        setTimeout(typeWriter, typeSpeed);
+    }
+    
+    // Start typewriter effect when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(typeWriter, 500);
+    });
+	
+    // Template click → fill input
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const prompt = card.getAttribute('data-prompt');
+            document.querySelector('.main-input').value = prompt;
+            document.querySelector('.main-input').focus();
+        });
+    });
+
+    // Submit button progress animation
+    const submitBtn = document.querySelector('.submit-btn');
+    const progressBar = submitBtn.querySelector('.progress-bar');
+    const mainInput = document.querySelector('.main-input');
+    let progressInterval;
+
+    submitBtn.addEventListener("click", () => {
+        if (!mainInput.value.trim()) return;
+        let progress = 0;
+        clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+            progress += 5;
+            if (progress > 100) progress = 0;
+            progressBar.style.width = progress + "%";
+        }, 200);
+
+        // ⚠️ Replace with your real search logic
+        setTimeout(() => {
+            clearInterval(progressInterval);
+            progressBar.style.width = "0%";
+            alert("Executed query: " + mainInput.value);
+        }, 5000);
+    });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,69 @@
+{
+  "domain": "retail",
+  "portal_name": "Jewelry Marketplace Portal",
+  "entity_name": "customer",
+  "search_placeholder": "Search for jewelry items",
+  "upload_description": "This portal handles customer data related to jewelry purchases and inquiries.",
+  "primary_actions": [
+    "View Customer Details",
+    "Manage Orders",
+    "Analyze Customer Behavior"
+  ],
+  "color_scheme": "#FF5733",
+  "templates": [
+    {
+      "prompt": "SELECT * FROM customers WHERE contact_city = 'Bengaluru' AND contacts_type = 51 AND is_whatsapp = true AND is_call = true",
+      "category": "Customer Search",
+      "tag": "Warm leads",
+      "title": "Engaged Bangalore customers",
+      "description": "Find customers from Bangalore who are engaged via WhatsApp and phone calls",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M17 1.5a2.5 2.5 0 0 1 2.5 2.5v16a2.5 2.5 0 0 1-2.5 2.5H7a2.5 2.5 0 0 1-2.5-2.5v-16A2.5 2.5 0 0 1 7 1.5h10zm-5 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 10c-2.5 0-4.5-1.5-5-3.5h10c-.5 2-2.5 3.5-5 3.5z'></path></svg>",
+      "image": "https://images.pexels.com/photos/375790/pexels-photo-375790.jpeg"
+    },
+    {
+      "prompt": "SELECT * FROM customers WHERE is_starred_lead = true AND is_blocked = false AND is_archive = false ORDER BY last_contact_date DESC",
+      "category": "Customer Engagement",
+      "tag": "Starred leads",
+      "title": "Active starred leads",
+      "description": "Find active customers who have been starred as leads, ordered by most recent contact",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z'></path></svg>",
+      "image": "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg"
+    },
+    {
+      "prompt": "SELECT * FROM customers WHERE contacts_add_date BETWEEN '2024-01-01' AND '2024-12-31' AND contacts_type IN (51, 52) AND source IN ('referral', 'organic')",
+      "category": "Lead Generation",
+      "tag": "New customers",
+      "title": "New organic and referral customers",
+      "description": "Find new customers added in the last year who were acquired organically or through referrals",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M3 18v-6a9 9 0 0 1 18 0v6'></path><path d='M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg"
+    },
+    {
+      "prompt": "SELECT * FROM customers WHERE contact_last_product IN ('Gold Ring', 'Kundan Bracelet') AND is_buylead = true AND last_contact_date BETWEEN '2024-01-01' AND '2025-12-31'",
+      "category": "Sales",
+      "tag": "High-value products",
+      "title": "Gold and Kundan product leads",
+      "description": "Find customers interested in high-value jewelry products like gold rings and kundan bracelets who have expressed interest in purchasing",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M21 13.255A23.931 23.931 0 0 1 12 15c-3.183 0-6.22-.62-9-1.745M21 3s-3 0-4 3-1 7 1 10-3 3-3 3'></path></svg>",
+      "image": "https://images.pexels.com/photos/2726160/pexels-photo-2726160.jpeg"
+    },
+    {
+      "prompt": "SELECT * FROM customers WHERE contact_state IN ('Karnataka', 'Maharashtra') AND is_archive = true AND is_blocked = false AND is_removed = false AND unread_message_cnt > 0",
+      "category": "Customer Support",
+      "tag": "Unengaged customers",
+      "title": "Archived customers with unread messages",
+      "description": "Find customers in Karnataka and Maharashtra who have been archived but have unread messages, indicating a need for follow-up",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M22 12h-4l-3 9L9 3l-3 9H2'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184627/pexels-photo-3184627.jpeg"
+    },
+    {
+      "prompt": "SELECT * FROM customers WHERE contacts_name LIKE '%Sharma%' AND contacts_mobile1 IS NOT NULL AND is_wa_reply = false AND is_call = false",
+      "category": "Customer Outreach",
+      "tag": "Cold leads",
+      "title": "Unreached Sharma customers",
+      "description": "Find customers with the last name Sharma who have not been reached via WhatsApp or phone calls, indicating a need for outreach",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184619/pexels-photo-3184619.jpeg"
+    }
+  ]
+}

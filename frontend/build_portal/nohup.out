@@ -1,0 +1,577 @@
+Traceback (most recent call last):
+  File "/root/repo/tensile-search-with-strands/frontend/build_portal/app.py", line 3, in <module>
+    from descope import DescopeClient, AuthException
+ModuleNotFoundError: No module named 'descope'
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-21 10:19:00,181 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-21 10:19:00,181 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-21 10:19:00,181 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-21 10:19:00,200 - INFO - ================================================================================
+2025-10-21 10:19:00,200 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-21 10:19:00,200 - INFO - ================================================================================
+2025-10-21 10:19:00,200 - INFO - Maximum file upload size: 500 MB
+2025-10-21 10:19:00,200 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-21 10:19:00,200 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-21 10:19:00,200 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-21 10:19:00,200 - INFO - Database file: data/user_database.json
+2025-10-21 10:19:00,200 - INFO - Allowed file extensions: {'json', 'txt', 'zip', 'xml', 'docx', 'csv'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-21 10:19:00,219 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:19:00,219 - INFO - Remote MCP integration enabled
+2025-10-21 10:19:00,219 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:19:00,219 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-21 10:19:00,219 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-21 10:19:00,219 - INFO - EnhancedSchemaManager initialized.
+2025-10-21 10:19:00,219 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/esportal
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+ * Serving Flask app 'app'
+ * Debug mode: on
+2025-10-21 10:19:00,231 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:7000
+ * Running on http://82.112.235.26:7000
+2025-10-21 10:19:00,231 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-21 10:19:00,233 - INFO -  * Restarting with stat
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-21 10:19:00,917 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-21 10:19:00,917 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-21 10:19:00,917 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-21 10:19:00,919 - INFO - ================================================================================
+2025-10-21 10:19:00,919 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-21 10:19:00,919 - INFO - ================================================================================
+2025-10-21 10:19:00,919 - INFO - Maximum file upload size: 500 MB
+2025-10-21 10:19:00,919 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-21 10:19:00,919 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-21 10:19:00,920 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-21 10:19:00,920 - INFO - Database file: data/user_database.json
+2025-10-21 10:19:00,920 - INFO - Allowed file extensions: {'txt', 'xml', 'json', 'zip', 'csv', 'docx'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-21 10:19:00,928 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:19:00,929 - INFO - Remote MCP integration enabled
+2025-10-21 10:19:00,929 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:19:00,929 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-21 10:19:00,929 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-21 10:19:00,929 - INFO - EnhancedSchemaManager initialized.
+2025-10-21 10:19:00,929 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/esportal
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+2025-10-21 10:19:00,935 - WARNING -  * Debugger is active!
+2025-10-21 10:19:00,942 - INFO -  * Debugger PIN: 128-756-173
+2025-10-21 10:20:46,541 - INFO - ================================================================================
+2025-10-21 10:20:46,541 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:20:46,541 - INFO -    Method: GET
+2025-10-21 10:20:46,541 - INFO -    Path: /esportal
+2025-10-21 10:20:46,541 - INFO -    Remote IP: 82.112.235.26
+2025-10-21 10:20:46,559 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:20:46,559 - INFO -    Status Code: 200
+2025-10-21 10:20:46,559 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:20:46,559 - INFO - ================================================================================
+2025-10-21 10:20:46,560 - INFO - 82.112.235.26 - - [21/Oct/2025 10:20:46] "GET /esportal HTTP/1.1" 200 -
+2025-10-21 10:44:36,344 - INFO - ================================================================================
+2025-10-21 10:44:36,344 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:44:36,344 - INFO -    Method: GET
+2025-10-21 10:44:36,344 - INFO -    Path: /esportal
+2025-10-21 10:44:36,346 - INFO -    Remote IP: 82.112.235.26
+2025-10-21 10:44:36,346 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:44:36,346 - INFO -    Status Code: 200
+2025-10-21 10:44:36,346 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:44:36,346 - INFO - ================================================================================
+2025-10-21 10:44:36,346 - INFO - 82.112.235.26 - - [21/Oct/2025 10:44:36] "GET /esportal HTTP/1.1" 200 -
+2025-10-21 10:44:36,366 - INFO - ================================================================================
+2025-10-21 10:44:36,366 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:44:36,366 - INFO -    Method: GET
+2025-10-21 10:44:36,366 - INFO -    Path: /
+2025-10-21 10:44:36,366 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:44:36,366 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:44:36,366 - INFO -    Status Code: 302
+2025-10-21 10:44:36,366 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:44:36,366 - INFO - ================================================================================
+2025-10-21 10:44:36,367 - INFO - 172.18.0.2 - - [21/Oct/2025 10:44:36] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-21 10:44:41,371 - INFO - ================================================================================
+2025-10-21 10:44:41,371 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:44:41,371 - INFO -    Method: GET
+2025-10-21 10:44:41,371 - INFO -    Path: /
+2025-10-21 10:44:41,371 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:44:41,371 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:44:41,371 - INFO -    Status Code: 302
+2025-10-21 10:44:41,371 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:44:41,371 - INFO - ================================================================================
+2025-10-21 10:44:41,371 - INFO - 172.18.0.2 - - [21/Oct/2025 10:44:41] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-21 10:44:59,470 - INFO - ================================================================================
+2025-10-21 10:44:59,470 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:44:59,470 - INFO -    Method: GET
+2025-10-21 10:44:59,470 - INFO -    Path: /esportal
+2025-10-21 10:44:59,470 - INFO -    Remote IP: 82.112.235.26
+2025-10-21 10:44:59,470 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:44:59,470 - INFO -    Status Code: 200
+2025-10-21 10:44:59,470 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:44:59,470 - INFO - ================================================================================
+2025-10-21 10:44:59,471 - INFO - 82.112.235.26 - - [21/Oct/2025 10:44:59] "GET /esportal HTTP/1.1" 200 -
+2025-10-21 10:45:11,903 - INFO - ================================================================================
+2025-10-21 10:45:11,903 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:45:11,903 - INFO -    Method: GET
+2025-10-21 10:45:11,903 - INFO -    Path: /esportal
+2025-10-21 10:45:11,903 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:45:11,903 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:45:11,903 - INFO -    Status Code: 200
+2025-10-21 10:45:11,903 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:45:11,903 - INFO - ================================================================================
+2025-10-21 10:45:11,904 - INFO - 172.18.0.2 - - [21/Oct/2025 10:45:11] "GET /esportal HTTP/1.1" 200 -
+2025-10-21 10:45:29,766 - INFO - ================================================================================
+2025-10-21 10:45:29,766 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:45:29,766 - INFO -    Method: GET
+2025-10-21 10:45:29,766 - INFO -    Path: /esportal
+2025-10-21 10:45:29,766 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:45:29,766 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:45:29,766 - INFO -    Status Code: 200
+2025-10-21 10:45:29,766 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:45:29,766 - INFO - ================================================================================
+2025-10-21 10:45:29,767 - INFO - 172.18.0.2 - - [21/Oct/2025 10:45:29] "GET /esportal HTTP/1.1" 200 -
+2025-10-21 10:50:16,393 - INFO - ================================================================================
+2025-10-21 10:50:16,393 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:50:16,393 - INFO -    Method: GET
+2025-10-21 10:50:16,393 - INFO -    Path: /
+2025-10-21 10:50:16,393 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:50:16,393 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:50:16,393 - INFO -    Status Code: 302
+2025-10-21 10:50:16,393 - INFO -    Content Type: text/html; charset=utf-8
+2025-10-21 10:50:16,393 - INFO - ================================================================================
+2025-10-21 10:50:16,393 - INFO - 172.18.0.2 - - [21/Oct/2025 10:50:16] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-21 10:50:16,411 - INFO - ================================================================================
+2025-10-21 10:50:16,412 - INFO - 📨 INCOMING REQUEST
+2025-10-21 10:50:16,412 - INFO -    Method: GET
+2025-10-21 10:50:16,412 - INFO -    Path: /assets
+2025-10-21 10:50:16,412 - INFO -    Remote IP: 172.18.0.2
+2025-10-21 10:50:16,412 - INFO - 📤 OUTGOING RESPONSE
+2025-10-21 10:50:16,412 - INFO -    Status Code: 404
+2025-10-21 10:50:16,412 - INFO -    Content Type: application/json
+2025-10-21 10:50:16,412 - INFO -    Response Data: {'error': 'Page not found'}
+2025-10-21 10:50:16,412 - INFO - ================================================================================
+2025-10-21 10:50:16,412 - INFO - 172.18.0.2 - - [21/Oct/2025 10:50:16] "[33mGET /assets HTTP/1.1[0m" 404 -
+2025-10-21 10:51:50,376 - INFO -  * Detected change in '/root/repo/tensile-search-with-strands/frontend/build_portal/app.py', reloading
+2025-10-21 10:51:50,627 - INFO -  * Restarting with stat
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-21 10:51:51,829 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-21 10:51:51,829 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-21 10:51:51,829 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-21 10:51:51,833 - INFO - ================================================================================
+2025-10-21 10:51:51,833 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-21 10:51:51,833 - INFO - ================================================================================
+2025-10-21 10:51:51,833 - INFO - Maximum file upload size: 500 MB
+2025-10-21 10:51:51,833 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-21 10:51:51,833 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-21 10:51:51,833 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-21 10:51:51,833 - INFO - Database file: data/user_database.json
+2025-10-21 10:51:51,833 - INFO - Allowed file extensions: {'zip', 'csv', 'txt', 'docx', 'json', 'xml'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-21 10:51:51,844 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:51:51,844 - INFO - Remote MCP integration enabled
+2025-10-21 10:51:51,844 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:51:51,844 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-21 10:51:51,844 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-21 10:51:51,844 - INFO - EnhancedSchemaManager initialized.
+2025-10-21 10:51:51,844 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/esportal
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+2025-10-21 10:51:51,853 - WARNING -  * Debugger is active!
+2025-10-21 10:51:51,863 - INFO -  * Debugger PIN: 128-756-173
+2025-10-21 10:51:59,968 - INFO -  * Detected change in '/root/repo/tensile-search-with-strands/frontend/build_portal/app.py', reloading
+2025-10-21 10:52:00,129 - INFO -  * Restarting with stat
+  File "/root/repo/tensile-search-with-strands/frontend/build_portal/app.py", line 709
+    return f'''<!DOCTYPE html>
+    ^
+IndentationError: expected an indented block after 'except' statement on line 708
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-21 10:54:14,004 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-21 10:54:14,004 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-21 10:54:14,004 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-21 10:54:14,007 - INFO - ================================================================================
+2025-10-21 10:54:14,007 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-21 10:54:14,007 - INFO - ================================================================================
+2025-10-21 10:54:14,007 - INFO - Maximum file upload size: 500 MB
+2025-10-21 10:54:14,007 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-21 10:54:14,007 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-21 10:54:14,007 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-21 10:54:14,007 - INFO - Database file: data/user_database.json
+2025-10-21 10:54:14,007 - INFO - Allowed file extensions: {'txt', 'docx', 'zip', 'xml', 'json', 'csv'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-21 10:54:14,018 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:54:14,018 - INFO - Remote MCP integration enabled
+2025-10-21 10:54:14,018 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:54:14,018 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-21 10:54:14,018 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-21 10:54:14,018 - INFO - EnhancedSchemaManager initialized.
+2025-10-21 10:54:14,018 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+ * Serving Flask app 'app'
+ * Debug mode: on
+2025-10-21 10:54:14,025 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:7000
+ * Running on http://82.112.235.26:7000
+2025-10-21 10:54:14,026 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-21 10:54:14,026 - INFO -  * Restarting with stat
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-21 10:54:14,636 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-21 10:54:14,637 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-21 10:54:14,637 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-21 10:54:14,639 - INFO - ================================================================================
+2025-10-21 10:54:14,639 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-21 10:54:14,639 - INFO - ================================================================================
+2025-10-21 10:54:14,639 - INFO - Maximum file upload size: 500 MB
+2025-10-21 10:54:14,639 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-21 10:54:14,639 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-21 10:54:14,639 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-21 10:54:14,639 - INFO - Database file: data/user_database.json
+2025-10-21 10:54:14,639 - INFO - Allowed file extensions: {'csv', 'docx', 'zip', 'xml', 'json', 'txt'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-21 10:54:14,650 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:54:14,650 - INFO - Remote MCP integration enabled
+2025-10-21 10:54:14,650 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-21 10:54:14,650 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-21 10:54:14,650 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-21 10:54:14,650 - INFO - EnhancedSchemaManager initialized.
+2025-10-21 10:54:14,650 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+2025-10-21 10:54:14,656 - WARNING -  * Debugger is active!
+2025-10-21 10:54:14,659 - INFO -  * Debugger PIN: 128-756-173
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-22 11:05:24,275 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-22 11:05:24,275 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-22 11:05:24,275 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-22 11:05:24,278 - INFO - ================================================================================
+2025-10-22 11:05:24,278 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-22 11:05:24,278 - INFO - ================================================================================
+2025-10-22 11:05:24,278 - INFO - Maximum file upload size: 500 MB
+2025-10-22 11:05:24,278 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-22 11:05:24,278 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-22 11:05:24,278 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-22 11:05:24,278 - INFO - Database file: data/user_database.json
+2025-10-22 11:05:24,278 - INFO - Allowed file extensions: {'txt', 'csv', 'zip', 'xml', 'docx', 'json'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-22 11:05:24,288 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:05:24,288 - INFO - Remote MCP integration enabled
+2025-10-22 11:05:24,288 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:05:24,288 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-22 11:05:24,288 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-22 11:05:24,288 - INFO - EnhancedSchemaManager initialized.
+2025-10-22 11:05:24,288 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 7000 is in use by another program. Either identify and stop that program, or start the server with a different port.
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-22 11:05:47,123 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-22 11:05:47,123 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-22 11:05:47,123 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-22 11:05:47,125 - INFO - ================================================================================
+2025-10-22 11:05:47,125 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-22 11:05:47,125 - INFO - ================================================================================
+2025-10-22 11:05:47,125 - INFO - Maximum file upload size: 500 MB
+2025-10-22 11:05:47,125 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-22 11:05:47,125 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-22 11:05:47,125 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-22 11:05:47,125 - INFO - Database file: data/user_database.json
+2025-10-22 11:05:47,125 - INFO - Allowed file extensions: {'csv', 'json', 'xml', 'docx', 'txt', 'zip'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-22 11:05:47,135 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:05:47,135 - INFO - Remote MCP integration enabled
+2025-10-22 11:05:47,135 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:05:47,135 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-22 11:05:47,135 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-22 11:05:47,135 - INFO - EnhancedSchemaManager initialized.
+2025-10-22 11:05:47,136 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 7000 is in use by another program. Either identify and stop that program, or start the server with a different port.
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+/root/repo/tensile-search-with-strands/frontend/build_portal/venv_frontend/lib/python3.12/site-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Remote MCP integration loaded successfully
+2025-10-22 11:06:03,824 - INFO - 🚀 DatabaseModule initialized: api mode
+2025-10-22 11:06:03,824 - INFO - 📡 API Base URL: http://82.112.235.26:4000
+2025-10-22 11:06:03,824 - INFO - ✅ Using REAL API for CREATE and GET operations
+2025-10-22 11:06:03,826 - INFO - ================================================================================
+2025-10-22 11:06:03,826 - INFO - Flask Application Starting - Enhanced Logging Enabled
+2025-10-22 11:06:03,826 - INFO - ================================================================================
+2025-10-22 11:06:03,826 - INFO - Maximum file upload size: 500 MB
+2025-10-22 11:06:03,826 - INFO - Large files (>500MB) will be chunked automatically
+2025-10-22 11:06:03,827 - INFO - Descope client initialized: Project ID = P32OxoFpY0ihVvncEbabQARqzw8I
+2025-10-22 11:06:03,827 - INFO - User Database: Local JSON storage (easily replaceable)
+2025-10-22 11:06:03,827 - INFO - Database file: data/user_database.json
+2025-10-22 11:06:03,827 - INFO - Allowed file extensions: {'zip', 'docx', 'csv', 'json', 'txt', 'xml'}
+============================================================
+ENHANCED ELASTICSEARCH PIPELINE WITH MCP INTEGRATION
+============================================================
+Created necessary directories
+
+Initializing pipeline...
+Initializing enhanced pipeline...
+2025-10-22 11:06:03,837 - INFO - RemoteMCPElasticsearchServer initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:06:03,837 - INFO - Remote MCP integration enabled
+2025-10-22 11:06:03,837 - INFO - RemoteElasticsearchManager initialized for PRODUCTION: 82.112.235.26
+2025-10-22 11:06:03,837 - INFO - 🚀 Deploying to: 82.112.235.26 (Production Server)
+2025-10-22 11:06:03,837 - ERROR - Failed to initialize local Elasticsearch: Can't specify both 'timeout' and 'request_timeout', instead only specify 'request_timeout'
+2025-10-22 11:06:03,837 - INFO - EnhancedSchemaManager initialized.
+2025-10-22 11:06:03,837 - INFO - EnhancedDataPipeline initialized. Remote MCP enabled: True
+Enhanced pipeline initialized successfully
+MCP Integration Status: Enabled
+Pipeline initialization successful
+MCP Integration: Enabled
+
+Starting Flask server...
+Server will be available at: http://localhost:7000
+Main portal: http://localhost:7000/
+
+Available features:
+  - Intelligent Schema Generation
+  - Attribute Extraction
+  - Auto-Query Generation
+  - Remote Elasticsearch Deployment
+  - MCP Server Integration (if enabled)
+  - Automatic Browser Opening
+  - Enhanced SSH Authentication
+
+Key endpoints:
+  POST /upload - Enhanced upload with MCP
+  GET /remote-instances - List remote ES instances
+  GET /mcp/connections - List MCP connections
+  GET /mcp/status - MCP integration status
+  GET /health - System health check
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 7000 is in use by another program. Either identify and stop that program, or start the server with a different port.

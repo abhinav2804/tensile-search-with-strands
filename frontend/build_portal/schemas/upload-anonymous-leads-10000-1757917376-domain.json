@@ -1,0 +1,70 @@
+{
+  "domain": "sales",
+  "portal_name": "Sales Lead Management Portal",
+  "entity_name": "lead",
+  "search_placeholder": "Search for leads by name, company, or email",
+  "upload_description": "This portal handles sales lead data, including contact information, company details, and deal status.",
+  "primary_actions": [
+    "Manage Leads",
+    "View Pipeline",
+    "Log Activities",
+    "Generate Reports"
+  ],
+  "color_scheme": "#007bff",
+  "templates": [
+    {
+      "prompt": "Search for leads with 'Closed Won' deal stage and source='LinkedIn Outreach'",
+      "category": "Sales Pipeline Management",
+      "tag": "Closed Won",
+      "title": "Closed Won Leads from LinkedIn",
+      "description": "Find recently closed won leads that originated from LinkedIn outreach",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find leads with email domain containing '@hunt.com' or '@york.com' and note containing 'interested'",
+      "category": "Lead Prospecting",
+      "tag": "Email Outreach",
+      "title": "Leads from Hunt or York",
+      "description": "Search for leads with email addresses from target companies who have shown interest",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'></path><polyline points='22,6 12,13 2,6'></polyline></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search for leads with 'LinkedIn Outreach' or 'Referral' source and deal stage between 'Qualified' and 'Closed Won'",
+      "category": "Sales Pipeline Analysis",
+      "tag": "Mid-Funnel",
+      "title": "Mid-Funnel Leads from Referrals and LinkedIn",
+      "description": "Find leads in the middle of the sales funnel that came from referrals or LinkedIn outreach",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'></path><polyline points='3.27 6.96 12 12.01 20.73 6.96'></polyline><line x1='12' y1='22.08' x2='12' y2='12'></line></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find leads with first name starting with 'A' and last name starting with 'A' and company name containing 'Inc'",
+      "category": "Lead Generation",
+      "tag": "Targeted",
+      "title": "Targeted Lead Search",
+      "description": "Search for leads with specific first and last name patterns and company name",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'></path><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search for leads with phone number starting with '9' and deal stage 'Re-engagement' or 'On Hold'",
+      "category": "Lead Nurturing",
+      "tag": "Retargeting",
+      "title": "Leads for Retargeting",
+      "description": "Find leads that are in the 're-engagement' or 'on hold' stages and have phone numbers starting with '9'",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='5' y='2' width='14' height='20' rx='2' ry='2'></rect><line x1='12' y1='18' x2='12' y2='18'></line></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find leads with company name containing 'Burch' or 'Ali' and created in the last 60 days",
+      "category": "New Business Development",
+      "tag": "Recent",
+      "title": "New Leads with Target Companies",
+      "description": "Search for recently created leads from target companies",
+      "icon": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ]
+}

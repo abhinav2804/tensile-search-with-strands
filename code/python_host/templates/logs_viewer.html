@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Server Logs - 82.112.235.26</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-nav a {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .header-nav a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .log-viewer {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .log-line {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .log-error {
+            background: rgba(229, 115, 115, 0.1);
+            color: #e57373;
+        }
+
+        .log-warn {
+            background: rgba(255, 183, 77, 0.1);
+            color: #ffb74d;
+        }
+
+        .log-success {
+            background: rgba(129, 199, 132, 0.1);
+            color: #81c784;
+        }
+
+        .log-info {
+            color: #4fc3f7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .health-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .health-healthy {
+            background: #4caf50;
+            box-shadow: 0 0 8px #4caf50;
+        }
+
+        .health-warning {
+            background: #ff9800;
+            box-shadow: 0 0 8px #ff9800;
+        }
+
+        .health-error {
+            background: #f44336;
+            box-shadow: 0 0 8px #f44336;
+        }
+
+        .health-unknown {
+            background: #9e9e9e;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Remote Server Logs</h1>
+            <p>View logs from instances on 82.112.235.26 in real-time</p>
+            <div class="header-nav">
+                <a href="/instances">🚀 Instance Manager</a>
+            </div>
+        </div>
+
+        <!-- Health Dashboard -->
+        <div class="card">
+            <h2>Instance Health</h2>
+            <div class="form-group">
+                <label for="healthUserId">User ID</label>
+                <input type="text" id="healthUserId" placeholder="Enter user ID">
+            </div>
+            <button onclick="checkHealth()" class="btn btn-primary">🏥 Check Health</button>
+            
+            <div id="healthDashboard" style="margin-top: 20px; display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="esStatus">-</div>
+                        <div class="stat-label">Elasticsearch</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mcpStatus">-</div>
+                        <div class="stat-label">MCP</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="esErrors">0</div>
+                        <div class="stat-label">ES Errors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mcpErrors">0</div>
+                        <div class="stat-label">MCP Errors</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Viewer -->
+        <div class="card">
+            <h2>Log Viewer</h2>
+            
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('es')">Elasticsearch</button>
+                <button class="tab" onclick="switchTab('mcp')">MCP</button>
+                <button class="tab" onclick="switchTab('system')">System</button>
+            </div>
+
+            <!-- ES Logs -->
+            <div id="es-tab" class="tab-content active">
+                <div class="form-group">
+                    <label for="esUserId">User ID</label>
+                    <input type="text" id="esUserId" placeholder="Enter user ID">
+                </div>
+                <div class="form-group">
+                    <label for="esLines">Lines to retrieve</label>
+                    <select id="esLines">
+                        <option value="50">50 lines</option>
+                        <option value="100" selected>100 lines</option>
+                        <option value="200">200 lines</option>
+                        <option value="500">500 lines</option>
+                    </select>
+                </div>
+                <div class="auto-refresh">
+                    <label class="switch">
+                        <input type="checkbox" id="esAutoRefresh">
+                        <span class="slider"></span>
+                    </label>
+                    <label for="esAutoRefresh">Auto-refresh (5s)</label>
+                </div>
+                <button onclick="viewESLogs()" class="btn btn-primary">📊 View ES Logs</button>
+                <button onclick="downloadLogs('es')" class="btn btn-secondary">💾 Download</button>
+                
+                <div class="search-box">
+                    <input type="text" id="esSearch" placeholder="Search logs...">
+                    <button onclick="searchLogs('es')" class="btn btn-primary">🔍 Search</button>
+                </div>
+                
+                <div id="esLogs" class="log-viewer">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+            <!-- MCP Logs -->
+            <div id="mcp-tab" class="tab-content">
+                <div class="form-group">
+                    <label for="mcpUserId">User ID</label>
+                    <input type="text" id="mcpUserId" placeholder="Enter user ID">
+                </div>
+                <div class="form-group">
+                    <label for="mcpLines">Lines to retrieve</label>
+                    <select id="mcpLines">
+                        <option value="50">50 lines</option>
+                        <option value="100" selected>100 lines</option>
+                        <option value="200">200 lines</option>
+                        <option value="500">500 lines</option>
+                    </select>
+                </div>
+                <div class="auto-refresh">
+                    <label class="switch">
+                        <input type="checkbox" id="mcpAutoRefresh">
+                        <span class="slider"></span>
+                    </label>
+                    <label for="mcpAutoRefresh">Auto-refresh (5s)</label>
+                </div>
+                <button onclick="viewMCPLogs()" class="btn btn-primary">📊 View MCP Logs</button>
+                <button onclick="downloadLogs('mcp')" class="btn btn-secondary">💾 Download</button>
+                
+                <div class="search-box">
+                    <input type="text" id="mcpSearch" placeholder="Search logs...">
+                    <button onclick="searchLogs('mcp')" class="btn btn-primary">🔍 Search</button>
+                </div>
+                
+                <div id="mcpLogs" class="log-viewer">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+            <!-- System Logs -->
+            <div id="system-tab" class="tab-content">
+                <div class="form-group">
+                    <label for="systemLines">Lines to retrieve</label>
+                    <select id="systemLines">
+                        <option value="50" selected>50 lines</option>
+                        <option value="100">100 lines</option>
+                        <option value="200">200 lines</option>
+                    </select>
+                </div>
+                <button onclick="viewSystemLogs()" class="btn btn-primary">📊 View System Logs</button>
+                <button onclick="downloadLogs('system')" class="btn btn-secondary">💾 Download</button>
+                
+                <div id="systemLogs" class="log-viewer">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Files List -->
+        <div class="card">
+            <h2>Log Files</h2>
+            <div class="form-group">
+                <label for="listUserId">User ID</label>
+                <input type="text" id="listUserId" placeholder="Enter user ID">
+            </div>
+            <button onclick="listLogFiles()" class="btn btn-primary">📁 List Files</button>
+            
+            <div id="logFilesList" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let refreshIntervals = {};
+        let currentTab = 'es';
+
+        // Switch tabs
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+
+        // Check health
+        async function checkHealth() {
+            const userId = document.getElementById('healthUserId').value;
+            
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            console.log(`🏥 Checking health for: ${userId}`);
+            
+            try {
+                const response = await fetch(`/api/logs/health/${userId}`);
+                const health = await response.json();
+                
+                console.log('Health data:', health);
+                
+                // Update dashboard
+                document.getElementById('healthDashboard').style.display = 'block';
+                
+                // ES status
+                const esStatus = health.elasticsearch.status;
+                const esStatusEl = document.getElementById('esStatus');
+                esStatusEl.innerHTML = `<span class="health-indicator health-${esStatus}"></span>${esStatus}`;
+                
+                // MCP status
+                const mcpStatus = health.mcp.status;
+                const mcpStatusEl = document.getElementById('mcpStatus');
+                mcpStatusEl.innerHTML = `<span class="health-indicator health-${mcpStatus}"></span>${mcpStatus}`;
+                
+                // Error counts
+                document.getElementById('esErrors').textContent = health.elasticsearch.errors.length;
+                document.getElementById('mcpErrors').textContent = health.mcp.errors.length;
+                
+            } catch (error) {
+                console.error('Error checking health:', error);
+                alert('Failed to check health: ' + error.message);
+            }
+        }
+
+        // View ES logs
+        async function viewESLogs() {
+            const userId = document.getElementById('esUserId').value;
+            const lines = document.getElementById('esLines').value;
+            
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            console.log(`📊 Fetching ES logs for: ${userId} (${lines} lines)`);
+            
+            const container = document.getElementById('esLogs');
+            container.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const response = await fetch(`/api/logs/es/${userId}?lines=${lines}`);
+                const result = await response.json();
+                
+                console.log('ES logs:', result);
+                
+                if (result.success) {
+                    displayLogs(result.lines, 'esLogs');
+                } else {
+                    container.innerHTML = `<div class="log-error">Error: ${result.error}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching ES logs:', error);
+                container.innerHTML = `<div class="log-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // View MCP logs
+        async function viewMCPLogs() {
+            const userId = document.getElementById('mcpUserId').value;
+            const lines = document.getElementById('mcpLines').value;
+            
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            console.log(`📊 Fetching MCP logs for: ${userId} (${lines} lines)`);
+            
+            const container = document.getElementById('mcpLogs');
+            container.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const response = await fetch(`/api/logs/mcp/${userId}?lines=${lines}`);
+                const result = await response.json();
+                
+                console.log('MCP logs:', result);
+                
+                if (result.success) {
+                    displayLogs(result.lines, 'mcpLogs');
+                } else {
+                    container.innerHTML = `<div class="log-error">Error: ${result.error}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching MCP logs:', error);
+                container.innerHTML = `<div class="log-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // View system logs
+        async function viewSystemLogs() {
+            const lines = document.getElementById('systemLines').value;
+            
+            console.log(`📊 Fetching system logs (${lines} lines)`);
+            
+            const container = document.getElementById('systemLogs');
+            container.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const response = await fetch(`/api/logs/system?lines=${lines}`);
+                const result = await response.json();
+                
+                console.log('System logs:', result);
+                
+                if (result.success) {
+                    displayLogs(result.lines, 'systemLogs');
+                } else {
+                    container.innerHTML = `<div class="log-error">Error: ${result.error}</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching system logs:', error);
+                container.innerHTML = `<div class="log-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Display logs
+        function displayLogs(lines, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (!lines || lines.length === 0) {
+                container.innerHTML = '<div class="log-info">No logs found</div>';
+                return;
+            }
+            
+            let html = '';
+            lines.forEach(line => {
+                let className = 'log-line';
+                
+                if (line.toUpperCase().includes('ERROR')) {
+                    className += ' log-error';
+                } else if (line.toUpperCase().includes('WARN')) {
+                    className += ' log-warn';
+                } else if (line.toLowerCase().includes('started') || 
+                           line.toLowerCase().includes('success') ||
+                           line.toLowerCase().includes('healthy')) {
+                    className += ' log-success';
+                } else {
+                    className += ' log-info';
+                }
+                
+                html += `<div class="${className}">${escapeHtml(line)}</div>`;
+            });
+            
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Search logs
+        async function searchLogs(type) {
+            const userId = type === 'es' ? document.getElementById('esUserId').value : document.getElementById('mcpUserId').value;
+            const searchTerm = type === 'es' ? document.getElementById('esSearch').value : document.getElementById('mcpSearch').value;
+            
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+            
+            if (!searchTerm) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            console.log(`🔍 Searching ${type} logs for: ${searchTerm}`);
+            
+            try {
+                const response = await fetch(`/api/logs/search/${userId}?term=${encodeURIComponent(searchTerm)}&type=${type}`);
+                const result = await response.json();
+                
+                console.log('Search results:', result);
+                
+                if (result.success) {
+                    const containerId = type === 'es' ? 'esLogs' : 'mcpLogs';
+                    const container = document.getElementById(containerId);
+                    
+                    if (result.matches.length === 0) {
+                        container.innerHTML = '<div class="log-info">No matches found</div>';
+                    } else {
+                        let html = `<div class="log-success">Found ${result.total_matches} matches:</div><br>`;
+                        result.matches.forEach(match => {
+                            html += `<div class="log-line log-info"><strong>Line ${match.line_number}:</strong> ${escapeHtml(match.content)}</div>`;
+                        });
+                        container.innerHTML = html;
+                    }
+                } else {
+                    alert('Search failed: ' + result.error);
+                }
+                
+            } catch (error) {
+                console.error('Error searching logs:', error);
+                alert('Search failed: ' + error.message);
+            }
+        }
+
+        // List log files
+        async function listLogFiles() {
+            const userId = document.getElementById('listUserId').value;
+            
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            console.log(`📁 Listing log files for: ${userId}`);
+            
+            const container = document.getElementById('logFilesList');
+            container.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const response = await fetch(`/api/logs/list/${userId}`);
+                const result = await response.json();
+                
+                console.log('Log files:', result);
+                
+                if (result.success) {
+                    if (result.log_files.length === 0) {
+                        container.innerHTML = '<p>No log files found</p>';
+                    } else {
+                        let html = '<table style="width: 100%; border-collapse: collapse;">';
+                        html += '<tr style="background: #f0f0f0;"><th style="padding: 10px; text-align: left;">File</th><th style="padding: 10px; text-align: left;">Type</th><th style="padding: 10px; text-align: left;">Size</th><th style="padding: 10px; text-align: left;">Modified</th></tr>';
+                        
+                        result.log_files.forEach(file => {
+                            html += `<tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px; font-family: monospace;">${file.path}</td>
+                                <td style="padding: 10px;">${file.type}</td>
+                                <td style="padding: 10px;">${file.size}</td>
+                                <td style="padding: 10px;">${file.modified}</td>
+                            </tr>`;
+                        });
+                        
+                        html += '</table>';
+                        container.innerHTML = html;
+                    }
+                } else {
+                    container.innerHTML = `<p style="color: red;">Error: ${result.error}</p>`;
+                }
+                
+            } catch (error) {
+                console.error('Error listing log files:', error);
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Download logs
+        function downloadLogs(type) {
+            const userId = type === 'system' ? null : (type === 'es' ? document.getElementById('esUserId').value : document.getElementById('mcpUserId').value);
+            
+            if (type !== 'system' && !userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+            
+            const containerId = type === 'es' ? 'esLogs' : (type === 'mcp' ? 'mcpLogs' : 'systemLogs');
+            const container = document.getElementById(containerId);
+            const content = container.innerText;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${type}-logs-${userId || 'system'}-${new Date().getTime()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Auto-refresh
+        document.getElementById('esAutoRefresh').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                refreshIntervals.es = setInterval(viewESLogs, 5000);
+                console.log('✅ ES auto-refresh enabled');
+            } else {
+                clearInterval(refreshIntervals.es);
+                console.log('❌ ES auto-refresh disabled');
+            }
+        });
+
+        document.getElementById('mcpAutoRefresh').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                refreshIntervals.mcp = setInterval(viewMCPLogs, 5000);
+                console.log('✅ MCP auto-refresh enabled');
+            } else {
+                clearInterval(refreshIntervals.mcp);
+                console.log('❌ MCP auto-refresh disabled');
+            }
+        });
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        console.log('📋 Remote Log Viewer initialized');
+        console.log('📡 Server: 82.112.235.26');
+    </script>
+</body>
+</html>

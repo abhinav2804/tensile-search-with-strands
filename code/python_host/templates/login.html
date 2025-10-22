@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Product Discovery AI</title>
+    
+    <!-- Descope SDKs -->
+    <script src="https://unpkg.com/@descope/web-component@latest/dist/index.js"></script>
+    <script src="https://unpkg.com/@descope/web-js-sdk@latest/dist/index.umd.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            background: linear-gradient(135deg,
+                #0a0a0f 0%,
+                #1a0f2e 15%,
+                #0f1419 30%,
+                #1a1f2e 45%,
+                #0f1419 60%,
+                #1a0f2e 75%,
+                #0a0a0f 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        .auth-header {
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #6e45e2, #88d3ce);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .descope-container {
+            width: 100%;
+            min-height: 400px;
+        }
+
+        /* Glowing effect */
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #6e45e2, #88d3ce);
+            border-radius: 16px;
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="auth-header">
+        <div class="logo">Product Discovery AI</div>
+    </header>
+
+    <div class="auth-container">
+        <!-- Descope Authentication Component -->
+        <descope-wc
+            project-id="P32OxoFpY0ihVvncEbabQARqzw8I"
+            flow-id="sign-up-or-in"
+            theme="dark"
+            telemetry="false"
+        ></descope-wc>
+    </div>
+
+    <script>
+        // Initialize Descope SDK
+        const sdk = Descope.init('P32OxoFpY0ihVvncEbabQARqzw8I');
+
+        // Handle successful authentication
+        window.addEventListener('descope-session-started', async (e) => {
+            try {
+                const session = await sdk.getSession();
+                if (session) {
+                    // Send session token to your webhook
+                    await fetch('http://35.244.59.108:5678/webhook/es_mcp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${session.sessionToken}`
+                        },
+                        body: JSON.stringify({
+                            userId: session.user.userId,
+                            sessionToken: session.sessionToken
+                        })
+                    });
+
+                    // Store session token
+                    localStorage.setItem('token', session.sessionToken);
+                    
+                    // Redirect to main application
+                    window.location.href = '/index.html';
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+            }
+        });
+
+        // Check existing session on page load
+        async function checkAuth() {
+            try {
+                const session = await sdk.getSession();
+                if (session && session.sessionToken) {
+                    window.location.href = '/index.html';
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+
+        // Run auth check when page loads
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,83 @@
+{
+  "users": {
+    "hybrid_test_user_001": {
+      "user_id": "hybrid_test_user_001",
+      "ofELK": "5",
+      "name": "Hybrid Test User",
+      "email": "hybridtest@example.com",
+      "created_at": "2025-10-20T01:55:36.887568",
+      "updated_at": "2025-10-20T01:55:36.977783",
+      "has_elasticsearch": true,
+      "elasticsearch": {
+        "host": "54.227.251.28",
+        "port": 9200,
+        "instance_name": "es-hybrid-test",
+        "index_name": "hybrid-test-index"
+      },
+      "mcp": {
+        "host": "54.227.251.28",
+        "port": 8080,
+        "instance_name": "mcp-hybrid-test",
+        "es_instance": "es-hybrid-test",
+        "created_at": "2025-10-20T10:00:00"
+      },
+      "has_mcp": true
+    },
+    "api_test_user_999": {
+      "user_id": "api_test_user_999",
+      "ofELK": "10",
+      "name": "API Test User",
+      "email": "apitest@example.com",
+      "created_at": "2025-10-20T02:06:30.500245",
+      "updated_at": "2025-10-20T02:06:32.257264",
+      "has_elasticsearch": true,
+      "elasticsearch": {
+        "host": "54.227.251.28",
+        "port": 9200,
+        "instance_name": "es-api-test",
+        "index_name": "api-test-index"
+      },
+      "mcp": {
+        "host": "54.227.251.28",
+        "port": 8080,
+        "instance_name": "mcp-api-test",
+        "es_instance": "es-api-test",
+        "created_at": "2025-10-20T10:00:00"
+      },
+      "has_mcp": true
+    },
+    "api_test_user_888": {
+      "user_id": "api_test_user_888",
+      "ofELK": "20",
+      "name": "Second API Test",
+      "email": "apitest2@example.com",
+      "created_at": "2025-10-20T02:06:31.833994",
+      "updated_at": "2025-10-20T02:06:31.834008"
+    },
+    "U32Vpj26DiaBKFxUaJp6A1Mz1fn7": {
+      "user_id": "U32Vpj26DiaBKFxUaJp6A1Mz1fn7",
+      "email": "unknown@example.com",
+      "name": "unknown",
+      "has_elasticsearch": true,
+      "has_mcp": true,
+      "elasticsearch": {
+        "host": "82.112.235.26",
+        "port": 9205,
+        "instance_name": "upload-u32vpj26di-exact-alt-cases-1760941862",
+        "index_name": "upload-u32vpj26di-exact-alt-cases-1760941862",
+        "access_url": "http://82.112.235.26:9205",
+        "created_at": "2025-10-20T12:02:44.560524"
+      },
+      "mcp": {
+        "host": "82.112.235.26",
+        "port": 8080,
+        "instance_name": "mcp-upload-u32vpj26di-exact-alt-cases-1760941862",
+        "es_instance": "upload-u32vpj26di-exact-alt-cases-1760941862",
+        "mcp_url": "http://82.112.235.26:10205",
+        "created_at": "2025-10-20T12:02:44.570361"
+      },
+      "created_at": "2025-10-20T02:51:53.953206",
+      "updated_at": "2025-10-20T12:02:44.729336"
+    }
+  }
+}

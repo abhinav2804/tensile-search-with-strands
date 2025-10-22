@@ -1,0 +1,71 @@
+{
+  "domain": "healthcare",
+  "portal_name": "Healthcare Data Portal",
+  "entity_name": "record",
+  "search_placeholder": "Search patients, appointments, treatments...",
+  "upload_description": "Upload patient records, appointment data, or medical information",
+  "primary_actions": [
+    "search",
+    "filter",
+    "analyze",
+    "report"
+  ],
+  "color_scheme": "#10b981",
+  "templates": [
+    {
+      "prompt": "Find patients with diabetes scheduled for this week",
+      "category": "Patient Care",
+      "tag": "Scheduling",
+      "title": "Patient Appointment Search",
+      "description": "Search patients by condition and appointment schedule",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/></svg>",
+      "image": "https://images.pexels.com/photos/3845457/pexels-photo-3845457.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Find patient records by treatment history and outcomes",
+      "category": "Treatment Analysis",
+      "tag": "Clinical",
+      "title": "Treatment History Search",
+      "description": "Search patients by treatment plans and medical outcomes",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 12h-4l-3 9L9 3l-3 9H2\"/></svg>",
+      "image": "https://images.pexels.com/photos/3845457/pexels-photo-3845457.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search medical equipment and availability by department",
+      "category": "Equipment",
+      "tag": "Resources",
+      "title": "Medical Equipment Search",
+      "description": "Find available medical equipment and resources",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/></svg>",
+      "image": "https://images.pexels.com/photos/3845457/pexels-photo-3845457.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Country values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Country Search",
+      "description": "Find records by Country criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Name values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Name Search",
+      "description": "Find records by Name criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Index values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Index Search",
+      "description": "Find records by Index criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}
