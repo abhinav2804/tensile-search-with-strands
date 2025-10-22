@@ -1,0 +1,40 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FASTAPI banayi h as end point to hit the ai-indexing flow
+Ek badiya sa UI banaya as homepage of the API, shows the API is active & kicking, with proper hackathon like vibe with uptime & total request received
+isme smart port picking if in case main added port 8000 is busy
+FastAPI ka StreamingResponse use karke har step pr updates push hoti h to the api caller as response, using which use interactive, chat like UI bana sakta h, kibd of live feed
+API ka flow h aisa, API ko 3 param chaiye, data ka path jaha pr data rakha h, user ki query as file store kari, kis user k liye h uski id
+API sabse phele ko base folder h wo clean karti h purani requests k uss user k
+uske baad dynamoDB se data fetch karte h user ka, to get the ES port & host
+uske baad, jitna bhi data h + user query unn files ka smartly ek combination banaya h, 1 data file - 1 user input file, sare combinations generate kiya not the actual data loading just files name based combination
+now for each combination, we load 2 files, iss chunking h n uss chunk pr hum data utha kr AWS bedrock ka use karke model call karte h and model se udpated data docs, schema for ES index & fields jo generate ki h model n unka readme banwa lete h, readme m fields ka info like kya meaning h uss field ka like 1 liner as context for the next iteration
+model se json data mangwaya h, uss json ka use karke hum index/schema, data-docs, readme update karte h, readme/schema udpate hota h fresh, docs append hote h data file m
+uske baad next step h elasticsearch, isme dynamoDB ka data utha k check karte h elasticsearch healthy h ya ni
+    if not healthy, raise connection error
+    if healthy, check schema validate karte h ki valid json hi h na, aur readme read karte h
+    firr uske baad schema aur readme ka use karke index ka naamkaran karte h, using bedrock AI model help, prompt aisa ki name unique ho describe karke
+    agr naam ka index pada h phele se firr hum jo naam mila h AI + ek default name + current timestamp lagakr ek indexname lete h
+    once that is done, we create that index using mappings, settings, indexname
+    firr uske baad bulk processing karke docs index kardete h
+End m sab hone k baad ek summary return karte h live m as output/api-response, jisme
+    all done, elasticsearch docs count, total time kitna gaya, index name bhejdete h
+
+And end!!
+
+Just for information purpose, pura documentatino generate kara h smartly with the help of AI-claude, copilot
+Readme.md at every possible jagah
+
+Architecture/Flow diagram path: ./tensile-search-with-strands/indexing-agent/static
+Main readme: ./tensile-search-with-strands/indexing-agent/README.md
+Main documentation: ./tensile-search-with-strands/indexing-agent/docs --> Must check on github as majorly md files
+    must part: 
+        1> ./tensile-search-with-strands/indexing-agent/docs/architecture/components.md
+        2> ./tensile-search-with-strands/indexing-agent/docs/architecture/overview.md
+
+
+and thoda try karna tha Live feed wala functiionality, so ek UI bhi create kardiya h, again op h bohot do check, ss attached
+    isme simple static paths k saath API call kara h and usme API ki live feed ka response show kara h, ideally front end pr aisa kuch karna h hume agr ni hua h to
+    iska bhi readme banadiya h, not worth checking tho, but do check the ss
+    path: ./tensile-search-with-strands/indexing-agent/ui/static/dashboard-screenshot.png
+
+And do check this: ./tensile-search-with-strands/demo/team/harshit/mermaid_diagrams.html (claude se banawaya h :p)
