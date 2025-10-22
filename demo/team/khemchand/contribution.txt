@@ -1,0 +1,56 @@
+# AWS Strand Agent - Two-Phase Architecture
+===============================================
+
+## Phase A: Infrastructure Setup
+
+When a user first registers on our platform, they share details about their requirements for a full-fledged search infrastructure. For each user, we create the following components:
+
+### Infrastructure Components:
+a) **Elasticsearch Database** - Stores user data such as product information, hospital data, or any other domain-specific content
+b) **Elastic MCP Server** - Registers as a tool with AWS Bedrock model to enable seamless integration
+c) **AWS Strand Search Agent** - Leverages the power of AWS Bedrock model and Elastic MCP server to retrieve relevant information from Elasticsearch based on user prompts
+
+### Infrastructure Setup Endpoint:
+**URL:** `http://localhost:8000/deploy`  
+**Method:** POST  
+**Request Body:**
+```json
+{
+  "ports": {
+    "elasticsearch_port": 7001,
+    "mcp_port": 7002,
+    "ai_agent_port": 7003
+  }
+}
+```
+
+### Demo Screenshots:
+1. `demo/team/khemchand/Server Running - SpinUp Search infra base on user - including elasticsearch db, elastic mcp, strand search agent.png`
+2. `demo/team/khemchand/Client Request - SpinUp Search infra base on user - including elasticsearch db, elastic mcp, strand search agent.png`
+
+---
+
+## Phase B: Search Query Processing
+
+Once the infrastructure is set up, the AWS Strand Search Agent processes user queries using the power of Elastic MCP and LLM with our fully optimized system prompt.
+
+### Query Processing Endpoint:
+**URL:** `http://82.112.235.26:5000/query`  
+**Method:** POST  
+**Request Body:**
+```json
+{
+  "query": "Get me details of led bulb of 9 watt",
+  "temperature": 0.3
+}
+```
+
+### Demo Screenshots:
+1. `demo/team/khemchand/User Query -1 - Call go AI Strand Search Agent - it get the details form es.png`
+2. `demo/team/khemchand/User Query -2 - Call go AI Strand Search Agent - it get the details form es.png`
+
+
+
+
+
+
