@@ -1,0 +1,244 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "es_mcp",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a16049d5-f344-4014-a1a6-bb1ca5f697f5",
+      "name": "Webhook",
+      "webhookId": "77d1700f-b7c8-43bc-8d18-6b2863eb3033"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "You are an Elasticsearch assistant. You have TWO tools available:\n\nTOOL-1: HTTP Request Tool\nPURPOSE: Get Elasticsearch index mappings when user asks or when any other tool needs it.\nUSAGE: Always call this tool with a JSON body in this exact format:\n\n{\n  \"index\": \"index_name_here\"\n}\n\nEXAMPLE:\n- Question: \"get mapping for nested_test_index\"  \n- You call the tool with: {\"index\": \"nested_test_index\"}\n\n\nTOOL-2: ElasticSearch MCP\nPURPOSE: For all other scenarios, check this MCP having various tools.\nUSAGE: getting list of indices, searching documents, updating documents, deleting documents, creating indices, etc. For mapping requests, use the HTTP Request tool described in Tool-1.\n\n\n### QUERY RULES:\n1. Always perform searches in **two steps**:\n   - **Step 1:** Run an **exact match** query using the `.keyword` subfield with a `term` query.  \n   - **Step 2:** If Step 1 returns **0 hits**, then run a **full-text `match` query** on the non-keyword field with `\"fuzziness\": \"AUTO\"`.  \n   - Use `\"operator\": \"and\"` for full-text to reduce noise.  \n\n2. When both queries are required, only return the **results of the successful query** (exact match preferred).\n\n3. Response Formatting:\n   - Return only the information that directly answers the user’s query.  \n   - Final response must be in **valid CSV format**:  \n     ```\n     predata, in short show here processing of elasticserach mcp here\n     header,[heading1, heading2...]\n     data,[{row1_column1, row1_column2}, {row2_column1,row2_column2}]\n     postdata,summarizing statement \n     finaly,ending of response with a follow-up question \n     ```\n\n4. Fallback:\n   - If no relevant data is found in Elasticsearch, respond with exactly:  \n     **\"Are you alien - don't expand from your universe\"**\n\n5. If the system produces `\"Agent stopped due to max iterations.\"`, always replace it with:  \n     **\"Context of your prompt input is out the context form the Elastic/Kibana Scope. Please modify your prompt and try again with new prompt\"**\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        0
+      ],
+      "id": "1fe0bdbe-d4f6-424c-acf8-0efacdc23d68",
+      "name": "AI Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "anthropic/claude-sonnet-4",
+          "mode": "list",
+          "cachedResultName": "anthropic/claude-sonnet-4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        256
+      ],
+      "id": "3bce3ec9-be9e-4007-8b12-25986a853d65",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "s2eRawQy1jU2DkTR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://35.244.59.108:8080/mcp/sse",
+        "authentication": "headerAuth",
+        "include": "except",
+        "excludeTools": [
+          "esql",
+          "get_mappings"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        576,
+        240
+      ],
+      "id": "dc19990b-3b8a-4886-b3ac-28bc9709cac6",
+      "name": "MCP Client",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3mcgUOvq4UxZNdTH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b1d2f4c-1f0c-4c99-9679-c1ba4c05749a",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "d9720836-bcbe-4fd8-a0d8-f00855ee91d7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool ONLY for getting index mappings. Input must be JSON: { \"index\": \"<index-name>\" }",
+        "url": "https://intent-vaguely-opossum.ngrok-free.app/_mapping",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "elasticsearchApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "index",
+              "value": "={{$fromAI(\"index\")}}"
+            }
+          ]
+        },
+        "options": {},
+        "optimizeResponse": true
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        256
+      ],
+      "id": "03a8ca51-1833-4829-9936-01b3946dd89a",
+      "name": "HTTP Request",
+      "credentials": {
+        "elasticsearchApi": {
+          "id": "7I08bNUsWQuxpj0j",
+          "name": "Elasticsearch account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "imworkflow.intermesh.net",
+            "content-type": "application/json",
+            "user-agent": "insomnia/11.2.0",
+            "accept": "text/event-stream",
+            "content-length": "59"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "chatInput": "Get in all indices of elastic search db"
+          },
+          "webhookUrl": "https://imworkflow.intermesh.net/webhook-test/es_mcp",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e381f66d-5cb7-4a67-8b72-830f932a8ab6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fb5935587143be2df4ed51d573a1f4fad345ca2f588db6a4fc64dacf5d5dd82e"
+  },
+  "id": "8Uxa14SqlH5es1tN",
+  "tags": [
+    {
+      "createdAt": "2025-09-05T07:11:50.550Z",
+      "updatedAt": "2025-09-05T07:11:50.550Z",
+      "id": "ghns1l70uB5iv26l",
+      "name": "mcp"
+    }
+  ]
+}

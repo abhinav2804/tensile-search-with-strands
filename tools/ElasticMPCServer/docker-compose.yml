@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  mcp-server:
+    image: elastic-mcp-server:latest
+    container_name: elastic-mcp-server
+    command: ["http"]   # 👈 run with the http subcommand
+    ports:
+      - "8080:8080"
+    environment:
+      ES_URL: ${ES_URL}
+      ES_API_KEY: ${ES_API_KEY}
+    restart: unless-stopped

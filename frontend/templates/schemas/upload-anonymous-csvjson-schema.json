@@ -1,0 +1,359 @@
+{
+  "mappings": {
+    "properties": {
+      "search_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "modified_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "qcr_keyword": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "attribute_extraction_flag": {
+        "type": "integer"
+      },
+      "solr_execution": {
+        "type": "boolean"
+      },
+      "solr_status": {
+        "type": "keyword"
+      },
+      "alfa_execution": {
+        "type": "boolean"
+      },
+      "alfa_status": {
+        "type": "keyword"
+      },
+      "mars_execution": {
+        "type": "boolean"
+      },
+      "mars_status": {
+        "type": "keyword"
+      },
+      "omnimars_execution": {
+        "type": "boolean"
+      },
+      "omnimars_status": {
+        "type": "boolean"
+      },
+      "chatgpt_execution": {
+        "type": "boolean"
+      },
+      "chatgpt_status": {
+        "type": "boolean"
+      },
+      "meri_execution": {
+        "type": "boolean"
+      },
+      "meri_status": {
+        "type": "boolean"
+      },
+      "ensemble_run": {
+        "type": "keyword"
+      },
+      "solr_info": {
+        "type": "text"
+      },
+      "alfa_info": {
+        "type": "text"
+      },
+      "mars_info": {
+        "type": "text"
+      },
+      "omnimars_info": {
+        "type": "text"
+      },
+      "chatgpt_info": {
+        "type": "text"
+      },
+      "meri_info": {
+        "type": "text"
+      },
+      "id_1": {
+        "type": "long"
+      },
+      "name_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_1": {
+        "type": "keyword"
+      },
+      "id_2": {
+        "type": "long"
+      },
+      "name_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_2": {
+        "type": "keyword"
+      },
+      "id_3": {
+        "type": "long"
+      },
+      "name_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_3": {
+        "type": "keyword"
+      },
+      "id_4": {
+        "type": "long"
+      },
+      "name_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_4": {
+        "type": "keyword"
+      },
+      "id_5": {
+        "type": "long"
+      },
+      "name_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "mcat_accuracy_level_5": {
+        "type": "keyword"
+      },
+      "SEARCH_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MODIFIED_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "QCR_KEYWORD": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ATTRIBUTE_EXTRACTION_FLAG": {
+        "type": "integer"
+      },
+      "SOLR_EXECUTION": {
+        "type": "boolean"
+      },
+      "SOLR_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ALFA_EXECUTION": {
+        "type": "boolean"
+      },
+      "ALFA_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MARS_EXECUTION": {
+        "type": "boolean"
+      },
+      "MARS_STATUS": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "OMNIMARS_EXECUTION": {
+        "type": "boolean"
+      },
+      "OMNIMARS_STATUS": {
+        "type": "boolean"
+      },
+      "CHATGPT_EXECUTION": {
+        "type": "boolean"
+      },
+      "CHATGPT_STATUS": {
+        "type": "boolean"
+      },
+      "MERI_EXECUTION": {
+        "type": "boolean"
+      },
+      "MERI_STATUS": {
+        "type": "boolean"
+      },
+      "ENSEMBLE_RUN": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "SOLR_INFO": {
+        "type": "text"
+      },
+      "ALFA_INFO": {
+        "type": "text"
+      },
+      "MARS_INFO": {
+        "type": "text"
+      },
+      "OMNIMARS_INFO": {
+        "type": "text"
+      },
+      "CHATGPT_INFO": {
+        "type": "text"
+      },
+      "MERI_INFO": {
+        "type": "text"
+      },
+      "ID_1": {
+        "type": "long"
+      },
+      "NAME_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_2": {
+        "type": "long"
+      },
+      "NAME_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_2": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_3": {
+        "type": "long"
+      },
+      "NAME_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_3": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_4": {
+        "type": "long"
+      },
+      "NAME_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_4": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ID_5": {
+        "type": "long"
+      },
+      "NAME_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "MCAT_ACCURACY_LEVEL_5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
