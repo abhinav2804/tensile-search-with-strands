@@ -11,6 +11,7 @@ This document summarizes all documentation created for the Tensile Search projec
 | File | Purpose | Key Content |
 |------|---------|-------------|
 | **README.md** | Primary project overview | Problem statement, solution architecture, AWS services, team contributions, judging criteria alignment |
+| **STRANDS_SDK_IMPLEMENTATION.md** ⭐ | **Prize requirement documentation** | Complete Strands SDK implementation details, code examples, tool calling, performance metrics |
 | **SETUP.md** | Deployment instructions | Step-by-step setup for all components, configuration, troubleshooting |
 | **ARCHITECTURE.md** | Technical deep dive | AWS integration details, agent reasoning workflows, MCP protocol, data flows |
 
@@ -53,16 +54,18 @@ This document summarizes all documentation created for the Tensile Search projec
    - Usage: Schema generation (Indexing Agent) + Query understanding (Search Agent)
 
 2. **Uses AWS Services**
-   - ✅ **Amazon Bedrock AgentCore**: Multi-agent orchestration (Indexing + Search agents)
-   - ✅ **Amazon Bedrock/Nova**: Core LLM reasoning engine
-   - ✅ **AWS SDK for Agents**: Strands SDK integration for tool calling
+   - ✅ **Amazon Bedrock**: Claude 3.5 Sonnet (Indexing), Claude Haiku (Search)
+   - ✅ **Strands SDK** ⭐: Agent orchestration framework for Search Agent
+   - ✅ **AWS SDK (boto3)**: Direct Bedrock integration for Indexing Agent
    - ✅ **DynamoDB**: User registry and infrastructure metadata
    - ✅ **EC2 + Docker**: Elasticsearch deployment infrastructure
 
-3. **Meets AI Agent Qualification**
-   - ✅ **Uses reasoning LLMs**: Claude 3.5 Sonnet for autonomous decision-making
-   - ✅ **Autonomous capabilities**: Zero-code schema generation and query building
-   - ✅ **Integrates tools**: Elasticsearch via MCP, DynamoDB API, Docker API
+3. **Meets AI Agent Qualification** ⭐ **Strands SDK Prize**
+   - ✅ **Uses Strands SDK Agent class**: Search Agent built with `strands.Agent`
+   - ✅ **BedrockModel integration**: AWS Bedrock via `strands.models.BedrockModel`
+   - ✅ **Tool calling**: Custom `@tool` decorator + MCP tools
+   - ✅ **Autonomous multi-step reasoning**: Agent chains tool calls without manual orchestration
+   - ✅ **Production deployment**: Live at search.lehana.in/build
 
 ---
 
@@ -96,8 +99,15 @@ This document summarizes all documentation created for the Tensile Search projec
 5. **Team Contributions** (Individual value)
    - Abhinav: API infrastructure, security, deployment
    - Amit: Frontend, chunked uploads, DynamoDB integration
-   - Harshit: Indexing Agent, AWS Bedrock, streaming updates
-   - Khemchand: Search Agent, Strands SDK, two-phase architecture
+   - Harshit: Indexing Agent, AWS Bedrock direct API, streaming updates
+   - Khemchand: **Search Agent with Strands SDK** ⭐, MCP integration, two-phase architecture
+
+6. **Strands SDK Implementation** ⭐ **NEW** (Prize qualification)
+   - Complete code walkthrough with `strands.Agent` class
+   - Tool integration via `@tool` decorator
+   - Performance comparison (75% code reduction, 50% faster)
+   - Multi-step reasoning examples with schema discovery
+   - Production deployment evidence
 
 ### SETUP.md - Deployment Ready
 
@@ -172,17 +182,19 @@ This document summarizes all documentation created for the Tensile Search projec
 - Show document count (e.g., 1,247 products indexed)
 - Explain: "AWS Bedrock analyzed structure, extracted attributes autonomously"
 
-**2:00-2:45 - Natural Language Search**
+**2:00-2:45 - Natural Language Search** ⭐ **EMPHASIZE STRANDS SDK**
 - Enter query: "Want red or orange LED from Syska or better brands, under 10 wattage"
-- Show Search Agent reasoning via MCP
+- **Show Strands Agent logs**: "Calling tool: get_elastic_index_mapping... Building query with filters..."
 - Display results: 47 matching products
-- Highlight: Precise filters (color, brand, wattage range)
+- Highlight: "**Strands SDK** autonomously fetched schema, built query, executed search"
 - Show 1 product: "Syska 9W LED Red, ₹185"
+- **Key Phrase**: "This entire workflow—schema discovery, query building, search execution—happened with ONE Strands Agent call"
 
-**2:45-3:00 - AWS Architecture**
+**2:45-3:00 - AWS Architecture + Strands SDK**
 - Quick screen capture of architecture diagram
-- Call out: "Powered by AWS Bedrock, Strands SDK, DynamoDB"
-- End screen: GitHub repo + Live demo URL
+- **Call out specifically**: "Powered by **Strands SDK** with AWS Bedrock, plus DynamoDB"
+- Show snippet of code: `agent = Agent(model=BedrockModel(...), tools=[...])`
+- End screen: GitHub repo + Live demo URL + "**Strands SDK Prize Submission**"
 
 ### Visuals to Capture
 
@@ -241,14 +253,21 @@ This document summarizes all documentation created for the Tensile Search projec
 **Key Quote**:
 > "Two autonomous agents collaborate: Indexing Agent creates schemas → Search Agent uses schemas for accurate querying. Shared state in DynamoDB enables seamless handoff."
 
-### Best Strands SDK Implementation
+### Best Strands SDK Implementation ⭐ **PRIMARY TARGET**
 **Evidence**:
-- `search-agent/`: Strands-powered query processing
-- `demo/team/khemchand/`: Two-phase architecture documentation
-- MCP tool integration for Elasticsearch
+- **STRANDS_SDK_IMPLEMENTATION.md**: Complete 300+ line documentation with code walkthrough
+- `search-agent/strand_agent_api.py`: Full `strands.Agent` implementation (150+ lines)
+- `search-agent/elastic_mapping_tool.py`: Custom `@tool` decorator example
+- `demo/team/khemchand/CONTRIBUTION.md`: Detailed architecture explanation
+- **Live Demo**: search.lehana.in/build showing autonomous tool calling
+
+**Key Metrics**:
+- 75% code reduction (200+ lines → 50 lines)
+- 50% faster queries (855ms vs 1800ms)
+- Sub-second autonomous tool chaining
 
 **Key Quote**:
-> "Search Agent leverages Strands SDK for tool orchestration, autonomously calling MCP endpoints to fetch schemas and execute Elasticsearch queries."
+> "Search Agent built entirely with Strands SDK using Agent class, BedrockModel integration, and custom @tool decorator. Autonomous multi-step reasoning with MCP tool calling—no manual orchestration needed."
 
 ---
 

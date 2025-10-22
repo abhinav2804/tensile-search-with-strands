@@ -380,3 +380,29 @@ Press CTRL+C to quit
  * Restarting with watchdog (inotify)
  * Debugger is active!
  * Debugger PIN: 574-438-745
+ * Detected change in '/usr/lib/python3.12/uuid.py', reloading
+ * Detected change in '/usr/lib/python3.12/base64.py', reloading
+ * Detected change in '/usr/lib/python3.12/functools.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 574-438-745
+ * Detected change in '/root/repo/tensile-search-with-strands/api/config.py', reloading
+ * Detected change in '/root/repo/tensile-search-with-strands/api/test_auth.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 574-438-745
+ * Detected change in '/usr/lib/python3.12/os.py', reloading
+ * Detected change in '/usr/lib/python3.12/os.py', reloading
+ * Detected change in '/usr/lib/python3.12/os.py', reloading
+ * Detected change in '/usr/lib/python3.12/os.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 574-438-745
+ * Detected change in '/usr/lib/python3.12/base64.py', reloading
+ * Detected change in '/usr/lib/python3.12/functools.py', reloading
+ * Detected change in '/root/repo/tensile-search-with-strands/api/app.py', reloading
+ * Detected change in '/usr/lib/python3.12/functools.py', reloading
+ * Detected change in '/usr/lib/python3.12/functools.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 574-438-745
