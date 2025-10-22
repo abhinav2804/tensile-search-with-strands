@@ -1,0 +1,138 @@
+version: '3.8'
+
+networks:
+  mcp-net-${INSTANCE_ID}:
+    driver: bridge
+  ext-net-${INSTANCE_ID}:
+    driver: bridge
+
+services:
+  elasticsearch-${INSTANCE_ID}:
+    image: elastic/elasticsearch:8.18.8
+    container_name: elasticsearch-${INSTANCE_ID}
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
+      - ELASTIC_PASSWORD=changeme
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - mcp-net-${INSTANCE_ID}
+      - ext-net-${INSTANCE_ID}
+    ports:
+      - "${ELASTICSEARCH_PORT}:9200"
+      - "${ELASTICSEARCH_TRANSPORT_PORT}:9300"
+    volumes:
+      - elasticsearch_data_${INSTANCE_ID}:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:changeme -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  elasticsearch-init-${INSTANCE_ID}:
+    image: curlimages/curl:latest
+    container_name: elasticsearch-init-${INSTANCE_ID}
+    networks:
+      - mcp-net-${INSTANCE_ID}
+    depends_on:
+      elasticsearch-${INSTANCE_ID}:
+        condition: service_healthy
+    command: 
+      - sh
+      - -c
+      - |
+        echo 'Waiting for Elasticsearch to be ready...'
+        sleep 10
+        echo 'Creating API key for MCP server...'
+        response=$$(curl -s -u elastic:changeme -X POST 'http://elasticsearch-${INSTANCE_ID}:9200/_security/api_key' -H 'Content-Type: application/json' -d '{
+          "name": "mcp-server-${INSTANCE_ID}",
+          "expiration": "30d",
+          "role_descriptors": {
+            "mcp_role": {
+              "cluster": ["all"],
+              "index": [{
+                "names": ["*"],
+                "privileges": ["all"]
+              }]
+            }
+          }
+        }')
+        echo 'API Key Response:'
+        echo "$$response"
+        encoded_key=$$(echo "$$response" | grep -o '"encoded":"[^"]*"' | cut -d'"' -f4)
+        echo "Generated Encoded API Key: $$encoded_key"
+        echo "$$encoded_key" > /tmp/api_key.txt
+        echo 'API key generation completed'
+    restart: "no"
+    volumes:
+      - api_key_data_${INSTANCE_ID}:/tmp
+
+  mcp-server-${INSTANCE_ID}:
+    image: khemchandrs/elastic-mcp-server:latest
+    container_name: elastic-mcp-server-${INSTANCE_ID}
+    command: ["http"]
+    networks:
+      - mcp-net-${INSTANCE_ID}
+      - ext-net-${INSTANCE_ID}
+    dns:
+      - 8.8.8.8
+    ports:
+      - "${MCP_PORT}:8080"
+    environment:
+      ES_URL: http://elasticsearch-${INSTANCE_ID}:9200
+    restart: unless-stopped
+    depends_on:
+      elasticsearch-${INSTANCE_ID}:
+        condition: service_healthy
+      elasticsearch-init-${INSTANCE_ID}:
+        condition: service_completed_successfully
+    volumes:
+      - api_key_data_${INSTANCE_ID}:/tmp
+    healthcheck:
+      test: ["CMD", "sh", "-c", "netstat -ln | grep :8080"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  doc-agent-api-${INSTANCE_ID}:
+    build: .
+    image: ai-strand-agent:latest
+    container_name: ai-strand-agent-container-${INSTANCE_ID}
+    networks:
+      - mcp-net-${INSTANCE_ID}
+      - ext-net-${INSTANCE_ID}
+    dns:
+      - 8.8.8.8
+    ports:
+      - "${AI_AGENT_PORT}:5000"
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_REGION=us-east-1
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - AWS_ACCESS_KEY_ID=AKIA2WN2VXZHIYJJHGE7
+      - AWS_SECRET_ACCESS_KEY=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
+      - BEDROCK_INFERENCE_PROFILE_ARN=arn:aws:bedrock:us-east-1:301697000154:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0
+      - MCP_URL=http://elastic-mcp-server-${INSTANCE_ID}:8080/mcp
+    restart: unless-stopped
+    depends_on:
+      elasticsearch-${INSTANCE_ID}:
+        condition: service_healthy
+      mcp-server-${INSTANCE_ID}:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  elasticsearch_data_${INSTANCE_ID}:
+    driver: local
+  api_key_data_${INSTANCE_ID}:
+    driver: local

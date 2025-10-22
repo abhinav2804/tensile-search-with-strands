@@ -36,4 +36,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Run the application with uvicorn directly for production
-CMD ["uvicorn", "api_wrapper:app", "--host", "0.0.0.0", "--port", "5000", "--workers", "1"]
+CMD ["uvicorn", "strand_agent_api:app", "--host", "0.0.0.0", "--port", "5000", "--workers", "1"]

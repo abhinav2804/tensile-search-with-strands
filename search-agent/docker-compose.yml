@@ -3,22 +3,103 @@ version: '3.8'
 networks:
   mcp-net:
     driver: bridge
+  ext-net:
+    driver: bridge
 
 services:
+  elasticsearch:
+    image: elastic/elasticsearch:8.18.8
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
+      - ELASTIC_PASSWORD=changeme
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - mcp-net
+      - ext-net
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:changeme -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  elasticsearch-init:
+    image: curlimages/curl:latest
+    container_name: elasticsearch-init
+    networks:
+      - mcp-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo 'Waiting for Elasticsearch to be ready...' &&
+        sleep 10 &&
+        echo 'Creating API key...' &&
+        response=$$(curl -s -u elastic:changeme -X POST 'http://elasticsearch:9200/_security/api_key' \
+          -H 'Content-Type: application/json' \
+          -d '{
+            \"name\": \"aws-strand-agent\",
+            \"expiration\": \"30d\",
+            \"role_descriptors\": {
+              \"my_custom_role\": {
+                \"cluster\": [\"all\"],
+                \"index\": [{
+                  \"names\": [\"*\"],
+                  \"privileges\": [\"read\", \"write\"]
+                }]
+              }
+            }
+          }') &&
+        echo 'API Key Response:' &&
+        echo \"$$response\" &&
+        api_key=$$(echo \"$$response\" | grep -o '\"encoded\":\"[^\"]*\"' | cut -d'\"' -f4) &&
+        echo \"Generated API Key: $$api_key\" &&
+        echo \"$$api_key\" > /tmp/api_key.txt &&
+        echo 'API key generation completed'
+      "
+    restart: "no"
+
   mcp-server:
     image: khemchandrs/elastic-mcp-server:latest
     container_name: elastic-mcp-server
-    command: ["http"]
+    command:
+      - sh
+      - -c
+      - |
+        echo 'Waiting for API key...'
+        while [ ! -f /tmp/api_key.txt ]; do sleep 2; done
+        export ES_API_KEY=$$(cat /tmp/api_key.txt)
+        echo 'Starting MCP server with API key...'
+        /usr/local/bin/elasticsearch_core_mcp_server http
     networks:
       - mcp-net
+      - ext-net
+    dns:
+      - 8.8.8.8
     ports:
       - "8080:8080"
     environment:
-      ES_URL: ${ES_URL}
-      ES_API_KEY: ${ES_API_KEY}
+      ES_URL: http://elasticsearch:9200
     restart: unless-stopped
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      elasticsearch-init:
+        condition: service_completed_successfully
+    volumes:
+      - api_key_data:/tmp
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/health"]
+      test: ["CMD", "sh", "-c", "netstat -ln | grep :8080"]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -30,6 +111,9 @@ services:
     container_name: ai-strand-agent-container
     networks:
       - mcp-net
+      - ext-net
+    dns:
+      - 8.8.8.8
     ports:
       - "5000:5000"
     environment:
@@ -43,11 +127,18 @@ services:
       - MCP_URL=http://elastic-mcp-server:8080/mcp
     restart: unless-stopped
     depends_on:
+      elasticsearch:
+        condition: service_healthy
       mcp-server:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
+volumes:
+  elasticsearch_data:
+    driver: local
+  api_key_data:
+    driver: local
