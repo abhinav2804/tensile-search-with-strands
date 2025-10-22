@@ -1,0 +1,156 @@
+<svg viewBox="0 0 900 1400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="900" height="1400" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    Processing Pipeline Flow
+  </text>
+  <text x="450" y="70" font-family="Arial, sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">
+    End-to-End Document Processing Workflow
+  </text>
+  
+  <!-- Step 1 -->
+  <circle cx="100" cy="130" r="30" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+  
+  <rect x="160" y="100" width="680" height="110" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="180" y="130" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    API Request Received
+  </text>
+  <text x="180" y="155" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    GET /triggerIndexingLive endpoint receives request with parameters
+  </text>
+  <rect x="180" y="170" width="640" height="30" rx="6" fill="#0f172a"/>
+  <text x="500" y="190" font-family="Courier New, monospace" font-size="12" fill="#60a5fa" text-anchor="middle">
+    user_id, data_path, user_query_path
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="210" x2="450" y2="250" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="450,250 445,240 455,240" fill="#60a5fa"/>
+  
+  <!-- Step 2 -->
+  <circle cx="100" cy="300" r="30" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+  <text x="100" y="310" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+  
+  <rect x="160" y="270" width="680" height="110" rx="12" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+  <text x="180" y="300" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    Fetch User Metadata
+  </text>
+  <text x="180" y="325" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    Query DynamoDB to retrieve user profile and configuration data
+  </text>
+  <text x="180" y="350" font-family="Arial, sans-serif" font-size="12" fill="#fdba74">
+    User preferences - Access permissions - Custom settings
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="380" x2="450" y2="420" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="450,420 445,410 455,410" fill="#60a5fa"/>
+  
+  <!-- Step 3 -->
+  <circle cx="100" cy="480" r="30" fill="#06b6d4" stroke="#0891b2" stroke-width="2"/>
+  <text x="100" y="490" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+  
+  <rect x="160" y="440" width="680" height="140" rx="12" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
+  <text x="180" y="470" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    Process Input Files
+  </text>
+  <text x="180" y="495" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    Read and parse files with smart chunking (1000 characters per chunk)
+  </text>
+  <text x="180" y="520" font-family="Arial, sans-serif" font-size="12" fill="#67e8f9">
+    Supported Formats:
+  </text>
+  <rect x="180" y="530" width="100" height="30" rx="6" fill="#0891b2"/>
+  <text x="230" y="550" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">JSON</text>
+  <rect x="290" y="530" width="100" height="30" rx="6" fill="#0891b2"/>
+  <text x="340" y="550" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">JSONL</text>
+  <rect x="400" y="530" width="100" height="30" rx="6" fill="#0891b2"/>
+  <text x="450" y="550" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">CSV</text>
+  <rect x="510" y="530" width="100" height="30" rx="6" fill="#0891b2"/>
+  <text x="560" y="550" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">TXT</text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="580" x2="450" y2="620" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="450,620 445,610 455,610" fill="#60a5fa"/>
+  
+  <!-- Step 4 -->
+  <circle cx="100" cy="690" r="30" fill="#a855f7" stroke="#9333ea" stroke-width="2"/>
+  <text x="100" y="700" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">4</text>
+  
+  <rect x="160" y="650" width="680" height="130" rx="12" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="180" y="680" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    AI Enhancement via AWS Bedrock
+  </text>
+  <text x="180" y="705" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    Process documents through AWS Bedrock using Anthropic models
+  </text>
+  <text x="180" y="730" font-family="Arial, sans-serif" font-size="12" fill="#e9d5ff">
+    Document enrichment - Semantic analysis - Content enhancement
+  </text>
+  <text x="180" y="755" font-family="Arial, sans-serif" font-size="12" fill="#e9d5ff">
+    Metadata extraction - Quality improvement
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="780" x2="450" y2="820" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="450,820 445,810 455,810" fill="#60a5fa"/>
+  
+  <!-- Step 5 -->
+  <circle cx="100" cy="890" r="30" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+  <text x="100" y="900" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">5</text>
+  
+  <rect x="160" y="850" width="680" height="130" rx="12" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+  <text x="180" y="880" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    Index to Elasticsearch
+  </text>
+  <text x="180" y="905" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    Bulk index enriched documents into Elasticsearch cluster
+  </text>
+  <text x="180" y="930" font-family="Arial, sans-serif" font-size="12" fill="#fef3c7">
+    Batch size: 50 documents per batch
+  </text>
+  <text x="180" y="955" font-family="Arial, sans-serif" font-size="12" fill="#fef3c7">
+    Creates searchable index with optimized mappings
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="980" x2="450" y2="1020" stroke="#60a5fa" stroke-width="3"/>
+  <polygon points="450,1020 445,1010 455,1010" fill="#60a5fa"/>
+  
+  <!-- Step 6 -->
+  <circle cx="100" cy="1090" r="30" fill="#10b981" stroke="#059669" stroke-width="2"/>
+  <text x="100" y="1100" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+  
+  <rect x="160" y="1050" width="680" height="130" rx="12" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <text x="180" y="1080" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">
+    Stream SSE Updates and Complete
+  </text>
+  <text x="180" y="1105" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">
+    Real-time progress updates sent via Server-Sent Events throughout pipeline
+  </text>
+  <text x="180" y="1130" font-family="Arial, sans-serif" font-size="12" fill="#d1fae5">
+    Live status updates - Error notifications - Completion summary
+  </text>
+  <text x="180" y="1155" font-family="Arial, sans-serif" font-size="12" fill="#d1fae5">
+    Performance metrics - Document count tracking
+  </text>
+  
+  <!-- Configuration Box -->
+  <rect x="100" y="1220" width="700" height="140" rx="12" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+  <text x="120" y="1250" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#60a5fa">
+    Pipeline Configuration
+  </text>
+  
+  <text x="140" y="1280" font-family="Arial, sans-serif" font-size="13" fill="#93c5fd">
+    Chunk Size: 1000 characters per document chunk
+  </text>
+  <text x="140" y="1305" font-family="Arial, sans-serif" font-size="13" fill="#93c5fd">
+    Batch Size: 50 documents per Elasticsearch bulk operation
+  </text>
+  <text x="140" y="1330" font-family="Arial, sans-serif" font-size="13" fill="#93c5fd">
+    Output Format: Real-time JSON event stream via Server-Sent Events
+  </text>
+</svg>

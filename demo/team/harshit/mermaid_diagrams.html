@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture Diagrams</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .diagram-container {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .diagram-container.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .diagram-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .diagram-description {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ System Architecture Diagrams</h1>
+        <p class="subtitle">Generative Indexing System - Visual Documentation</p>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showDiagram('component-arch')">Component Architecture</button>
+            <button class="tab" onclick="showDiagram('high-level')">High-Level Architecture</button>
+            <button class="tab" onclick="showDiagram('sequence')">Sequence Flow</button>
+            <button class="tab" onclick="showDiagram('data-pipeline')">Data Pipeline</button>
+            <button class="tab" onclick="showDiagram('request-flow')">Request Flow</button>
+            <button class="tab" onclick="showDiagram('error-handling')">Error Handling</button>
+            <button class="tab" onclick="showDiagram('parallel')">Parallel Processing</button>
+            <button class="tab" onclick="showDiagram('security')">Security Architecture</button>
+        </div>
+
+        <div id="component-arch" class="diagram-container active">
+            <h2 class="diagram-title">Component Architecture</h2>
+            <p class="diagram-description">Core components of the Generative Indexing system and their interactions across application layers, external services, and utilities.</p>
+            <div class="mermaid">
+graph TB
+    subgraph "Application Core"
+        FastAPI[FastAPI Application]
+        Router[Route Handler]
+        Pipeline[Indexing Pipeline]
+    end
+    
+    subgraph "External Services"
+        Bedrock[AWS Bedrock]
+        DynamoDB[AWS DynamoDB]
+        ES[Elasticsearch]
+    end
+    
+    subgraph "Processing Components"
+        Schema[Schema Processor]
+        File[File Processor]
+        Index[Index Manager]
+    end
+    
+    subgraph "Utilities"
+        Logger[Logger]
+        Config[Config Loader]
+        Progress[Progress Tracker]
+    end
+    
+    FastAPI --> Router
+    Router --> Pipeline
+    Pipeline --> Schema
+    Pipeline --> File
+    Pipeline --> Index
+    
+    Schema --> Bedrock
+    Index --> ES
+    Pipeline --> DynamoDB
+    
+    Pipeline --> Progress
+    Pipeline --> Logger
+    FastAPI --> Config
+            </div>
+        </div>
+
+        <div id="high-level" class="diagram-container">
+            <h2 class="diagram-title">High-Level Architecture</h2>
+            <p class="diagram-description">Complete system architecture showing all layers from client to storage, including monitoring and AI processing components.</p>
+            <div class="mermaid">
+graph TB
+    subgraph Client["Client Layer"]
+        A[HTTP Client]
+        B[CLI Tool]
+    end
+
+    subgraph API["API Layer"]
+        C[FastAPI Service]
+        D[SSE Controller]
+        E[Request Validator]
+    end
+
+    subgraph Core["Core Processing"]
+        F[Indexing Pipeline]
+        G[Schema Processor]
+        H[File Processor]
+    end
+
+    subgraph AI["AI Processing"]
+        I[Bedrock Service]
+        J[Document Enhancer]
+    end
+
+    subgraph Storage["Storage Layer"]
+        K[Elasticsearch]
+        L[DynamoDB]
+    end
+
+    subgraph Monitor["Monitoring"]
+        M[Logger]
+        N[Progress Tracker]
+    end
+
+    A --> C
+    B --> C
+    C --> D
+    C --> E
+    E --> F
+    F --> G
+    F --> H
+    F --> I
+    I --> J
+    F --> K
+    F --> L
+    F --> N
+    N --> D
+    F --> M
+            </div>
+        </div>
+
+        <div id="sequence" class="diagram-container">
+            <h2 class="diagram-title">Detailed Sequence Flow</h2>
+            <p class="diagram-description">Step-by-step interaction sequence between components during document indexing, including SSE updates and bulk operations.</p>
+            <div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant FastAPI
+    participant Pipeline
+    participant DynamoDB
+    participant Bedrock
+    participant Elasticsearch
+    
+    Client->>FastAPI: POST /triggerIndexingLive
+    activate FastAPI
+    FastAPI->>Client: SSE Connection Established
+    
+    FastAPI->>Pipeline: Initialize Pipeline
+    activate Pipeline
+    
+    Pipeline->>DynamoDB: Fetch User Metadata
+    activate DynamoDB
+    DynamoDB-->>Pipeline: User Configuration
+    deactivate DynamoDB
+    
+    Pipeline->>Pipeline: Read & Chunk Documents
+    
+    loop For each document chunk
+        Pipeline->>Bedrock: Process Document
+        activate Bedrock
+        Bedrock-->>Pipeline: Enhanced Document
+        deactivate Bedrock
+        
+        Pipeline->>Elasticsearch: Bulk Index Documents
+        activate Elasticsearch
+        Elasticsearch-->>Pipeline: Indexing Status
+        deactivate Elasticsearch
+        
+        Pipeline->>FastAPI: Progress Update
+        FastAPI->>Client: SSE Progress Event
+    end
+    
+    Pipeline->>FastAPI: Completion Status
+    deactivate Pipeline
+    
+    FastAPI->>Client: SSE Completion Event
+    deactivate FastAPI
+            </div>
+        </div>
+
+        <div id="data-pipeline" class="diagram-container">
+            <h2 class="diagram-title">Data Processing Pipeline</h2>
+            <p class="diagram-description">End-to-end data flow from raw input through AI enhancement to final indexing, with parallel progress tracking.</p>
+            <div class="mermaid">
+graph LR
+    subgraph Input["Input Processing"]
+        A[Raw Data] --> B[File Reader]
+        B --> C[Chunker]
+        C --> D[Validator]
+    end
+
+    subgraph Enhancement["AI Enhancement"]
+        D --> E[Bedrock Client]
+        E --> F[Content Processor]
+        F --> G[Metadata Extractor]
+    end
+
+    subgraph Indexing["Search Indexing"]
+        G --> H[Document Formatter]
+        H --> I[Bulk Processor]
+        I --> J[Index Manager]
+    end
+
+    subgraph Monitoring["Progress Tracking"]
+        K[Status Tracker] --> L[SSE Emitter]
+        L --> M[Client Updates]
+    end
+
+    D --> K
+    G --> K
+    J --> K
+            </div>
+        </div>
+
+        <div id="request-flow" class="diagram-container">
+            <h2 class="diagram-title">Request Flow</h2>
+            <p class="diagram-description">HTTP request handling flow showing the journey from client request through processing to SSE event streaming.</p>
+            <div class="mermaid">
+sequenceDiagram
+    participant C as Client
+    participant F as FastAPI
+    participant P as Pipeline
+    participant B as Bedrock
+    participant E as Elasticsearch
+    
+    C->>F: HTTP Request
+    F->>P: Initialize Pipeline
+    P->>B: Process Documents
+    B-->>P: Enhanced Documents
+    P->>E: Index Documents
+    E-->>P: Index Status
+    P->>F: Progress Update
+    F->>C: SSE Event
+            </div>
+        </div>
+
+        <div id="error-handling" class="diagram-container">
+            <h2 class="diagram-title">Error Handling Flow</h2>
+            <p class="diagram-description">Robust error handling mechanism with retry logic, logging, and progress tracking for failed operations.</p>
+            <div class="mermaid">
+graph TD
+    A[Operation] -->|Execute| B{Success?}
+    B -->|No| C[Error Handler]
+    C -->|Retry| A
+    C -->|Max Retries| D[Error Response]
+    B -->|Yes| E[Next Step]
+    
+    C -->|Log| F[Logger]
+    C -->|Track| G[Progress]
+            </div>
+        </div>
+
+        <div id="parallel" class="diagram-container">
+            <h2 class="diagram-title">Parallel Processing</h2>
+            <p class="diagram-description">Concurrent document processing architecture enabling high-throughput batch indexing operations.</p>
+            <div class="mermaid">
+graph TB
+    subgraph "Document Processing"
+        P1[Processor 1]
+        P2[Processor 2]
+        P3[Processor 3]
+    end
+    
+    subgraph "Bulk Indexing"
+        B1[Batch 1]
+        B2[Batch 2]
+        B3[Batch 3]
+    end
+    
+    D[Documents] --> P1 & P2 & P3
+    P1 --> B1
+    P2 --> B2
+    P3 --> B3
+    B1 & B2 & B3 --> E[Elasticsearch]
+            </div>
+        </div>
+
+        <div id="security" class="diagram-container">
+            <h2 class="diagram-title">Security Architecture</h2>
+            <p class="diagram-description">Multi-layered security implementation with authentication, authorization, encryption, and comprehensive audit trails.</p>
+            <div class="mermaid">
+graph TB
+    subgraph "Security Layers"
+        A[API Gateway]
+        B[Authentication]
+        C[Authorization]
+        D[Data Encryption]
+    end
+    
+    subgraph "Secure Storage"
+        E[Encrypted Data]
+        F[Access Logs]
+        G[Audit Trail]
+    end
+    
+    Client -->|HTTPS| A
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    A --> F
+    C --> G
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        function showDiagram(id) {
+            // Hide all diagrams
+            document.querySelectorAll('.diagram-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected diagram
+            document.getElementById(id).classList.add('active');
+            
+            // Add active to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
