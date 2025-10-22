@@ -47,8 +47,8 @@ This architecture diagram illustrates the complete system flow, showing how diff
 
 ```bash
 # Create and activate virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv indexing-agent
+source indexing-agent/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
