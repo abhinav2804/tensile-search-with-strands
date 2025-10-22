@@ -1,0 +1,700 @@
+{
+  "schema": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "max_result_window": 50000
+      },
+      "analysis": {
+        "analyzer": {
+          "custom_text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "stop",
+              "snowball",
+              "custom_synonym"
+            ]
+          },
+          "search_analyzer": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": [
+              "lowercase",
+              "trim"
+            ]
+          },
+          "autocomplete_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "edge_ngram_filter"
+            ]
+          }
+        },
+        "filter": {
+          "custom_synonym": {
+            "type": "synonym",
+            "synonyms": [
+              "phone,mobile,cell",
+              "email,mail,e-mail",
+              "address,location,place"
+            ]
+          },
+          "edge_ngram_filter": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 10
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_searchable": {
+            "match_mapping_type": "string",
+            "match": "*name*|*title*|*description*|*content*|*text*|*note*|*comment*",
+            "mapping": {
+              "type": "text",
+              "analyzer": "custom_text_analyzer",
+              "search_analyzer": "standard",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "autocomplete": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "match": "*_id|*code*|*sku*|*isbn*|*account*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "dates_detection": {
+            "match": "*date*|*time*|created*|updated*|modified*",
+            "mapping": {
+              "type": "date",
+              "format": "yyyy-MM-dd||yyyy-MM-dd HH:mm:ss||epoch_millis||strict_date_optional_time"
+            }
+          }
+        },
+        {
+          "numbers_as_scaled": {
+            "match_mapping_type": "long",
+            "match": "*price*|*cost*|*amount*|*fee*|*salary*",
+            "mapping": {
+              "type": "scaled_float",
+              "scaling_factor": 100
+            }
+          }
+        }
+      ],
+      "properties": {
+        "SEARCH KEYWORD": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MODIFIED KEYWORD": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "QCR KEYWORD": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ATTRIBUTE EXTRACTION FLAG": {
+          "type": "long",
+          "searchable": false,
+          "query_referenced": false
+        },
+        "SERVEDFROMCACHE": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "SOLR EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "SOLR STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ALFA EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ALFA STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MARS EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MARS STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MERI EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MERI STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "CHATGPT EXECUTION": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "CHATGPT STATUS": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ENSEMBLE RUN": {
+          "type": "keyword",
+          "ignore_above": 55,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "SOLR_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ALFA_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MARS_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "MERI_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "CHATGPT_INFO": {
+          "type": "keyword",
+          "ignore_above": 52,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ID 1": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "NAME 1": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 100
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "MCAT_ACCURACY_LEVEL 1": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ID 2": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "NAME 2": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 100
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "MCAT_ACCURACY_LEVEL 2": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ID 3": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "NAME 3": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 100
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "MCAT_ACCURACY_LEVEL 3": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ID 4": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "NAME 4": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 100
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "MCAT_ACCURACY_LEVEL 4": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "ID 5": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "NAME 5": {
+          "type": "text",
+          "analyzer": "custom_text_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 100
+            },
+            "autocomplete": {
+              "type": "text",
+              "analyzer": "autocomplete_analyzer",
+              "search_analyzer": "standard"
+            },
+            "exact": {
+              "type": "text",
+              "analyzer": "keyword"
+            }
+          },
+          "searchable": true,
+          "query_referenced": false
+        },
+        "MCAT_ACCURACY_LEVEL 5": {
+          "type": "keyword",
+          "ignore_above": 50,
+          "fields": {
+            "text": {
+              "type": "text",
+              "analyzer": "standard"
+            }
+          },
+          "searchable": false,
+          "query_referenced": false
+        },
+        "upload_id": {
+          "type": "long",
+          "searchable": false,
+          "query_referenced": false
+        },
+        "display_id": {
+          "type": "long",
+          "searchable": false,
+          "query_referenced": false
+        }
+      }
+    }
+  },
+  "auto_queries": [
+    "Show all records with SEARCH KEYWORD",
+    "Find records where SEARCH KEYWORD contains specific value",
+    "Search for records with SEARCH KEYWORD like ''",
+    "Show all records with MODIFIED KEYWORD",
+    "Find records where MODIFIED KEYWORD contains specific value",
+    "Search for records with MODIFIED KEYWORD like ''",
+    "Show all records with QCR KEYWORD",
+    "Find records where QCR KEYWORD contains specific value",
+    "Search for records with QCR KEYWORD like ''",
+    "Show all records with ATTRIBUTE EXTRACTION FLAG",
+    "Find records where ATTRIBUTE EXTRACTION FLAG contains specific value",
+    "Find records with ATTRIBUTE EXTRACTION FLAG greater than 0",
+    "Find records with ATTRIBUTE EXTRACTION FLAG less than 0",
+    "Show all records with SERVEDFROMCACHE",
+    "Find records where SERVEDFROMCACHE contains specific value",
+    "Search for records with SERVEDFROMCACHE like 'NA'",
+    "Show all records",
+    "Find recent entries",
+    "Search by keyword",
+    "Filter by date range",
+    "Group by category",
+    "Sort by relevance",
+    "Find duplicates",
+    "Export search results",
+    "Advanced filter options",
+    "Statistical analysis"
+  ],
+  "user_queries": [],
+  "generated_at": "2025-09-16T16:57:10.109229",
+  "domain_info": {
+    "domain": "general",
+    "portal_name": "Data Discovery Portal",
+    "entity_name": "record",
+    "search_placeholder": "Search your data with natural language...",
+    "upload_description": "Upload your data files for intelligent search and analysis",
+    "primary_actions": [
+      "search",
+      "filter",
+      "analyze",
+      "export"
+    ],
+    "color_scheme": "#8b5cf6",
+    "templates": [
+      {
+        "prompt": "Search records by CHATGPT STATUS",
+        "category": "Field Search",
+        "tag": "Field-CHATGPT STATUS",
+        "title": "Chatgpt Status Search",
+        "description": "Find records with specific CHATGPT STATUS values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by CHATGPT EXECUTION",
+        "category": "Field Search",
+        "tag": "Field-CHATGPT EXECUTION",
+        "title": "Chatgpt Execution Search",
+        "description": "Find records with specific CHATGPT EXECUTION values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by SOLR_INFO",
+        "category": "Field Search",
+        "tag": "Field-SOLR_INFO",
+        "title": "Solr_Info Search",
+        "description": "Find records with specific SOLR_INFO values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by ID 1",
+        "category": "Field Search",
+        "tag": "Field-ID 1",
+        "title": "Id 1 Search",
+        "description": "Find records with specific ID 1 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by MERI EXECUTION",
+        "category": "Field Search",
+        "tag": "Field-MERI EXECUTION",
+        "title": "Meri Execution Search",
+        "description": "Find records with specific MERI EXECUTION values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        "prompt": "Search records by ID 2",
+        "category": "Field Search",
+        "tag": "Field-ID 2",
+        "title": "Id 2 Search",
+        "description": "Find records with specific ID 2 values",
+        "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+        "image": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    "auto_queries": []
+  },
+  "product_attributes": [],
+  "total_documents": 2583,
+  "file_processed": "temp_him_2k_kwds_2025-05-19-11-42-43-220372_live.csv"
+}

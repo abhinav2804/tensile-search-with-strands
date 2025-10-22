@@ -1,0 +1,819 @@
+from flask import Flask, jsonify, request, render_template, redirect, url_for, session
+import requests
+from descope import DescopeClient, AuthException
+from functools import wraps
+from flask_cors import CORS
+import os
+import tempfile
+import json
+import webbrowser
+import threading
+from werkzeug.utils import secure_filename
+from enhanced_data_pipeline import EnhancedDataPipeline, EnhancedSchemaManager, FixedRemoteElasticsearchManager
+from config import CONFIG
+import uuid
+from datetime import datetime, timedelta
+import shutil
+import glob
+import sys
+import time
+sys.stdout.reconfigure(line_buffering=True)
+
+app = Flask(__name__)
+app.secret_key = 'O26pYIWHrk9u+jk9Q3N335C75FU/mnxRbwGRfyNQ'  # Change this in production
+CORS(app)
+
+# Descope Configuration
+DESCOPE_PROJECT_ID = "P32OxoFpY0ihVvncEbabQARqzw8I"
+descope_client = DescopeClient(project_id=DESCOPE_PROJECT_ID)
+
+# Enhanced Pipeline Configuration
+pipeline = None
+processing_status = {}
+ALLOWED_EXTENSIONS = {'json', 'csv', 'xml', 'txt', 'docx', 'zip'}
+
+# Cache for stats to reduce frequent Elasticsearch calls
+stats_cache = {
+    'data': None,
+    'timestamp': None,
+    'ttl_seconds': 30  # Cache for 30 seconds
+}
+
+def initialize_pipeline():
+    """Initialize the enhanced data pipeline"""
+    global pipeline
+    try:
+        pipeline = EnhancedDataPipeline(
+            aws_access_key=CONFIG['aws_access_key'],
+            aws_secret_key=CONFIG['aws_secret_key'],
+            aws_region=CONFIG['aws_region'],
+            es_host=CONFIG['es_host'],
+            es_auth=CONFIG['es_auth']
+        )
+        print("Enhanced pipeline initialized successfully")
+    except Exception as e:
+        print(f"Failed to initialize pipeline: {e}")
+        print("Note: Pipeline will be unavailable until configuration is fixed")
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def open_browser_delayed(url, delay=3):
+    """Open browser after a delay"""
+    def delayed_open():
+        import time
+        time.sleep(delay)
+        try:
+            webbrowser.open(url)
+            print(f"Browser opened to: {url}")
+        except Exception as e:
+            print(f"Failed to open browser: {e}")
+    
+    thread = threading.Thread(target=delayed_open)
+    thread.daemon = True
+    thread.start()
+
+# Login Required Decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'session_token' not in session:
+            return redirect('/login')
+        try:
+            descope_client.validate_session(session['session_token'])
+            return f(*args, **kwargs)
+        except AuthException:
+            session.clear()
+            return redirect('/login')
+    return decorated_function
+
+@app.route('/')
+def home_redirect():
+    return redirect('/esportal')
+
+@app.route('/login')
+def login():
+    """Fast-loading login page with immediate Descope component"""
+    return f'''<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Data Portal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preload" href="https://unpkg.com/@descope/web-component@latest/dist/index.js" as="script">
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        .login-container {{
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }}
+        h1 {{ text-align: center; margin-bottom: 30px; color: #333; }}
+        #loading {{ text-align: center; color: #666; }}
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Welcome</h1>
+        <div id="loading">Loading authentication...</div>
+        <descope-wc project-id="{DESCOPE_PROJECT_ID}" flow-id="sign-up-or-in" style="display:none;"></descope-wc>
+    </div>
+    
+    <script src="https://unpkg.com/@descope/web-component@latest/dist/index.js"></script>
+    <script>
+        // Show login component immediately when loaded
+        document.addEventListener('DOMContentLoaded', function() {{
+            setTimeout(() => {{
+                const loading = document.getElementById('loading');
+                const descope = document.querySelector('descope-wc');
+                if (descope) {{
+                    loading.style.display = 'none';
+                    descope.style.display = 'block';
+                }}
+            }}, 100);
+        }});
+        
+        // Handle authentication
+        const descopeWc = document.querySelector('descope-wc');
+        descopeWc.addEventListener('success', (e) => {{
+            fetch('/auth/callback', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify({{ sessionToken: e.detail.sessionToken }})
+            }})
+            .then(r => r.json())
+            .then(data => {{
+                if(data.success) {{
+                    window.location.href = data.redirect;
+                }} else {{
+                    alert('Login failed: ' + data.error);
+                }}
+            }});
+        }});
+    </script>
+</body>
+</html>'''
+
+@app.route('/esportal')
+def landingpage():
+    return render_template('index.html')
+
+@app.route('/auth/callback', methods=['POST'])
+def auth_callback():
+    try:
+        data = request.json
+        session_token = data.get('sessionToken')
+
+        if session_token:
+            user = descope_client.validate_session(session_token)
+            session['session_token'] = session_token
+            session['user'] = {
+                'id': user.get('userId'),
+                'email': user.get('email'),
+                'name': user.get('name')
+            }
+            return jsonify({'success': True, 'redirect': '/esportal'})
+
+        return jsonify({'success': False, 'error': 'Invalid token'}), 401
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
+
+@app.route('/ask', methods=['POST'])
+@login_required
+def ask():
+    try:
+        data = request.get_json()
+        chat_input = data.get('chatInput', '').strip()
+
+        if not chat_input:
+            return jsonify({"error": "No input provided"}), 400
+
+        # Add authentication token to webhook request
+        webhook_url = "http://54.227.251.28:5678/webhook/search"
+        headers = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'insomnia/11.2.0',
+            'Authorization': f'Bearer {session.get("session_token")}'
+        }
+        payload = {
+            "chatInput": chat_input
+        }
+
+        response = requests.post(webhook_url, json=payload, headers=headers, timeout=30)
+        response.raise_for_status()
+
+        webhook_response = response.text
+
+        return jsonify({
+            "success": True,
+            "redirect": url_for('result', query=chat_input, response=webhook_response)
+        })
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "success": True,
+            "redirect": url_for('result', query=chat_input, response=f"Error: {str(e)}")
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": True,
+            "redirect": url_for('result', query=chat_input, response=f"Unexpected error: {str(e)}")
+        }), 200
+
+@app.route('/result')
+def result():
+    query = request.args.get('query', 'No query')
+    response = request.args.get('response', 'No response')
+    return render_template('result.html', query=query, response=response)
+
+# Enhanced File Upload Routes
+@app.route('/upload', methods=['POST'])
+def upload_files_enhanced():
+    """Enhanced file upload with remote deployment and automatic browser opening"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+            
+        files = request.files.getlist('files')
+        if not files:
+            return jsonify({'error': 'No files provided'}), 400
+        
+        # Get form data
+        description = request.form.get('description', '').strip()
+        user_queries_text = request.form.get('userQueries', '').strip()
+        deployment_option = request.form.get('deployment', 'local')
+        
+        # Parse user queries
+        user_queries = []
+        if user_queries_text:
+            user_queries = [q.strip() for q in user_queries_text.split('\n') if q.strip()]
+        
+        user_id = session.get('user', {}).get('id', 'anonymous')
+        results = []
+        
+        print(f"Processing {len(files)} files with deployment: {deployment_option}")
+        print(f"User queries: {len(user_queries)}")
+        print(f"Description: {description}")
+        
+        for file in files:
+            if file and file.filename and allowed_file(file.filename):
+                try:
+                    # Save to temp file
+                    filename = secure_filename(file.filename)
+                    temp_path = f"temp_{filename}"
+                    print(f"Saving file: {filename}")
+                    file.save(temp_path)
+                    
+                    # Process with enhanced pipeline
+                    base_name = os.path.splitext(filename)[0]
+                    base_name = base_name.replace('_', '-')
+                    clean_user_id = ''.join(c for c in user_id if c.isalnum())[:10]
+                    
+                    # Add timestamp to ensure unique index names
+                    import time
+                    timestamp = int(time.time())
+                    index_name = f"upload-{clean_user_id}-{base_name}-{timestamp}".lower()
+                    schema_file = f"schemas/{index_name}-schema.json"
+                    
+                    print(f"Processing {filename} -> {index_name}")
+                    print(f"User queries provided: {len(user_queries)}")
+                    print(f"Deploy to remote: {deployment_option == 'remote'}")
+                    
+                    # Enhanced processing with all new features
+                    processing_result = pipeline.process_file_enhanced(
+                        file_path=temp_path,
+                        index_name=index_name,
+                        schema_file=schema_file,
+                        user_queries=user_queries,
+                        deploy_remote=(deployment_option == 'remote')
+                    )
+                    
+                    # Build result object
+                    result = {
+                        'file': filename,
+                        'index': index_name,
+                        'status': 'completed',
+                        'domain_info': processing_result['domain_info'],
+                        'schema_file': schema_file,
+                        'templates_generated': len(processing_result['domain_info'].get('templates', [])),
+                        'domain': processing_result['domain_info'].get('domain', 'unknown'),
+                        'total_documents': processing_result['total_documents'],
+                        'auto_queries_generated': processing_result['auto_queries_generated'],
+                        'user_queries_count': len(user_queries),
+                        'attributes_extracted': processing_result['attributes_extracted'],
+                        'schema_optimized': processing_result['schema_optimized'],
+                        'deployment_target': deployment_option
+                    }
+                    
+                    # Add deployment info if remote
+                    if deployment_option == 'remote' and processing_result['deployment_result']:
+                        if processing_result['deployment_result']['success']:
+                            access_url = processing_result['deployment_result']['access_url']
+                            result['remote_deployment'] = {
+                                'success': True,
+                                'access_url': access_url,
+                                'instance_name': processing_result['deployment_result']['instance_name'],
+                                'host': processing_result['deployment_result']['host'],
+                                'port': processing_result['deployment_result']['port'],
+                                'documents_deployed': processing_result['deployment_result'].get('documents_deployed', 0)
+                            }
+                            
+                            # Invalidate stats cache after successful deployment
+                            stats_cache['timestamp'] = None
+                            
+                            # Open browser automatically after deployment
+                            print(f"Remote deployment successful! Opening browser to: {access_url}")
+                            open_browser_delayed(access_url, delay=2)
+                            
+                        else:
+                            result['remote_deployment'] = {
+                                'success': False,
+                                'error': processing_result['deployment_result'].get('error', 'Unknown deployment error')
+                            }
+                    elif deployment_option == 'local' and processing_result.get('local_indexing_success'):
+                        # For local deployment, show local ES URL
+                        local_url = CONFIG['es_host']
+                        result['local_deployment'] = {
+                            'success': True,
+                            'access_url': local_url,
+                            'index_name': index_name
+                        }
+                        
+                        # Invalidate stats cache after successful local deployment
+                        stats_cache['timestamp'] = None
+                        
+                        print(f"Local deployment successful! Elasticsearch available at: {local_url}")
+                    
+                    results.append(result)
+                    
+                    # Clean up temp file
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                    
+                    print(f"Completed processing: {filename}")
+                    print(f"Domain detected: {processing_result['domain_info'].get('domain', 'unknown')}")
+                    print(f"Templates generated: {len(processing_result['domain_info'].get('templates', []))}")
+                    print(f"Auto-queries generated: {processing_result['auto_queries_generated']}")
+                    print(f"Attributes extracted: {processing_result['attributes_extracted']}")
+                    
+                except Exception as e:
+                    print(f"Error processing {filename}: {e}")
+                    results.append({
+                        'file': filename,
+                        'error': str(e),
+                        'status': 'failed'
+                    })
+            else:
+                results.append({
+                    'file': file.filename if file else 'Unknown',
+                    'error': 'Unsupported file type',
+                    'status': 'failed'
+                })
+        
+        return jsonify({
+            'success': True,
+            'results': results,
+            'message': f'Processed {len(results)} files with enhanced pipeline',
+            'templates_updated': any(r.get('templates_generated', 0) > 0 for r in results),
+            'features_enabled': {
+                'intelligent_schema': True,
+                'attribute_extraction': True,
+                'auto_query_generation': True,
+                'remote_deployment': deployment_option == 'remote',
+                'browser_auto_open': deployment_option == 'remote'
+            }
+        })
+        
+    except Exception as e:
+        print(f"Upload error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/domain-config', methods=['GET'])
+def get_domain_config():
+    """Get domain configuration with templates and auto-queries (simplified)"""
+    try:
+        schema_dir = 'schemas'
+        os.makedirs(schema_dir, exist_ok=True)
+        
+        domain_files = []
+        for file in os.listdir(schema_dir):
+            if file.endswith('-domain.json'):
+                domain_files.append(file)
+        
+        if not domain_files:
+            # Reduced logging frequency
+            return jsonify({
+                'domain': 'general',
+                'portal_name': 'Data Discovery Portal',
+                'entity_name': 'record',
+                'search_placeholder': 'Describe what you\'re looking for...',
+                'upload_description': 'Upload your data files for analysis',
+                'primary_actions': ['search', 'analyze', 'export'],
+                'color_scheme': '#8b5cf6',
+                'templates': [],
+                'auto_queries': []
+            })
+        
+        # Get the most recent domain file
+        latest_domain_file = max(domain_files, key=lambda f: os.path.getctime(os.path.join(schema_dir, f)))
+        
+        with open(os.path.join(schema_dir, latest_domain_file), 'r') as f:
+            domain_config = json.load(f)
+        
+        # Ensure all required fields are present
+        domain_config.setdefault('templates', [])
+        domain_config.setdefault('auto_queries', [])
+        
+        return jsonify(domain_config)
+        
+    except Exception as e:
+        return jsonify({
+            'domain': 'general',
+            'portal_name': 'Data Discovery Portal', 
+            'entity_name': 'record',
+            'search_placeholder': 'Describe what you\'re looking for...',
+            'upload_description': 'Upload your data files for analysis',
+            'primary_actions': ['search', 'analyze', 'export'],
+            'color_scheme': '#8b5cf6',
+            'templates': [],
+            'auto_queries': []
+        })
+
+# OPTIMIZED API Stats with caching to reduce frequent Elasticsearch calls
+@app.route('/api/stats', methods=['GET'])
+def get_dynamic_stats():
+    """Get dynamic statistics from Elasticsearch indices with caching"""
+    global stats_cache
+    
+    try:
+        # Check if we have valid cached data
+        now = datetime.now()
+        if (stats_cache['data'] is not None and 
+            stats_cache['timestamp'] is not None and
+            (now - stats_cache['timestamp']).total_seconds() < stats_cache['ttl_seconds']):
+            # Return cached data
+            return jsonify(stats_cache['data'])
+        
+        # Cache miss or expired - fetch new data
+        if pipeline is None or not pipeline.es_manager.es:
+            stats_data = {
+                'total_documents': '0',
+                'total_indices': '0', 
+                'total_fields': '0',
+                'avg_query_time': 'N/A'
+            }
+        else:
+            # Get actual stats from Elasticsearch
+            indices_info = pipeline.es_manager.es.cat.indices(format='json')
+            
+            # Calculate real statistics
+            our_indices = [idx for idx in indices_info if idx['index'].startswith('upload-')]
+            total_docs = sum(int(idx.get('docs.count', 0)) for idx in our_indices)
+            total_indices = len(our_indices)
+            
+            # Get field count from schemas
+            schema_files = glob.glob('schemas/*-schema.json')
+            total_fields = 0
+            for schema_file in schema_files:
+                try:
+                    with open(schema_file, 'r') as f:
+                        schema_data = json.load(f)
+                        properties = schema_data.get('schema', {}).get('mappings', {}).get('properties', {})
+                        total_fields += len(properties)
+                except:
+                    pass
+            
+            stats_data = {
+                'total_documents': f"{total_docs:,}" if total_docs > 0 else "0",
+                'total_indices': f"{total_indices:,}" if total_indices > 0 else "0",
+                'total_fields': f"{total_fields:,}" if total_fields > 0 else "0", 
+                'avg_query_time': '< 150ms'
+            }
+        
+        # Update cache
+        stats_cache['data'] = stats_data
+        stats_cache['timestamp'] = now
+        
+        return jsonify(stats_data)
+        
+    except Exception as e:
+        # Return cached data if available, otherwise return default
+        if stats_cache['data'] is not None:
+            return jsonify(stats_cache['data'])
+        
+        return jsonify({
+            'total_documents': '0',
+            'total_indices': '0',
+            'total_fields': '0',
+            'avg_query_time': 'N/A'
+        })
+
+# Remote Elasticsearch Management Routes
+@app.route('/remote-instances', methods=['GET'])
+@login_required
+def list_remote_instances():
+    """List all remote Elasticsearch instances"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+        
+        instances = pipeline.get_remote_instances()
+        return jsonify({
+            'instances': instances,
+            'total_count': len(instances)
+        })
+        
+    except Exception as e:
+        print(f"Error listing remote instances: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/remote-instances/<instance_name>/stop', methods=['POST'])
+@login_required
+def stop_remote_instance(instance_name):
+    """Stop a remote Elasticsearch instance"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+        
+        success = pipeline.stop_remote_instance(instance_name)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f'Instance {instance_name} stopped successfully'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to stop instance {instance_name}'
+            }), 500
+            
+    except Exception as e:
+        print(f"Error stopping remote instance: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/remote-instances/<instance_name>/delete', methods=['DELETE'])
+@login_required
+def delete_remote_instance(instance_name):
+    """Delete a remote Elasticsearch instance"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+        
+        success = pipeline.delete_remote_instance(instance_name)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f'Instance {instance_name} deleted successfully'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to delete instance {instance_name}'
+            }), 500
+            
+    except Exception as e:
+        print(f"Error deleting remote instance: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/open-browser/<path:url>', methods=['POST'])
+def open_browser_endpoint(url):
+    """Endpoint to open browser to specific URL"""
+    try:
+        decoded_url = url.replace('--', '://')  # Simple URL encoding
+        webbrowser.open(decoded_url)
+        return jsonify({'success': True, 'message': f'Browser opened to {decoded_url}'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/schema-info/<index_name>', methods=['GET'])
+def get_schema_info(index_name):
+    """Get schema and auto-queries information for an index"""
+    try:
+        schema_file = f"schemas/{index_name}-schema.json"
+        
+        if not os.path.exists(schema_file):
+            return jsonify({'error': 'Schema file not found'}), 404
+        
+        # Load schema data
+        with open(schema_file, 'r') as f:
+            schema_data = json.load(f)
+        
+        return jsonify({
+            'schema': schema_data.get('schema', {}),
+            'auto_queries': schema_data.get('auto_queries', []),
+            'generated_at': schema_data.get('generated_at'),
+            'query_count': len(schema_data.get('auto_queries', []))
+        })
+        
+    except Exception as e:
+        print(f"Error getting schema info: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/test-templates', methods=['GET'])
+def test_templates():
+    """Test endpoint to check template generation"""
+    try:
+        domain_config_response = get_domain_config()
+        domain_config = domain_config_response.get_json()
+        
+        return jsonify({
+            'domain': domain_config.get('domain'),
+            'portal_name': domain_config.get('portal_name'),
+            'templates_count': len(domain_config.get('templates', [])),
+            'auto_queries_count': len(domain_config.get('auto_queries', [])),
+            'templates': domain_config.get('templates', []),
+            'auto_queries': domain_config.get('auto_queries', [])[:10]  # First 10 for preview
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Enhanced health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'pipeline_ready': pipeline is not None,
+        'features': {
+            'intelligent_schema': True,
+            'attribute_extraction': True,
+            'auto_query_generation': True,
+            'remote_deployment': True,
+            'domain_detection': True,
+            'browser_auto_open': True
+        },
+        'timestamp': datetime.now().isoformat()
+    })
+
+# Keep existing routes for backward compatibility
+@app.route('/status/<job_id>', methods=['GET'])
+def get_status(job_id):
+    """Get processing status for a job"""
+    if job_id not in processing_status:
+        return jsonify({'error': 'Job not found'}), 404
+    
+    return jsonify(processing_status[job_id])
+
+@app.route('/jobs', methods=['GET'])
+@login_required
+def list_jobs():
+    """List all processing jobs for current user"""
+    user_id = session.get('user', {}).get('id', 'anonymous')
+    user_jobs = {
+        job_id: status for job_id, status in processing_status.items() 
+        if status.get('user_id') == user_id
+    }
+    return jsonify(user_jobs)
+
+@app.route('/indices', methods=['GET'])
+def list_indices():
+    """List all Elasticsearch indices"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+            
+        indices_info = pipeline.es_manager.es.cat.indices(format='json')
+        
+        our_indices = [
+            {
+                'index': idx['index'],
+                'docs_count': idx.get('docs.count', '0'),
+                'store_size': idx.get('store.size', '0b'),
+                'health': idx.get('health', 'unknown')
+            }
+            for idx in indices_info 
+            if idx['index'].startswith('upload-') or idx['index'].startswith('index-')
+        ]
+        
+        return jsonify({
+            'indices': our_indices,
+            'total_count': len(our_indices)
+        })
+        
+    except Exception as e:
+        print(f"Error listing indices: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/search/<index_name>', methods=['GET'])
+def search_index(index_name):
+    """Search documents in an index"""
+    try:
+        if pipeline is None:
+            return jsonify({'error': 'Pipeline not initialized'}), 500
+            
+        size = request.args.get('size', 10, type=int)
+        query = request.args.get('q', '*')
+        
+        search_body = {
+            'query': {
+                'query_string': {
+                    'query': query
+                }
+            },
+            'size': min(size, 100)
+        }
+        
+        result = pipeline.es_manager.es.search(
+            index=index_name,
+            body=search_body
+        )
+        
+        return jsonify({
+            'total_hits': result['hits']['total']['value'] if isinstance(result['hits']['total'], dict) else result['hits']['total'],
+            'documents': [hit['_source'] for hit in result['hits']['hits']],
+            'took': result['took']
+        })
+        
+    except Exception as e:
+        print(f"Search error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'error': 'Page not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error'}), 500
+
+if __name__ == '__main__':
+    # Create necessary directories
+    os.makedirs('schemas', exist_ok=True)
+    os.makedirs('uploads', exist_ok=True)
+        # Initialize enhanced pipeline
+
+    initialize_pipeline()
+
+    print("Starting enhanced server with remote deployment...")
+
+    print("Available routes:")
+
+    for rule in app.url_map.iter_rules():
+
+        print(f"  {rule}")
+
+    print("\nEnhanced Features:")
+
+    print("  Intelligent Schema Generation with Advanced Analyzers")
+
+    print("  Attribute Extraction from Product Names")
+
+    print("  Auto-Query Generation (50 queries)")
+
+    print("  Remote Elasticsearch Deployment with SSH")
+
+    print("  Automatic Browser Opening")
+
+    print("  User Query Integration")
+
+    print("  Field-Based Templates (No Domain Examples)")
+
+    print("  Enhanced SSH Authentication")
+
+    print("\nRemote Deployment:")
+
+    print(f"  SSH Host: 54.227.251.28")
+
+    print(f"  SSH User: khemchand")
+
+    print(f"  Auto Browser Open: Enabled")
+
+    print(f"  Enhanced Schema: Enabled")
+
+    print("\nNew Endpoints:")
+
+    print("  POST /upload - Enhanced upload with remote deployment")
+
+    print("  GET /remote-instances - List remote ES instances")
+
+    print("  POST /remote-instances/<name>/stop - Stop remote instance")
+
+    print("  DELETE /remote-instances/<name>/delete - Delete remote instance")
+
+    print("  POST /open-browser/<url> - Open browser to URL")
+
+    print("  GET /schema-info/<index> - Get schema and auto-queries")
+
+    print("  GET /test-templates - Test template generation")
+
+    app.run(host='0.0.0.0', port=7000, debug=True)

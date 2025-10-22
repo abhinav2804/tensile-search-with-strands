@@ -1,0 +1,53 @@
+{
+  "domain": "education",
+  "portal_name": "Education Management Portal",
+  "entity_name": "record",
+  "search_placeholder": "Search students, courses, grades...",
+  "upload_description": "Upload student data, course information, or academic records",
+  "primary_actions": [
+    "search",
+    "filter",
+    "analyze",
+    "report"
+  ],
+  "color_scheme": "#ef4444",
+  "templates": [
+    {
+      "prompt": "Search records with specific Deal Stage values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Deal Stage Search",
+      "description": "Find records by Deal Stage criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Source values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Source Search",
+      "description": "Find records by Source criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Phone 1 values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Phone 1 Search",
+      "description": "Find records by Phone 1 criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      "prompt": "Search records with specific Email 1 values",
+      "category": "Field Search",
+      "tag": "Targeted",
+      "title": "Email 1 Search",
+      "description": "Find records by Email 1 criteria",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg>",
+      "image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ],
+  "auto_queries": []
+}
