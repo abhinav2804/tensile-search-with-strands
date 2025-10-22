@@ -1,0 +1,20 @@
+1. Various Secured APIs are generated to empower the frontend.
+
+2. API details are as follows:
+    2.1 Upload API:
+    This is used to upload data of the user at data and query directory.
+    data and query directories are stored at /var/www/es/{userid}/data and /var/www/es/{userid}/query
+
+    2.2 Post the last file of query is uploaded, we instantiate two processes.
+        2.2.1 Provide infra to the user.
+        We provide the auto deployed infra to the user that contains spinning up elasticsearch db, followed by MCP server that connect with the elastic and later landing to a search agent generated over strand agents library. This is one time process if the user doesnt have the infra. While deploying the infra we check if the ports are available or not.
+        2.2.2 Provide indexed data to the user.
+        Here we have generated an indexing pipeline that is responsible for understanding the data and query files provided by the user using LLM and generating a smart Indexing schema with valid mapping and various smart analyzers settings.
+        Later the mapping is uploaded and the index is generated.
+        After that documents are generated and ingested to the es.
+
+    2.3 This completes the flow for upload.
+    2.4 Other API is query api, that is responsible to get the search query from the frontend and share the same to our bedrock search agent generated over strand library. The response is shared with the frontend that it showcases in a beautiful way.
+    Search api is expected to smartly figure out the agent based on user and get the results.
+
+3. A basic authorization has been enabled currently that keeps our api secure.
