@@ -1,0 +1,45 @@
+﻿What I Built - Summary
+
+
+Frontend (UI/UX)
+* Built complete user interface with user intensive, responsive design
+* Integrated Descope for email-based user login
+* Added backup login system if Descope fails to load
+* Developed dashboard with interactive templates queries
+* Added advanced features of elasticsearch to showcase the capabilities of our portal
+* Added Upload section - when clicked opens the data description and queries description dialog box for better schema creation
+
+
+Backend API
+* Built Flask server to handle all requests
+* Set up API endpoints connecting frontend to backend services
+* Added logs every request and response
+
+
+File Processing
+* Built chunked upload system for files over 500MB, if less than 500mb then in 0ne chunk it can be uploaded
+* Processing - last message for identification in last chunk along with the queries that user will write
+
+
+Elasticsearch Setup ( not reqiured now as flow changed )
+* Spinning up new elastic search instance for individual user
+* Integrated Elasticsearch for indexing and searching data
+* Auto-generates schemas and handles bulk uploads
+* Runs complex search queries and monitors cluster health
+
+
+MCP Setup ( not reqiured now as flow changed)
+* Spinning up new MCP instance for individual user
+* Auto-configures MCP during remote server deployment
+* Monitors MCP health and connection status
+
+
+Remote Deployments  ( not required now as flow changed)
+* Built automation to deploy Elasticsearch and MCP servers via SSH
+* Creates Docker containers with unique ports per user
+* Monitors deployments and can remotely stop/delete instances
+
+
+Database, Indexing APIs
+* DynamoDB integration - when user login first, we will store into db after creating an unique id for him and keeping his mail id as primary key
+* Integrated Search query for fetching the query details and showcase on the result screen in formatted way that will look stunning on seeing results
