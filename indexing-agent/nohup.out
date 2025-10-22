@@ -1,0 +1,9 @@
+INFO:     Will watch for changes in these directories: ['/root/repo/tensile-search-with-strands/indexing-agent']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [675528] using WatchFiles
+✅ Using configured port 8000
+🚀 Running on http://0.0.0.0:8000
+INFO:     Started server process [675531]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:49050 - "GET /triggerIndexingLive?user_id=abc123 HTTP/1.1" 422 Unprocessable Entity
