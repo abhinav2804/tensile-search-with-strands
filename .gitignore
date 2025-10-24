@@ -1,6 +1,7 @@
 # Project specific
 indexing-agent/app/indexing-agent
 indexing-agent/output_dir/
+indexing-agent/app/config/keys/*.key
 
 # Python virtual environments
 venv*/
