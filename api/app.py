@@ -26,6 +26,8 @@ from werkzeug.utils import secure_filename
 import requests
 import json # Used for pretty-printing the response
 import sseclient
+import socket
+
 
 app = Flask(__name__)
 
@@ -38,8 +40,15 @@ BASE_DIR = "/var/www/es"
 # These formats are supported by the Indexing Agent's data processing pipeline
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'json', 'csv', 'xml', 'doc', 'docx'}
 
+ES_PORT_LIST = [3101, 3102, 3103, 3104, 3105, 3106, 3107, 3108, 3109, 3110]
+ES_MCP_PORT_LIST = [3201, 3202, 3203, 3204, 3205, 3206, 3207, 3208, 3209, 3210]
+ES_AGENT_PORT_LIST = [3301, 3302, 3303, 3304, 3305, 3306, 3307, 3308, 3309, 3310]
+
 # 1. Define the base URL
 INDEXING_AGENT_URL = "http://localhost:8000/triggerIndexingLive"
+
+INFRA_API_LAUNCHER = "http://localhost:8002/deploy"
+SEARCH_API_URL = "http://localhost:5000/query"
 
 # 2. Define the query parameters (everything after the '?')
 INDEXING_AGENT_PARAMS = {
@@ -172,6 +181,25 @@ def create_directory_structure(userid):
     
     return user_dir, data_dir, query_dir
 
+def deploy_service(elasticsearch_port, mcp_port, ai_agent_port, base_url):
+    """
+    Deploys services by sending a POST request with dynamic port values.
+    """
+    payload = {
+        "ports": {
+            "elasticsearch_port": elasticsearch_port,
+            "mcp_port": mcp_port,
+            "ai_agent_port": ai_agent_port
+        }
+    }
+
+    try:
+        response = requests.post(base_url, json=payload, timeout=10)
+        response.raise_for_status()  # Raise exception for HTTP errors
+        return response.json()  # Return parsed JSON response
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+
 @app.route('/upload', methods=['POST'])
 @require_auth
 def upload_file():
@@ -207,6 +235,11 @@ def upload_file():
         - Uses secure_filename() to prevent directory traversal attacks
         - Adds UUID to prevent filename collisions
     """
+
+    """Upload file endpoint"""
+
+    endOfFile = False
+
     try:
         # Validate required parameters
         if 'userid' not in request.form:
@@ -260,6 +293,26 @@ def upload_file():
         file.save(file_path)
         
         if endOfFile:
+
+            """ GET AVAILABLE PORTS FOR ES INSTANCES """
+
+            nextESPort = get_next_available_port(ES_PORT_LIST)
+            nextESMCPPort = get_next_available_port(ES_MCP_PORT_LIST)
+            nextESAgentPort = get_next_available_port(ES_AGENT_PORT_LIST)
+
+            if nextESPort and nextESMCPPort and nextESAgentPort:
+                print(f"Next available port for es: {nextESPort}, mcp: {nextESMCPPort}, agent: {nextESAgentPort}")
+            else:
+                return jsonify({'error': f'Resource Limit reached. Please purchase premium serivces '}), 500
+
+
+            """ Deploy the ES Infrastructure via Infra API """
+
+            infra_deploy_status = deploy_service(nextESPort, nextESMCPPort, nextESAgentPort, INFRA_API_LAUNCHER)
+
+            print(infra_deploy_status)
+
+
             INDEXING_AGENT_PARAMS["user_id"] = userid
             INDEXING_AGENT_PARAMS["data_path"] = data_dir
             INDEXING_AGENT_PARAMS["user_query_path"] = query_dir
@@ -353,6 +406,19 @@ def callIndexingAgent():
         traceback.print_exc()
         return {'success': False, 'error': f"An unexpected error occurred: {err}"}
 
+def get_next_available_port(ports):
+    """
+    Checks the given list of ports and returns the first available one.
+    """
+    for port in ports:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(("", port))  # Try binding to the port
+                return port
+            except OSError:
+                continue
+    return None
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
@@ -391,7 +457,41 @@ def list_user_files(userid):
         
     except Exception as e:
         return jsonify({'error': f'Failed to list files: {str(e)}'}), 500
+    
 
+@app.route("/query", methods=["POST"])
+@require_auth
+def external_query():
+    """
+    Exposes an endpoint to accept query & temperature 
+    and forwards the request to the internal API.
+    """
+    if 'userid' not in request.form:
+            return jsonify({'error': 'userid is required'}), 400
+        
+    if 'query' not in request.form:
+        return jsonify({'error': 'query is required'}), 400
+    
+    if 'temperature' not in request.form:
+        return jsonify({'error': 'temperature is required'}), 400
+
+    userid = request.form['userid']
+    query_text = request.form['query']
+    temperature = request.form['temperature']
+
+    print(userid)
+    print(query_text)
+    print(temperature)
+
+    # Forward request to internal API
+    try:
+        payload = {"query": query_text, "temperature": temperature}
+        response = requests.post(SEARCH_API_URL, json=payload, timeout=300)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     # Create base directory if it doesn't exist
     os.makedirs(BASE_DIR, exist_ok=True)
