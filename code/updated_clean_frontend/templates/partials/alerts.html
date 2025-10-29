@@ -1,0 +1,12 @@
+<div id="alerts_area" class="toast toast-top toast-end"></div>
+<script>
+  // Optional alternate toast API using DaisyUI toast container
+  function toast(type, text){
+    const root = document.getElementById('alerts_area');
+    const div = document.createElement('div');
+    div.className = 'alert ' + (type==='error'?'alert-error': type==='success'?'alert-success':'alert-info');
+    div.innerHTML = `<span>${text}</span>`;
+    root.appendChild(div);
+    setTimeout(()=> div.remove(), 4000);
+  }
+</script>

@@ -1,0 +1,141 @@
+﻿<script>
+const phrases = ["Find the exact product you need", "Search with natural language", "Powered by Elasticsearch AI", "Fast, accurate, intelligent"];
+let phraseIndex = 0, charIndex = 0, isDeleting = false;
+function typeWriter() {
+    const el = document.getElementById("typewriter");
+    const phrase = phrases[phraseIndex];
+    if (isDeleting) {
+        el.textContent = phrase.substring(0, charIndex - 1);
+        charIndex--;
+    } else {
+        el.textContent = phrase.substring(0, charIndex + 1);
+        charIndex++;
+    }
+    if (!isDeleting && charIndex === phrase.length) {
+        setTimeout(() => isDeleting = true, 2000);
+    } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+    }
+    setTimeout(typeWriter, isDeleting ? 50 : 100);
+}
+setTimeout(typeWriter, 500);
+
+function animateCounter(el, target) {
+    const duration = 2000, increment = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) { current = target; clearInterval(timer); }
+        if (target >= 1000000) el.textContent = (current / 1000000).toFixed(1) + "M";
+        else if (target >= 1000) el.textContent = (current / 1000).toFixed(1) + "K";
+        else el.textContent = Math.round(current);
+    }, 16);
+}
+setTimeout(() => {
+    document.querySelectorAll(".stat-value[data-target]").forEach(el => {
+        const target = parseInt(el.dataset.target);
+        animateCounter(el, target);
+    });
+}, 1000);
+
+async function loadTemplates() {
+    try {
+        const r = await fetch("/domain-config");
+        const c = await r.json();
+        const grid = document.getElementById("templatesGrid");
+        const icons = ["", "", "", "", "", ""];
+        const badges = ["ADMIN", "HEALTH", "KEYWORD", "SUMMARY", "ANALYTICS", "RECENT"];
+        c.templates.forEach((t, i) => {
+            const card = document.createElement("div");
+            card.className = "template-card";
+            card.innerHTML = `<div class="template-icon">${icons[i % icons.length]}</div><div class="template-content"><div class="template-header"><span class="template-badge">${badges[i % badges.length]}</span><span class="template-badge">${t.tag || "QUERY"}</span></div><div class="template-title">${t.title}</div><div class="template-desc">${t.prompt || t.category}</div></div>`;
+            card.onclick = () => {
+                document.getElementById("userInput").value = t.prompt;
+                document.getElementById("userInput").focus();
+            };
+            grid.appendChild(card);
+        });
+    } catch (e) { console.error("Failed to load templates:", e); }
+}
+loadTemplates();
+
+const loginBtn = document.getElementById("loginBtn");
+const authModal = document.getElementById("authModal");
+const closeModal = document.getElementById("closeModal");
+const authPromptBtn = document.getElementById("authPromptBtn");
+const protectedOverlay = document.getElementById("protectedOverlay");
+function openModal() { authModal.style.display = "flex"; }
+function closeAuth() { authModal.style.display = "none"; }
+function hideProtected() { protectedOverlay.style.display = "none"; }
+loginBtn.addEventListener("click", openModal);
+closeModal.addEventListener("click", closeAuth);
+authPromptBtn.addEventListener("click", openModal);
+
+const descope = document.querySelector("descope-wc");
+descope?.addEventListener("success", async (evt) => {
+    try {
+        const email = evt?.detail?.user?.email || evt?.detail?.data?.user?.email || "";
+        if (email) {
+            const r = await fetch("/api/user/upsert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+            const j = await r.json();
+            if (j?.success) {
+                localStorage.setItem("user_email", j.email);
+                localStorage.setItem("user_key", j.uniqueKey);
+                hideProtected();
+                closeAuth();
+            }
+        }
+    } catch (e) { console.error("Auth error:", e); }
+});
+
+if (localStorage.getItem("user_email")) { hideProtected(); }
+
+const searchForm = document.getElementById("searchForm");
+const loadingOverlay = document.getElementById("loadingOverlay");
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const query = document.getElementById("userInput").value.trim();
+    if (!query) return;
+    loadingOverlay.style.display = "flex";
+    setTimeout(() => { window.location.href = "/result?q=" + encodeURIComponent(query); }, 500);
+});
+
+const dropZone = document.getElementById("uploadDropZone");
+const fileInput = document.getElementById("fileInput");
+const uploadedFilesList = document.getElementById("uploadedFilesList");
+const submitUploadBtn = document.getElementById("submitUploadBtn");
+const confirmationMessage = document.getElementById("confirmationMessage");
+let selectedFiles = [];
+
+function renderFiles() {
+    uploadedFilesList.innerHTML = "";
+    selectedFiles.forEach((f, i) => {
+        const el = document.createElement("div");
+        el.style.cssText = "padding: 10px; margin-top: 8px; background: rgba(30, 27, 75, 0.5); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;";
+        el.innerHTML = `<div><strong style="color: #e0e7ff;">${f.name}</strong><span style="color: #64748b; margin-left: 12px;">${(f.size / 1024 / 1024).toFixed(2)} MB</span></div><button data-idx="${i}" style="padding: 4px 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; color: #fca5a5; cursor: pointer;">Remove</button>`;
+        uploadedFilesList.appendChild(el);
+        el.querySelector("button").addEventListener("click", () => { selectedFiles.splice(i, 1); renderFiles(); });
+    });
+}
+
+dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.style.borderColor = "rgba(139, 92, 246, 0.6)"; dropZone.style.background = "rgba(139, 92, 246, 0.05)"; });
+dropZone.addEventListener("dragleave", () => { dropZone.style.borderColor = "rgba(139, 92, 246, 0.3)"; dropZone.style.background = "transparent"; });
+dropZone.addEventListener("drop", (e) => { e.preventDefault(); dropZone.style.borderColor = "rgba(139, 92, 246, 0.3)"; dropZone.style.background = "transparent"; const files = Array.from(e.dataTransfer.files || []); if (files.length) { selectedFiles = selectedFiles.concat(files); renderFiles(); } });
+fileInput.addEventListener("change", (e) => { const files = Array.from(e.target.files || []); if (files.length) { selectedFiles = selectedFiles.concat(files); renderFiles(); } });
+
+submitUploadBtn.addEventListener("click", async () => {
+    if (!selectedFiles.length) { confirmationMessage.textContent = "Please add at least one file"; confirmationMessage.style.display = "block"; return; }
+    const fd = new FormData();
+    selectedFiles.forEach(f => fd.append("files", f, f.name));
+    fd.append("description", document.getElementById("fileDescription").value || "");
+    try {
+        const r = await fetch("/upload", { method: "POST", body: fd });
+        const j = await r.json();
+        confirmationMessage.textContent = j?.success ? " Data Processing Initiated" : "Upload failed";
+        confirmationMessage.style.display = "block";
+        setTimeout(() => { confirmationMessage.style.display = "none"; }, 5000);
+    } catch (e) { confirmationMessage.textContent = "Upload error"; confirmationMessage.style.display = "block"; }
+});
+</script>

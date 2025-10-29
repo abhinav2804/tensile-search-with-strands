@@ -1,0 +1,42 @@
+{% set has_results = results and results.headers and results.rows %}
+<div class="card bg-base-100 shadow">
+  <div class="card-body">
+    {% if summary %}
+      <div class="mb-2">
+        <div class="badge badge-primary mr-2">Summary</div>
+        <span class="font-semibold">{{ summary.title }}</span>
+        <div class="text-sm opacity-70">{{ summary.details }}</div>
+      </div>
+    {% endif %}
+
+    {% if has_results %}
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              {% for h in results.headers %}<th>{{ h }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in results.rows %}
+              <tr>
+                {% for cell in row %}<td class="whitespace-pre-wrap">{{ cell }}</td>{% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="skeleton h-24 w-full"></div>
+      <div class="text-sm opacity-70 mt-2">No rows to display.</div>
+    {% endif %}
+
+    <div class="mt-3 collapse collapse-arrow bg-base-200">
+      <input type="checkbox" />
+      <div class="collapse-title text-sm font-medium">Raw response</div>
+      <div class="collapse-content">
+        <pre class="text-xs whitespace-pre-wrap">{{ raw | tojson(indent=2) }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
