@@ -16,6 +16,9 @@ services:
     environment:
       ES_URL: ${ES_URL}
       ES_API_KEY: ${ES_API_KEY}
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/health"]
@@ -37,8 +40,8 @@ services:
       - AWS_REGION=us-east-1
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      - AWS_ACCESS_KEY_ID=AKIA2WN2VXZHIYJJHGE7
-      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - BEDROCK_INFERENCE_PROFILE_ARN=arn:aws:bedrock:us-east-1:301697000154:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0
       - MCP_URL=http://elastic-mcp-server:8080/mcp
     restart: unless-stopped
@@ -51,3 +54,4 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+
