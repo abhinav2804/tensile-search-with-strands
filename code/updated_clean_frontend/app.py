@@ -28,8 +28,41 @@ UPLOAD_FOLDER = tempfile.gettempdir()
 
 @app.route('/')
 def index():
-    """Redirect root to esportal page"""
-    return redirect(url_for('esportal_page'))
+    """Serve the main portal directly at root ('/')."""
+    # Prefer environment variable; fall back to provided project id for convenience in dev
+    project_id = os.getenv('DESCOPE_PROJECT_ID', 'P32OxoFpY0ihVvncEbabQARqzw8I')
+    flow_id = os.getenv('DESCOPE_FLOW_ID', 'passwords-with-explicit-sign-up')
+    return render_template('esportal.html', 
+                         descope_project_id=project_id,
+                         descope_flow_id=flow_id)
+
+
+@app.route('/api/user-status')
+def user_status():
+    """Return lightweight user status for the widget after login.
+
+    This keeps it simple for now: if the user is in session, login is successful.
+    Flags for hosted services can later be wired to a real backend.
+    """
+    email = session.get('user_email')
+    unique_key = session.get('unique_key')
+    has_es = False
+    has_mcp = False
+    # TODO: Integrate a real check against your infra/DB if available
+    return jsonify({
+        'login': bool(email),
+        'has_es': has_es,
+        'has_mcp': has_mcp,
+        'email': email or '',
+        'unique_key': (unique_key or '')
+    })
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    """Clear server session for logout and return success."""
+    session.clear()
+    return jsonify({'success': True})
 
 @app.route('/esportal')
 def esportal_page():
@@ -54,12 +87,36 @@ def domain_config():
     """Return sample templates for the frontend"""
     return jsonify({
         "templates": [
-            {"title": "Fashion Product Search", "prompt": "Find trendy summer dresses under $100", "category": "fashion"},
-            {"title": "Electronics Comparison", "prompt": "Compare latest smartphones with 5G capability", "category": "electronics"},
-            {"title": "Audio Accessories", "prompt": "Find wireless headphones with noise cancellation", "category": "audio"},
-            {"title": "Mobile Device Analytics", "prompt": "Show mobile device performance metrics", "category": "mobile"},
-            {"title": "Price Trend Analysis", "prompt": "Analyze price trends for laptops in last 6 months", "category": "analytics"},
-            {"title": "Recent Product Updates", "prompt": "Show products updated in the last week", "category": "recent"}
+            {
+                "title": "Cement Raw Materials Overview",
+                "prompt": "Summarize cement raw materials across all indices: list top material types, counts, and typical suppliers.",
+                "category": "materials"
+            },
+            {
+                "title": "Building Materials Availability",
+                "prompt": "Find building materials with available stock and lead time under 14 days. Return name, SKU/code, unit, stock, and lead time.",
+                "category": "b2b"
+            },
+            {
+                "title": "Industrial Products Aggregation",
+                "prompt": "Aggregate B2B industrial products by category and show counts and average unit price per category.",
+                "category": "analytics"
+            },
+            {
+                "title": "Recent Additions (7 days)",
+                "prompt": "Show items added or updated in the last 7 days across all available indices with timestamp and source index.",
+                "category": "recent"
+            },
+            {
+                "title": "Supplier Directory",
+                "prompt": "List suppliers found across indices with the materials/products they provide and contact fields when available.",
+                "category": "suppliers"
+            },
+            {
+                "title": "Cross-index Search (Generic)",
+                "prompt": "Search across all indices for 'telecommunications' or 'mobile devices'. If none found, clearly state that no such data exists and list the indices that are available instead.",
+                "category": "discovery"
+            }
         ]
     })
 

@@ -53,6 +53,41 @@
             padding: 30px;
         }
 
+        .summary-card, .note-card, .message-card {
+            background: rgba(17, 17, 27, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+        .summary-card h4, .note-card h4, .message-card h4 { color: #a78bfa; margin-bottom: 8px; }
+
+        .table-wrap { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(13, 14, 24, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        thead th {
+            text-align: left;
+            padding: 12px 14px;
+            background: rgba(99, 102, 241, 0.12);
+            color: #e2e8f0;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        tbody td {
+            padding: 12px 14px;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+        tbody tr:hover { background: rgba(99, 102, 241, 0.06); }
+
         .back-btn {
             background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
             color: white;
@@ -92,16 +127,16 @@
     <div class="container">
         <div class="header">
             <h1>Search Results</h1>
-            <a href="/" class="back-btn">← Back to Portal</a>
+            <a href="/" class="back-btn">← Back </a>
         </div>
 
         <div class="query-display">
             <h3>Your Query:</h3>
-            <p>"{{ query }}"</p>
+            <p>{{ query }}</p>
         </div>
 
         <div class="results-container">
-            <h3>Results:</h3>
+            <h3 style="margin-bottom:12px;">Results</h3>
             {% if results %}
                 {% if results.error %}
                     <div class="error">
@@ -111,7 +146,159 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="results">{{ results | tojson(indent=2) }}</div>
+                    <div id="renderedResults"></div>
+                    <script id="resultsData" type="application/json">{{ results | tojson }}</script>
+                    <script>
+                        // Log result payload in browser console for visibility of upstream/meta
+                        try {
+                            const raw = JSON.parse(document.getElementById('resultsData').textContent || '{}');
+                            console.log('[RESULT] payload', raw);
+                            if (raw && raw.meta) console.log('[RESULT] meta', raw.meta);
+                        } catch(e) {}
+                        function parseStructuredResponse(respStr){
+                            const out = { predata: '', header: [], rows: [], postdata: '', final: '' };
+                            if (typeof respStr !== 'string') return out;
+                            // Normalize line breaks
+                            const s = respStr.replace(/\r\n/g,'\n');
+                            // predata
+                            const preMatch = s.match(/\*\*predata,\*\*\s*([\s\S]*?)(\n\n|\*\*header,\*\*|$)/i);
+                            if (preMatch) out.predata = preMatch[1].trim();
+                            // header: try to extract bracketed list, otherwise comma-split line
+                            const headerBlock = s.match(/\*\*header,\*\*\s*([\s\S]*?)(\n\n|\*\*data,\*\*|$)/i);
+                            if (headerBlock) {
+                                const hb = headerBlock[1];
+                                const bracket = hb.match(/\[(.*?)\]/s);
+                                if (bracket) {
+                                    // Split on commas not inside quotes
+                                    out.header = bracket[1].split(',').map(x => x.replace(/[\"\'\[\]]/g,'').trim()).filter(Boolean);
+                                } else {
+                                    out.header = hb.split(',').map(x => x.replace(/[\"\'\[\]]/g,'').trim()).filter(Boolean);
+                                }
+                            }
+                            // data: find first JSON array after **data,**
+                            const dataBlock = s.match(/\*\*data,\*\*\s*([\s\S]*?)(\n\n|\*\*postdata,\*\*|$)/i);
+                            if (dataBlock) {
+                                const db = dataBlock[1];
+                                const arrMatch = db.match(/\[(\s*[\{\[].*[\}\]]\s*)\]/s);
+                                // Fallback: locate first '[' ... last ']' in block
+                                let arrText = null;
+                                if (!arrMatch) {
+                                    const first = db.indexOf('['), last = db.lastIndexOf(']');
+                                    if (first !== -1 && last > first) arrText = db.substring(first, last+1);
+                                } else {
+                                    arrText = '[' + arrMatch[1] + ']';
+                                }
+                                if (arrText) {
+                                    try { out.rows = JSON.parse(arrText); } catch(e) {}
+                                }
+                            }
+                            // postdata
+                            const postMatch = s.match(/\*\*postdata,\*\*\s*([\s\S]*?)(\n\n|\*\*final(y)?,\*\*|$)/i);
+                            if (postMatch) out.postdata = postMatch[1].trim();
+                            // final / finaly
+                            const finMatch = s.match(/\*\*final(y)?,\*\*\s*([\s\S]*?)$/i);
+                            if (finMatch) out.final = (finMatch[2] || '').trim();
+                            return out;
+                        }
+
+                        function render(results){
+                            const root = document.getElementById('renderedResults');
+                            root.innerHTML = '';
+                            // Determine shape
+                            let payload = results;
+                            if (results && typeof results === 'object' && 'output' in results) payload = results.output;
+                            if (results && typeof results === 'object' && 'response' in results) payload = results.response;
+
+                            // If payload is a string, parse the structured markers
+                            let predata='', header=[], rows=[], postdata='', final='';
+                            if (typeof payload === 'string') {
+                                ({ predata, header, rows, postdata, final } = parseStructuredResponse(payload));
+                                // If no structured content detected, treat whole string as a message
+                                const hasStructure = predata || (header && header.length) || (rows && rows.length) || postdata || final;
+                                if (!hasStructure && payload.trim()) {
+                                    const msg = document.createElement('div');
+                                    msg.className = 'message-card';
+                                    msg.innerHTML = '<h4>Message</h4><div>'+ payload +'</div>';
+                                    root.appendChild(msg);
+                                }
+                            } else if (payload && typeof payload === 'object') {
+                                // Some APIs may already give header/data arrays
+                                if (Array.isArray(payload.header)) header = payload.header;
+                                if (Array.isArray(payload.data)) rows = payload.data;
+                                if (payload.predata) predata = payload.predata;
+                                if (payload.postdata) postdata = payload.postdata;
+                                if (payload.final || payload.finaly) final = payload.final || payload.finaly;
+                                // Or nested under 'response'
+                                if (typeof payload.response === 'string') {
+                                    const parsed = parseStructuredResponse(payload.response);
+                                    predata ||= parsed.predata; postdata ||= parsed.postdata; final ||= parsed.final;
+                                    if (!header.length) header = parsed.header;
+                                    if (!rows.length) rows = parsed.rows;
+                                }
+                            }
+
+                            // Summary/predata
+                            if (predata) {
+                                const summ = document.createElement('div');
+                                summ.className = 'summary-card';
+                                summ.innerHTML = '<h4>Summary</h4><div>'+ predata +'</div>';
+                                root.appendChild(summ);
+                            }
+
+                            // Table
+                            if (header && header.length && Array.isArray(rows)) {
+                                const wrap = document.createElement('div');
+                                wrap.className = 'table-wrap';
+                                const tbl = document.createElement('table');
+                                const thead = document.createElement('thead');
+                                const tbody = document.createElement('tbody');
+                                const trh = document.createElement('tr');
+                                header.forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); });
+                                thead.appendChild(trh); tbl.appendChild(thead);
+                                rows.forEach((r) => {
+                                    const tr = document.createElement('tr');
+                                    if (r && typeof r === 'object' && !Array.isArray(r)) {
+                                        header.forEach(h => { const td=document.createElement('td'); td.textContent = (r[h] ?? ''); tr.appendChild(td); });
+                                    } else if (Array.isArray(r)) {
+                                        r.forEach(val => { const td=document.createElement('td'); td.textContent = val; tr.appendChild(td); });
+                                    } else {
+                                        const td=document.createElement('td'); td.colSpan = header.length || 1; td.textContent = String(r); tr.appendChild(td);
+                                    }
+                                    tbody.appendChild(tr);
+                                });
+                                tbl.appendChild(tbody); wrap.appendChild(tbl); root.appendChild(wrap);
+                            }
+
+                            // Postdata
+                            if (postdata) {
+                                const post = document.createElement('div');
+                                post.className = 'note-card';
+                                post.innerHTML = '<h4>Notes</h4><div>'+ postdata +'</div>';
+                                root.appendChild(post);
+                            }
+
+                            // Final suggestion
+                            if (final) {
+                                const fin = document.createElement('div');
+                                fin.className = 'note-card';
+                                fin.innerHTML = '<h4>Recommendation</h4><div>'+ final +'</div>';
+                                root.appendChild(fin);
+                            }
+
+                            // Fallback if nothing rendered
+                            if (!root.children.length) {
+                                const raw = document.createElement('div'); raw.className='results'; raw.textContent = JSON.stringify(results,null,2); root.appendChild(raw);
+                            }
+                        }
+
+                        try {
+                            const results = JSON.parse(document.getElementById('resultsData').textContent || '{}');
+                            render(results);
+                        } catch (e) {
+                            const root = document.getElementById('renderedResults');
+                            root.innerHTML = '<div class="error">Failed to parse results</div>';
+                        }
+                    </script>
                 {% endif %}
             {% else %}
                 <div class="error">No results returned from search API</div>
